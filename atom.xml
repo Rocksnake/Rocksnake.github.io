@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>RokoBasilisk&#39;s Blog</title>
+  
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2020-02-26T03:44:13.220Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>Rokosnake</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Transformer(Goole 翻译模型)</title>
+    <link href="http://yoursite.com/2020/02/26/Transformer(Goole%20%E7%BF%BB%E8%AF%91%E6%A8%A1%E5%9E%8B)/"/>
+    <id>http://yoursite.com/2020/02/26/Transformer(Goole%20%E7%BF%BB%E8%AF%91%E6%A8%A1%E5%9E%8B)/</id>
+    <published>2020-02-26T03:42:36.280Z</published>
+    <updated>2020-02-26T03:44:13.220Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;center&gt;&lt;b&gt;&lt;font size=5&gt;双壁合一&lt;/font&gt;&lt;/b&gt;&lt;/center&gt;
+
+&lt;p&gt;&lt;strong&gt;卷积神经网络(CNNS)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="http://yoursite.com/2020/02/26/hello-world/"/>
+    <id>http://yoursite.com/2020/02/26/hello-world/</id>
+    <published>2020-02-26T02:49:19.175Z</published>
+    <updated>2020-02-26T02:49:19.175Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a
+        
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+</feed>

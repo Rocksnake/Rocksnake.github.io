@@ -23,6 +23,7 @@
 
   
 
+<link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
 </head>
 
 </html>
@@ -34,13 +35,13 @@
 <section class="cover">
     
       
-      <a class="forkMe" href="https://github.com/Shen-Yu/hexo-theme-ayer"
+      <a class="forkMe" href="https://github.com/Rocksnake"
         target="_blank"><img width="149" height="149" src="/images/forkme.png"
           class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
     
   <div class="cover-frame">
     <div class="bg-box">
-      <img src="/images/cover1.jpg" alt="image frame" />
+      <img src="/images/cover3.jpg" alt="image frame" />
     </div>
     <div class="cover-inner text-center text-white">
       <h1><a href="/">RokoBasilisk&#39;s Blog</a></h1>
@@ -383,7 +384,7 @@
     <ul class="list-inline">
       <li>
         &copy;
-        2015-2020
+        2020
         Rokosnake
       </li>
       <li>
@@ -408,7 +409,7 @@
       <li>
         <!-- cnzz统计 -->
         
-        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        <script type="text/javascript" src=''></script>
         
       </li>
     </ul>
@@ -425,7 +426,7 @@
 <nav class="navbar">
   
   <div class="logo">
-    <a href="/"><img src="/images/ayer-side.svg" alt="RokoBasilisk&#39;s Blog"></a>
+    <a href="/"><img src="/images/dragon.svg" alt="RokoBasilisk&#39;s Blog"></a>
   </div>
   
   <ul class="nav nav-main">
@@ -447,11 +448,7 @@
     </li>
     
     <li class="nav-item">
-      <a class="nav-item-link" href="/tags/%E6%97%85%E8%A1%8C/">旅行</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="http://shenyu-vip.lofter.com" target="_blank" rel="noopener">摄影</a>
+      <a class="nav-item-link" href="/tags/%E4%BA%BA%E7%94%9F">人生</a>
     </li>
     
     <li class="nav-item">
@@ -529,7 +526,7 @@
 <script>
   try {
     var typed = new Typed("#subtitle", {
-    strings: ['面朝大海，春暖花开','愿你一生努力，一生被爱','想要的都拥有，得不到的都释怀'],
+    strings: ['岁月静好，安然若素','知世俗而不世俗','想要的都拥有，得不到的都释怀'],
     startDelay: 0,
     typeSpeed: 200,
     loop: true,
@@ -546,7 +543,7 @@
 
 <script>
   var ayerConfig = {
-    mathjax: false
+    mathjax: true
   }
 </script>
 
@@ -666,6 +663,25 @@
 </script>
 
 
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.6/unpacked/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
 
 <script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
