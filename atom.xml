@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-02-26T03:44:13.220Z</updated>
+  <updated>2020-02-26T13:28:49.396Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Transformer(Goole 翻译模型)</title>
-    <link href="http://yoursite.com/2020/02/26/Transformer(Goole%20%E7%BF%BB%E8%AF%91%E6%A8%A1%E5%9E%8B)/"/>
-    <id>http://yoursite.com/2020/02/26/Transformer(Goole%20%E7%BF%BB%E8%AF%91%E6%A8%A1%E5%9E%8B)/</id>
+    <title>Transformer(Goole 机器翻译模型)</title>
+    <link href="http://yoursite.com/2020/02/26/Transformer(Goole%20%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91%E6%A8%A1%E5%9E%8B)/"/>
+    <id>http://yoursite.com/2020/02/26/Transformer(Goole%20%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91%E6%A8%A1%E5%9E%8B)/</id>
     <published>2020-02-26T03:42:36.280Z</published>
-    <updated>2020-02-26T03:44:13.220Z</updated>
+    <updated>2020-02-26T13:28:49.396Z</updated>
     
     <summary type="html">
     
@@ -40,29 +40,18 @@
     </summary>
     
     
-    
-  </entry>
-  
-  <entry>
-    <title>Hello World</title>
-    <link href="http://yoursite.com/2020/02/26/hello-world/"/>
-    <id>http://yoursite.com/2020/02/26/hello-world/</id>
-    <published>2020-02-26T02:49:19.175Z</published>
-    <updated>2020-02-26T02:49:19.175Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a
-        
-      
-    
-    </summary>
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
     
     
+      <category term="transformer" scheme="http://yoursite.com/tags/transformer/"/>
+    
+      <category term="masked softmax" scheme="http://yoursite.com/tags/masked-softmax/"/>
+    
+      <category term="多头注意" scheme="http://yoursite.com/tags/%E5%A4%9A%E5%A4%B4%E6%B3%A8%E6%84%8F/"/>
+    
+      <category term="位置编码" scheme="http://yoursite.com/tags/%E4%BD%8D%E7%BD%AE%E7%BC%96%E7%A0%81/"/>
+    
+      <category term="编/译码器" scheme="http://yoursite.com/tags/%E7%BC%96-%E8%AF%91%E7%A0%81%E5%99%A8/"/>
     
   </entry>
   
