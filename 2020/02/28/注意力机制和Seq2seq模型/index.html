@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>注意力机制和Seq2seq模型 | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">注意力机制和Seq2seq模型</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">February 28, 2020&nbsp;&nbsp;10:22:14</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Machine-Learning/">Machine Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <center><b><font size=6>Attention Mechanism</font></b></center><br/>
+
+<blockquote>
+<p>注意力机制借鉴了人类的注意力思维方式，以获得需要重点关注的目标区域</p>
+</blockquote>
+<p>&ensp;&ensp;&ensp;&ensp;在 <a href="https://blog.csdn.net/RokoBasilisk/article/details/104367653" target="_blank" rel="noopener">编码器—解码器（seq2seq)</a> 中，解码器在各个时间步依赖相同的背景变量（context vector）来获取输⼊序列信息。解码器输入的语境向量(context vector)不同，每个位置都会计算各自的 attention 输出。 当编码器为循环神经⽹络时，背景变量来⾃它最终时间步的隐藏状态。将源序列输入信息以循环单位状态编码，然后将其传递给解码器以生成目标序列。</p>
+<p>&ensp;&ensp;&ensp;&ensp;然而这种结构存在着问题，尤其是RNN机制实际中存在长程梯度消失的问题，对于较长的句子，我们很难寄希望于将输入的序列转化为定长的向量而保存所有的有效信息，所以随着所需翻译句子的长度的增加，这种结构的效果会显著下降。与此同时，解码的目标词语可能只与原输入的部分词语有关，而并不是与所有的输入有关。例如，当把 “Hello world” 翻译成 “Bonjour le monde” 时，“Hello” 映射成 “Bonjour”，“world” 映射成  “monde”。</p>
+<p>&ensp;&ensp;&ensp;&ensp;在 seq2seq 模型中，解码器只能隐式地从编码器的最终状态中选择相应的信息。然而，注意力机制可以将这种选择过程显式地建模。</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWttNGR3Z2Y5LlBORw?x-oss-process=image/format,png" alt="Image Name"></p>
+<h2 id="注意力机制框架"><a href="#注意力机制框架" class="headerlink" title="注意力机制框架"></a>注意力机制框架</h2><p>Attention 是一种通用的带权池化方法，输入由两部分构成：询问（query）和键值对（key-value pairs）。 $k_i∈R^{d_k}, v_i∈R^{d_v}$. Query  $q∈R^{d_q}$ ,  attention layer 得到输出与value的维度一致 $o∈R^{d_v}$.  对于一个query来说，attention layer 会与每一个 key 计算注意力分数并进行权重的归一化，输出的向量 $o$ 则是 value 的加权求和，而每个 key 计算的权重与 value 一一对应。</p>
+<p>为了计算输出，我们首先假设有一个函数$\alpha$ 用于计算query和key的相似性，然后可以计算所有的 attention scores $a_1, \ldots, a_n$  by</p>
+<p>$$<br>a_i = \alpha(\mathbf q, \mathbf k_i).<br>$$</p>
+<p>我们使用 softmax 函数 获得注意力权重：</p>
+<p>$$<br>b_1, \ldots, b_n = \textrm{softmax}(a_1, \ldots, a_n).<br>$$</p>
+<p>最终的输出就是 value 的加权求和：</p>
+<p>$$<br>\mathbf o = \sum_{i=1}^n b_i \mathbf v_i.<br>$$</p>
+<center><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWttNG9veXUyLlBORw?x-oss-process=image/format,png" /></center>
+
+<blockquote>
+<p>不同的 attetion layer 的区别在于 score 函数的选择</p>
+</blockquote>
+<p>接下来将利用[机器翻译及其相关技术介绍]一文中的(<a href="https://blog.csdn.net/RokoBasilisk/article/details/104367653" target="_blank" rel="noopener">https://blog.csdn.net/RokoBasilisk/article/details/104367653</a>)</p>
+<h2 id="介绍两个常用的注意层"><a href="#介绍两个常用的注意层" class="headerlink" title="介绍两个常用的注意层"></a>介绍两个常用的注意层</h2><blockquote>
+<ul>
+<li>Dot-product Attention <br/></li>
+<li>Multilayer Perceptron Attention</li>
+</ul>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> torch </span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="comment"># import dataset</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.listdir(<span class="string">'path to storaged file of dataset'</span>)</span><br></pre></td></tr></table></figure>
+<hr>
+<p><strong>工具1:</strong> Masked Softmax</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 排除padding位置的影响</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">SequenceMask</span><span class="params">(X, X_len,value=<span class="number">-1e6</span>)</span>:</span></span><br><span class="line">    maxlen = X.size(<span class="number">1</span>)</span><br><span class="line">    <span class="comment">#print(X.size(),torch.arange((maxlen),dtype=torch.float)[None, :],'\n',X_len[:, None] )</span></span><br><span class="line">    <span class="comment"># shape as same as X</span></span><br><span class="line">    mask = torch.arange((maxlen),dtype=torch.float)[<span class="literal">None</span>, :] &gt;= X_len[:, <span class="literal">None</span>]   </span><br><span class="line">    <span class="comment">#print(mask)</span></span><br><span class="line">    X[mask]=value</span><br><span class="line">    <span class="keyword">return</span> X</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">masked_softmax</span><span class="params">(X, valid_length)</span>:</span></span><br><span class="line">    <span class="comment"># X: 3-D tensor, valid_length: 1-D or 2-D tensor</span></span><br><span class="line">    softmax = nn.Softmax(dim=<span class="number">-1</span>)</span><br><span class="line">    <span class="keyword">if</span> valid_length <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span> softmax(X)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        shape = X.shape</span><br><span class="line">        <span class="keyword">if</span> valid_length.dim() == <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                valid_length = torch.FloatTensor(valid_length.numpy().repeat(shape[<span class="number">1</span>], axis=<span class="number">0</span>))<span class="comment">#[2,2,3,3]</span></span><br><span class="line">            <span class="keyword">except</span>:</span><br><span class="line">                valid_length = torch.FloatTensor(valid_length.cpu().numpy().repeat(shape[<span class="number">1</span>], axis=<span class="number">0</span>))<span class="comment">#[2,2,3,3]</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            valid_length = valid_length.reshape((<span class="number">-1</span>,))</span><br><span class="line">        <span class="comment"># fill masked elements with a large negative, whose exp is 0</span></span><br><span class="line">        X = SequenceMask(X.reshape((<span class="number">-1</span>, shape[<span class="number">-1</span>])), valid_length)</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">return</span> softmax(X).reshape(shape)</span><br></pre></td></tr></table></figure>
+
+<p><strong>工具2：</strong> 超出2维矩阵的乘法</p>
+<p>$X$ 和 $Y$ 是维度分别为$(b,n,m)$ 和$(b, m, k)$的张量，进行 $b$ 次二维矩阵乘法后得到 $Z$, 维度为 $(b, n, k)$。</p>
+<p>$$<br> Z[i,:,:] = dot(X[i,:,:], Y[i,:,:])\qquad for\ i= 1,…,n\ .<br>$$</p>
+<hr>
+<h3 id="Dot-Product-Attention"><a href="#Dot-Product-Attention" class="headerlink" title="Dot Product Attention"></a>Dot Product Attention</h3><p>The dot product 假设query和keys有相同的维度, 即 $\forall i, q,k_i ∈ R_d$. 通过计算 query 和 key 转置的乘积来计算 attention score ,通常还会除去 $\sqrt{d}$ 减少计算出来的 score 对维度 𝑑 的依赖性，如下</p>
+<p>$$<br>α (q,k)=⟨q,k⟩/ \sqrt{d}<br>$$</p>
+<p>假设 $Q∈R^{m×d}$ 有 $m$ 个query，$K∈R^{n×d}$ 有 $n$ 个 keys. 我们可以通过矩阵运算的方式计算所有 $mn$ 个 score：</p>
+<p>$$<br>α (Q,K)=QK^T/\sqrt{d}<br>$$</p>
+<p>它支持一批查询和键值对。此外，它支持作为正则化随机删除一些注意力权重.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Save to the d2l package.</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DotProductAttention</span><span class="params">(nn.Module)</span>:</span> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, dropout, **kwargs)</span>:</span></span><br><span class="line">        super(DotProductAttention, self).__init__(**kwargs)</span><br><span class="line">        self.dropout = nn.Dropout(dropout)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># query: (batch_size, #queries, d)</span></span><br><span class="line">    <span class="comment"># key: (batch_size, #kv_pairs, d)</span></span><br><span class="line">    <span class="comment"># value: (batch_size, #kv_pairs, dim_v)</span></span><br><span class="line">    <span class="comment"># valid_length: either (batch_size, ) or (batch_size, xx)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, query, key, value, valid_length=None)</span>:</span></span><br><span class="line">        d = query.shape[<span class="number">-1</span>]</span><br><span class="line">        <span class="comment"># set transpose_b=True to swap the last two dimensions of key</span></span><br><span class="line">        </span><br><span class="line">        scores = torch.bmm(query, key.transpose(<span class="number">1</span>,<span class="number">2</span>)) / math.sqrt(d)</span><br><span class="line">        attention_weights = self.dropout(masked_softmax(scores, valid_length))</span><br><span class="line">        print(<span class="string">"attention_weight\n"</span>,attention_weights)</span><br><span class="line">        <span class="keyword">return</span> torch.bmm(attention_weights, value)</span><br></pre></td></tr></table></figure>
+
+<p><strong>测试：</strong></p>
+<p>创建了两个批，每个批有一个query和10个key-values对。</p>
+<p>通过valid_length指定，对于第一批，只关注前2个键-值对，而对于第二批，检查前6个键-值对</p>
+<p>因此，尽管这两个批处理具有相同的查询和键值对，但我们获得的输出是不同的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">atten = DotProductAttention(dropout=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">keys = torch.ones((<span class="number">2</span>,<span class="number">10</span>,<span class="number">2</span>),dtype=torch.float)</span><br><span class="line">values = torch.arange((<span class="number">40</span>), dtype=torch.float).view(<span class="number">1</span>,<span class="number">10</span>,<span class="number">4</span>).repeat(<span class="number">2</span>,<span class="number">1</span>,<span class="number">1</span>)</span><br><span class="line">atten(torch.ones((<span class="number">2</span>,<span class="number">1</span>,<span class="number">2</span>),dtype=torch.float), keys, values, torch.FloatTensor([<span class="number">2</span>, <span class="number">6</span>]))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Result</span></span><br><span class="line">attention_weight</span><br><span class="line"> tensor([[[<span class="number">0.5000</span>, <span class="number">0.5000</span>, <span class="number">0.0000</span>, <span class="number">0.0000</span>, <span class="number">0.0000</span>, <span class="number">0.0000</span>, <span class="number">0.0000</span>, <span class="number">0.0000</span>,</span><br><span class="line">          <span class="number">0.0000</span>, <span class="number">0.0000</span>]],</span><br><span class="line"></span><br><span class="line">        [[<span class="number">0.1667</span>, <span class="number">0.1667</span>, <span class="number">0.1667</span>, <span class="number">0.1667</span>, <span class="number">0.1667</span>, <span class="number">0.1667</span>, <span class="number">0.0000</span>, <span class="number">0.0000</span>,</span><br><span class="line">          <span class="number">0.0000</span>, <span class="number">0.0000</span>]]])</span><br><span class="line">tensor([[[ <span class="number">2.0000</span>,  <span class="number">3.0000</span>,  <span class="number">4.0000</span>,  <span class="number">5.0000</span>]],</span><br><span class="line"></span><br><span class="line">        [[<span class="number">10.0000</span>, <span class="number">11.0000</span>, <span class="number">12.0000</span>, <span class="number">13.0000</span>]]])</span><br></pre></td></tr></table></figure>
+
+<h3 id="Multilayer-Porceptron-Attentiion"><a href="#Multilayer-Porceptron-Attentiion" class="headerlink" title="Multilayer Porceptron Attentiion"></a>Multilayer Porceptron Attentiion</h3><p>在多层感知器中，我们首先将 query and keys 投影到  $R^ℎ$ .为了更具体，我们将可以学习的参数做如下映射<br>$W_k∈R^{h×d_k}$ ,  $W_q∈R^{h×d_q}$ , and  $v∈R^h$ .  将 score 函数定义</p>
+<p>$$<br>α(k,q)=v^Ttanh(W_kk+W_qq)<br>$$<br>.<br>然后将key 和 value 在特征的维度上合并（concatenate），然后送至 a single hidden layer perceptron 这层中 hidden layer 为  ℎ  and 输出的size为 1 .隐层激活函数为tanh，无偏置.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Save to the d2l package.</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MLPAttention</span><span class="params">(nn.Module)</span>:</span>  </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, units,ipt_dim,dropout, **kwargs)</span>:</span></span><br><span class="line">        super(MLPAttention, self).__init__(**kwargs)</span><br><span class="line">        <span class="comment"># Use flatten=True to keep query's and key's 3-D shapes.</span></span><br><span class="line">        self.W_k = nn.Linear(ipt_dim, units, bias=<span class="literal">False</span>)</span><br><span class="line">        self.W_q = nn.Linear(ipt_dim, units, bias=<span class="literal">False</span>)</span><br><span class="line">        self.v = nn.Linear(units, <span class="number">1</span>, bias=<span class="literal">False</span>)</span><br><span class="line">        self.dropout = nn.Dropout(dropout)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, query, key, value, valid_length)</span>:</span></span><br><span class="line">        query, key = self.W_k(query), self.W_q(key)</span><br><span class="line">        <span class="comment">#print("size",query.size(),key.size())</span></span><br><span class="line">        <span class="comment"># expand query to (batch_size, #querys, 1, units), and key to</span></span><br><span class="line">        <span class="comment"># (batch_size, 1, #kv_pairs, units). Then plus them with broadcast.</span></span><br><span class="line">        features = query.unsqueeze(<span class="number">2</span>) + key.unsqueeze(<span class="number">1</span>)</span><br><span class="line">        <span class="comment">#print("features:",features.size())  #--------------开启</span></span><br><span class="line">        scores = self.v(features).squeeze(<span class="number">-1</span>) </span><br><span class="line">        attention_weights = self.dropout(masked_softmax(scores, valid_length))</span><br><span class="line">        <span class="keyword">return</span> torch.bmm(attention_weights, value)</span><br></pre></td></tr></table></figure>
+
+<p><strong>测试：</strong></p>
+<p>&ensp;&ensp;&ensp;&ensp;尽管 MLPAttention 包含一个额外的 MLP 模型，但如果给定相同的输入和相同的键，我们将获得与DotProductAttention相同的输出</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">atten = MLPAttention(ipt_dim=<span class="number">2</span>,units = <span class="number">8</span>, dropout=<span class="number">0</span>)</span><br><span class="line">atten(torch.ones((<span class="number">2</span>,<span class="number">1</span>,<span class="number">2</span>), dtype = torch.float), keys, values, torch.FloatTensor([<span class="number">2</span>, <span class="number">6</span>]))      </span><br><span class="line"><span class="comment">#Result</span></span><br><span class="line">tensor([[[ <span class="number">2.0000</span>,  <span class="number">3.0000</span>,  <span class="number">4.0000</span>,  <span class="number">5.0000</span>]],</span><br><span class="line"></span><br><span class="line">        [[<span class="number">10.0000</span>, <span class="number">11.0000</span>, <span class="number">12.0000</span>, <span class="number">13.0000</span>]]], grad_fn=&lt;BmmBackward&gt;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h3><blockquote>
+<p>在Dot-product Attention中，key与query维度需要一致，在MLP Attention中则不需要。</p>
+</blockquote>
+<h2 id="Seq2seq模型"><a href="#Seq2seq模型" class="headerlink" title="Seq2seq模型"></a>Seq2seq模型</h2><blockquote>
+<p><a href="https://blog.csdn.net/RokoBasilisk/article/details/104367653" target="_blank" rel="noopener">机器翻译及其相关技术介绍</a></p>
+</blockquote>
+<p>seq2seq 模型的预测需人为设定终止条件，设定最长序列长度或者输出 [EOS] 结束符号，若不加以限制则可能生成无穷长度序列。</p>
+<p>引出：</p>
+<h2 id="引入注意力机制的Seq2seq模型"><a href="#引入注意力机制的Seq2seq模型" class="headerlink" title="引入注意力机制的Seq2seq模型"></a>引入注意力机制的Seq2seq模型</h2><p>注意力机制本身有高效的并行性，但引入注意力并不能改变seq2seq内部RNN的迭代机制，因此无法加速。</p>
+<blockquote>
+<p>将注意机制添加到 sequence to sequence 模型中，以显式地使用权重聚合 states。</p>
+</blockquote>
+<p>下图展示 encoding 和 decoding 的模型结构，在时间步为 $t$ 的时候。此刻 attention layer 保存着 encodering 看到的所有信息——即 encoding 的每一步输出。在 decoding 阶段，解码器的 $t$ 时刻的隐藏状态被当作 query，encoder 的每个时间步的 hidden states 作为 key 和 value 进行 attention 聚合. </p>
+<p>Attetion model 的输出当作成上下文信息 context vector，并与解码器输入 $D_t$ 拼接起来一起送到解码器：</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWttN284ejkzLlBORw?x-oss-process=image/format,png" alt="Image Name"></p>
+<p>$$<br>Fig1具有注意机制的seq-to-seq模型解码的第二步<br>$$</p>
+<p>下图展示了seq2seq机制的所以层的关系，下面展示了encoder和decoder的layer结构</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWttOGRpaGxyLlBORw?x-oss-process=image/format,png" alt="Image Name"></p>
+<p>$$<br>Fig2具有注意机制的seq-to-seq模型中层结构<br>$$</p>
+<h3 id="解码器"><a href="#解码器" class="headerlink" title="解码器"></a>解码器</h3><p>由于带有注意机制的 seq2seq 的编码器与之前章节中的 Seq2SeqEncoder 相同，所以在此处我们只关注解码器。</p>
+<p>我们添加了一个MLP注意层(MLPAttention)，它的隐藏大小与解码器中的LSTM层相同。然后我们通过从编码器传递三个参数来初始化解码器的状态:</p>
+<ul>
+<li>the encoder outputs of all timesteps：encoder 输出的各个状态，被用于attetion layer 的 memory 部分，有相同的 key 和 values ；</li>
+</ul>
+<ul>
+<li>the hidden state of the encoder’s final timestep：编码器最后一个时间步的隐藏状态，被用于初始化decoder 的hidden state ；</li>
+</ul>
+<ul>
+<li>the encoder valid length: 编码器的有效长度，借此，注意层不会考虑编码器输出中的填充标记（Paddings）；</li>
+</ul>
+<p>在解码的每个时间步，我们使用解码器的最后一个RNN层的输出作为注意层的 query。</p>
+<p>然后，将注意力模型的输出与输入嵌入向量连接起来，输入到 RNN 层。虽然 RNN 层隐藏状态也包含来自解码器的历史信息，但是 attention model 的输出显式地选择了 enc_valid_len 以内的编码器输出，这样 attention机制就会尽可能排除其他不相关的信息。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Seq2SeqAttentionDecoder</span><span class="params">(d2l.Decoder)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, vocab_size, embed_size, num_hiddens, num_layers,</span></span></span><br><span class="line"><span class="function"><span class="params">                 dropout=<span class="number">0</span>, **kwargs)</span>:</span></span><br><span class="line">        super(Seq2SeqAttentionDecoder, self).__init__(**kwargs)</span><br><span class="line">        self.attention_cell = MLPAttention(num_hiddens,num_hiddens, dropout)</span><br><span class="line">        self.embedding = nn.Embedding(vocab_size, embed_size)</span><br><span class="line">        self.rnn = nn.LSTM(embed_size+ num_hiddens,num_hiddens, num_layers, dropout=dropout)</span><br><span class="line">        self.dense = nn.Linear(num_hiddens,vocab_size)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">init_state</span><span class="params">(self, enc_outputs, enc_valid_len, *args)</span>:</span></span><br><span class="line">        outputs, hidden_state = enc_outputs</span><br><span class="line"><span class="comment">#         print("first:",outputs.size(),hidden_state[0].size(),hidden_state[1].size())</span></span><br><span class="line">        <span class="comment"># Transpose outputs to (batch_size, seq_len, hidden_size)</span></span><br><span class="line">        <span class="keyword">return</span> (outputs.permute(<span class="number">1</span>,<span class="number">0</span>,<span class="number">-1</span>), hidden_state, enc_valid_len)</span><br><span class="line">        <span class="comment">#outputs.swapaxes(0, 1)</span></span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, X, state)</span>:</span></span><br><span class="line">        enc_outputs, hidden_state, enc_valid_len = state</span><br><span class="line">        <span class="comment">#("X.size",X.size())</span></span><br><span class="line">        X = self.embedding(X).transpose(<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line"><span class="comment">#         print("Xembeding.size2",X.size())</span></span><br><span class="line">        outputs = []</span><br><span class="line">        <span class="keyword">for</span> l, x <span class="keyword">in</span> enumerate(X):</span><br><span class="line"><span class="comment">#             print(f"\n&#123;l&#125;-th token")</span></span><br><span class="line"><span class="comment">#             print("x.first.size()",x.size())</span></span><br><span class="line">            <span class="comment"># query shape: (batch_size, 1, hidden_size)</span></span><br><span class="line">            <span class="comment"># select hidden state of the last rnn layer as query</span></span><br><span class="line">            query = hidden_state[<span class="number">0</span>][<span class="number">-1</span>].unsqueeze(<span class="number">1</span>) <span class="comment"># np.expand_dims(hidden_state[0][-1], axis=1)</span></span><br><span class="line">            <span class="comment"># context has same shape as query</span></span><br><span class="line"><span class="comment">#             print("query enc_outputs, enc_outputs:\n",query.size(), enc_outputs.size(), enc_outputs.size())</span></span><br><span class="line">            context = self.attention_cell(query, enc_outputs, enc_outputs, enc_valid_len)</span><br><span class="line">            <span class="comment"># Concatenate on the feature dimension</span></span><br><span class="line"><span class="comment">#             print("context.size:",context.size())</span></span><br><span class="line">            x = torch.cat((context, x.unsqueeze(<span class="number">1</span>)), dim=<span class="number">-1</span>)</span><br><span class="line">            <span class="comment"># Reshape x to (1, batch_size, embed_size+hidden_size)</span></span><br><span class="line"><span class="comment">#             print("rnn",x.size(), len(hidden_state))</span></span><br><span class="line">            out, hidden_state = self.rnn(x.transpose(<span class="number">0</span>,<span class="number">1</span>), hidden_state)</span><br><span class="line">            outputs.append(out)</span><br><span class="line">        outputs = self.dense(torch.cat(outputs, dim=<span class="number">0</span>))</span><br><span class="line">        <span class="keyword">return</span> outputs.transpose(<span class="number">0</span>, <span class="number">1</span>), [enc_outputs, hidden_state,</span><br><span class="line">                                        enc_valid_len]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">encoder = d2l.Seq2SeqEncoder(vocab_size=<span class="number">10</span>, embed_size=<span class="number">8</span>,</span><br><span class="line">                            num_hiddens=<span class="number">16</span>, num_layers=<span class="number">2</span>)</span><br><span class="line"><span class="comment"># encoder.initialize()</span></span><br><span class="line">decoder = Seq2SeqAttentionDecoder(vocab_size=<span class="number">10</span>, embed_size=<span class="number">8</span>,</span><br><span class="line">                                  num_hiddens=<span class="number">16</span>, num_layers=<span class="number">2</span>)</span><br><span class="line">X = torch.zeros((<span class="number">4</span>, <span class="number">7</span>),dtype=torch.long)</span><br><span class="line">print(<span class="string">"batch size=4\nseq_length=7\nhidden dim=16\nnum_layers=2\n"</span>)</span><br><span class="line">print(<span class="string">'encoder output size:'</span>, encoder(X)[<span class="number">0</span>].size())</span><br><span class="line">print(<span class="string">'encoder hidden size:'</span>, encoder(X)[<span class="number">1</span>][<span class="number">0</span>].size())</span><br><span class="line">print(<span class="string">'encoder memory size:'</span>, encoder(X)[<span class="number">1</span>][<span class="number">1</span>].size())</span><br><span class="line">state = decoder.init_state(encoder(X), <span class="literal">None</span>)</span><br><span class="line">out, state = decoder(X, state)</span><br><span class="line">out.shape, len(state), state[<span class="number">0</span>].shape, len(state[<span class="number">1</span>]), state[<span class="number">1</span>][<span class="number">0</span>].shape</span><br></pre></td></tr></table></figure>
+<h3 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> zipfile</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> io <span class="keyword">import</span> BytesIO</span><br><span class="line"><span class="keyword">from</span> torch.utils <span class="keyword">import</span> data</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> collections</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Vocab</span><span class="params">(object)</span>:</span> <span class="comment"># This class is saved in d2l.</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, tokens, min_freq=<span class="number">0</span>, use_special_tokens=False)</span>:</span></span><br><span class="line">    <span class="comment"># sort by frequency and token</span></span><br><span class="line">    counter = collections.Counter(tokens)</span><br><span class="line">    token_freqs = sorted(counter.items(), key=<span class="keyword">lambda</span> x: x[<span class="number">0</span>])</span><br><span class="line">    token_freqs.sort(key=<span class="keyword">lambda</span> x: x[<span class="number">1</span>], reverse=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">if</span> use_special_tokens:</span><br><span class="line">      <span class="comment"># padding, begin of sentence, end of sentence, unknown</span></span><br><span class="line">      self.pad, self.bos, self.eos, self.unk = (<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">      tokens = [<span class="string">''</span>, <span class="string">''</span>, <span class="string">''</span>, <span class="string">''</span>]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">      self.unk = <span class="number">0</span></span><br><span class="line">      tokens = [<span class="string">''</span>]</span><br><span class="line">    tokens += [token <span class="keyword">for</span> token, freq <span class="keyword">in</span> token_freqs <span class="keyword">if</span> freq &gt;= min_freq]</span><br><span class="line">    self.idx_to_token = []</span><br><span class="line">    self.token_to_idx = dict()</span><br><span class="line">    <span class="keyword">for</span> token <span class="keyword">in</span> tokens:</span><br><span class="line">      self.idx_to_token.append(token)</span><br><span class="line">      self.token_to_idx[token] = len(self.idx_to_token) - <span class="number">1</span></span><br><span class="line">      </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">__len__</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> len(self.idx_to_token)</span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span><span class="params">(self, tokens)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> isinstance(tokens, (list, tuple)):</span><br><span class="line">      <span class="keyword">return</span> self.token_to_idx.get(tokens, self.unk)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">      <span class="keyword">return</span> [self.__getitem__(token) <span class="keyword">for</span> token <span class="keyword">in</span> tokens]</span><br><span class="line">    </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">to_tokens</span><span class="params">(self, indices)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> isinstance(indices, (list, tuple)):</span><br><span class="line">      <span class="keyword">return</span> self.idx_to_token[indices]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">      <span class="keyword">return</span> [self.idx_to_token[index] <span class="keyword">for</span> index <span class="keyword">in</span> indices]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_data_nmt</span><span class="params">(batch_size, max_len, num_examples=<span class="number">1000</span>)</span>:</span></span><br><span class="line">    <span class="string">"""Download an NMT dataset, return its vocabulary and data iterator."""</span></span><br><span class="line">    <span class="comment"># Download and preprocess</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">preprocess_raw</span><span class="params">(text)</span>:</span></span><br><span class="line">        text = text.replace(<span class="string">'\u202f'</span>, <span class="string">' '</span>).replace(<span class="string">'\xa0'</span>, <span class="string">' '</span>)</span><br><span class="line">        out = <span class="string">''</span></span><br><span class="line">        <span class="keyword">for</span> i, char <span class="keyword">in</span> enumerate(text.lower()):</span><br><span class="line">            <span class="keyword">if</span> char <span class="keyword">in</span> (<span class="string">','</span>, <span class="string">'!'</span>, <span class="string">'.'</span>) <span class="keyword">and</span> text[i<span class="number">-1</span>] != <span class="string">' '</span>:</span><br><span class="line">                out += <span class="string">' '</span></span><br><span class="line">            out += char</span><br><span class="line">        <span class="keyword">return</span> out </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'/home/kesci/input/fraeng6506/fra.txt'</span>, <span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">      raw_text = f.read()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    text = preprocess_raw(raw_text)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Tokenize</span></span><br><span class="line">    source, target = [], []</span><br><span class="line">    <span class="keyword">for</span> i, line <span class="keyword">in</span> enumerate(text.split(<span class="string">'\n'</span>)):</span><br><span class="line">        <span class="keyword">if</span> i &gt;= num_examples:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        parts = line.split(<span class="string">'\t'</span>)</span><br><span class="line">        <span class="keyword">if</span> len(parts) &gt;= <span class="number">2</span>:</span><br><span class="line">            source.append(parts[<span class="number">0</span>].split(<span class="string">' '</span>))</span><br><span class="line">            target.append(parts[<span class="number">1</span>].split(<span class="string">' '</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Build vocab</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">build_vocab</span><span class="params">(tokens)</span>:</span></span><br><span class="line">        tokens = [token <span class="keyword">for</span> line <span class="keyword">in</span> tokens <span class="keyword">for</span> token <span class="keyword">in</span> line]</span><br><span class="line">        <span class="keyword">return</span> Vocab(tokens, min_freq=<span class="number">3</span>, use_special_tokens=<span class="literal">True</span>)</span><br><span class="line">    src_vocab, tgt_vocab = build_vocab(source), build_vocab(target)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Convert to index arrays</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pad</span><span class="params">(line, max_len, padding_token)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> len(line) &gt; max_len:</span><br><span class="line">            <span class="keyword">return</span> line[:max_len]</span><br><span class="line">        <span class="keyword">return</span> line + [padding_token] * (max_len - len(line))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">build_array</span><span class="params">(lines, vocab, max_len, is_source)</span>:</span></span><br><span class="line">        lines = [vocab[line] <span class="keyword">for</span> line <span class="keyword">in</span> lines]</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> is_source:</span><br><span class="line">            lines = [[vocab.bos] + line + [vocab.eos] <span class="keyword">for</span> line <span class="keyword">in</span> lines]</span><br><span class="line">        array = torch.tensor([pad(line, max_len, vocab.pad) <span class="keyword">for</span> line <span class="keyword">in</span> lines])</span><br><span class="line">        valid_len = (array != vocab.pad).sum(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> array, valid_len</span><br><span class="line"></span><br><span class="line">    src_vocab, tgt_vocab = build_vocab(source), build_vocab(target)</span><br><span class="line">    src_array, src_valid_len = build_array(source, src_vocab, max_len, <span class="literal">True</span>)</span><br><span class="line">    tgt_array, tgt_valid_len = build_array(target, tgt_vocab, max_len, <span class="literal">False</span>)</span><br><span class="line">    train_data = data.TensorDataset(src_array, src_valid_len, tgt_array, tgt_valid_len)</span><br><span class="line">    train_iter = data.DataLoader(train_data, batch_size, shuffle=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> src_vocab, tgt_vocab, train_iter</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">embed_size, num_hiddens, num_layers, dropout = <span class="number">32</span>, <span class="number">32</span>, <span class="number">2</span>, <span class="number">0.0</span></span><br><span class="line">batch_size, num_steps = <span class="number">64</span>, <span class="number">10</span></span><br><span class="line">lr, num_epochs, ctx = <span class="number">0.005</span>, <span class="number">500</span>, d2l.try_gpu()</span><br><span class="line"></span><br><span class="line">src_vocab, tgt_vocab, train_iter = load_data_nmt(batch_size, num_steps)</span><br><span class="line">encoder = d2l.Seq2SeqEncoder(</span><br><span class="line">    len(src_vocab), embed_size, num_hiddens, num_layers, dropout)</span><br><span class="line">decoder = Seq2SeqAttentionDecoder(</span><br><span class="line">    len(tgt_vocab), embed_size, num_hiddens, num_layers, dropout)</span><br><span class="line">model = d2l.EncoderDecoder(encoder, decoder)</span><br></pre></td></tr></table></figure>
+<h3 id="预测"><a href="#预测" class="headerlink" title="预测"></a>预测</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">d2l.train_s2s_ch9(model, train_iter, lr, num_epochs, ctx)</span><br><span class="line"><span class="keyword">for</span> sentence <span class="keyword">in</span> [<span class="string">'Go .'</span>, <span class="string">'Good Night !'</span>, <span class="string">"I'm OK ."</span>, <span class="string">'I won !'</span>]:</span><br><span class="line">    print(sentence + <span class="string">' =&gt; '</span> + d2l.predict_s2s_ch9(</span><br><span class="line">        model, sentence, src_vocab, tgt_vocab, num_steps, ctx))</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/MLP/"># MLP</a>
+                    
+                        <a href="/tags/Seq2seq%E6%A8%A1%E5%9E%8B/"># Seq2seq模型</a>
+                    
+                        <a href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/"># 注意力机制</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/02/28/Fundamentals%20of%20Convolutional%20Neural%20Networks/">Fundamentals of Convolutional Neural Networks</a>
+            
+            
+            <a class="next" rel="next" href="/2020/02/28/%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E4%BB%8B%E7%BB%8D/">机器翻译及其相关技术介绍</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+</footer>
+
+    </div>
+</body>
+</html>

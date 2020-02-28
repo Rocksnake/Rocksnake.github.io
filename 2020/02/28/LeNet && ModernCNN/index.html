@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>LeNet &amp;&amp; ModernCNN | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">LeNet &amp;&amp; ModernCNN</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">February 28, 2020&nbsp;&nbsp;10:26:20</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Machine-Learning/">Machine Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Convolutional-Neural-Networks"><a href="#Convolutional-Neural-Networks" class="headerlink" title="Convolutional Neural Networks"></a>Convolutional Neural Networks</h1><blockquote>
+<p>学而习之：<a href="https://blog.csdn.net/RokoBasilisk/article/details/104380762" target="_blank" rel="noopener">Fundamentals of Convolutional Neural Networks</a></p>
+</blockquote>
+<p>使用全连接层的局限性：</p>
+<ul>
+<li>图像在同一列邻近的像素在这个向量中可能相距较远。它们构成的模式可能难以被模型识别。</li>
+<li>对于大尺寸的输入图像，使用全连接层容易导致模型过大。</li>
+</ul>
+<p>使用卷积层的优势：</p>
+<ul>
+<li>卷积层保留输入形状。</li>
+<li>卷积层通过滑动窗口将同一卷积核与不同位置的输入重复计算，从而避免参数尺寸过大。</li>
+</ul>
+<p><strong>卷积神经网络就是含卷积层的网络。</strong></p>
+<h2 id="LeNet-模型"><a href="#LeNet-模型" class="headerlink" title="LeNet 模型"></a>LeNet 模型</h2><blockquote>
+<p>90%以上的参数都在全连接层块</p>
+</blockquote>
+<p>LeNet分为卷积层块和全连接层块两个部分<br><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNW5kd3Ntc2FvLnBuZw?x-oss-process=image/format,png" alt="Image Name"><br><strong>解释：</strong><br>&ensp;&ensp;&ensp;&ensp;卷积层块由两个这样的基本单位重复堆叠构成。在卷积层块中，每个卷积层都使用$5 \times 5$的窗口，并在输出上使用sigmoid激活函数。第一个卷积层输出通道数为6，第二个卷积层输出通道数则增加到16。</p>
+<p>&ensp;&ensp;&ensp;&ensp;全连接层块含3个全连接层。它们的输出个数分别是120、84和10，其中10为输出的类别个数。</p>
+<blockquote>
+<p>卷积层块里的基本单位</p>
+<blockquote>
+<p>是卷积层后接平均池化层</p>
+</blockquote>
+<p>卷积层用来识别图像里的空间模式，如线条和物体局部<br/><br>之后的平均池化层则用来降低卷积层对位置的敏感性。</p>
+</blockquote>
+<p><strong>LeNet交替使用卷积层和最大池化层后接全连接层来进行图像分类</strong></p>
+<h3 id="通过-Sequential-类实现-LeNet-模型"><a href="#通过-Sequential-类实现-LeNet-模型" class="headerlink" title="通过 Sequential 类实现 LeNet 模型"></a>通过 Sequential 类实现 LeNet 模型</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#import</span></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">"path to FashionMNIST2065"</span>)</span><br><span class="line"><span class="keyword">import</span> d2lzh1981 <span class="keyword">as</span> d2l</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">import</span> time</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#net</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Flatten</span><span class="params">(torch.nn.Module)</span>:</span>  <span class="comment">#展平操作</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> x.view(x.shape[<span class="number">0</span>], <span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Reshape</span><span class="params">(torch.nn.Module)</span>:</span> <span class="comment">#将图像大小重定型</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> x.view(<span class="number">-1</span>,<span class="number">1</span>,<span class="number">28</span>,<span class="number">28</span>)      <span class="comment">#(B x C x H x W)</span></span><br><span class="line"></span><br><span class="line">net = torch.nn.Sequential(     <span class="comment">#Lelet                                                  </span></span><br><span class="line">    Reshape(),  </span><br><span class="line">    <span class="comment"># 公式：[(nh-kh+ph+sh)/sh]*[(nw-kw+pw+sw)/sw]</span></span><br><span class="line">    nn.Conv2d(in_channels=<span class="number">1</span>, out_channels=<span class="number">6</span>, kernel_size=<span class="number">5</span>, padding=<span class="number">2</span>), <span class="comment">#b*1*28*28  =&gt;b*6*28*28</span></span><br><span class="line">    nn.Sigmoid(),     </span><br><span class="line">    <span class="comment"># 平均池化</span></span><br><span class="line">    nn.AvgPool2d(kernel_size=<span class="number">2</span>, stride=<span class="number">2</span>),                     <span class="comment">#b*6*28*28  =&gt;b*6*14*14</span></span><br><span class="line">    nn.Conv2d(in_channels=<span class="number">6</span>, out_channels=<span class="number">16</span>, kernel_size=<span class="number">5</span>),  <span class="comment">#b*6*14*14  =&gt;b*16*10*10</span></span><br><span class="line">    nn.Sigmoid(),</span><br><span class="line">    nn.AvgPool2d(kernel_size=<span class="number">2</span>, stride=<span class="number">2</span>),                     <span class="comment">#b*16*10*10  =&gt; b*16*5*5</span></span><br><span class="line">    <span class="comment"># 展平</span></span><br><span class="line">    Flatten(),                                                 <span class="comment">#b*16*5*5   =&gt; b*400</span></span><br><span class="line">    <span class="comment"># 三个全连接层</span></span><br><span class="line">    nn.Linear(in_features=<span class="number">16</span>*<span class="number">5</span>*<span class="number">5</span>, out_features=<span class="number">120</span>),</span><br><span class="line">    nn.Sigmoid(),</span><br><span class="line">    nn.Linear(<span class="number">120</span>, <span class="number">84</span>),</span><br><span class="line">    nn.Sigmoid(),</span><br><span class="line">    nn.Linear(<span class="number">84</span>, <span class="number">10</span>)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="获取数据"><a href="#获取数据" class="headerlink" title="获取数据"></a>获取数据</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 数据</span></span><br><span class="line">batch_size = <span class="number">256</span></span><br><span class="line">train_iter, test_iter = d2l.load_data_fashion_mnist(</span><br><span class="line">    batch_size=batch_size, root=<span class="string">'path to FashionMNIST2065'</span>)</span><br><span class="line"><span class="comment"># 训练集批次数</span></span><br><span class="line">print(len(train_iter))</span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">额外的数据表示，以图像形式显示</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="comment">#数据展示</span></span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="comment"># define drawing function</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show_fashion_mnist</span><span class="params">(images, labels)</span>:</span></span><br><span class="line">    d2l.use_svg_display()</span><br><span class="line">    <span class="comment"># 这里的_表示我们忽略（不使用）的变量</span></span><br><span class="line">    _, figs = plt.subplots(<span class="number">1</span>, len(images), figsize=(<span class="number">12</span>, <span class="number">12</span>))</span><br><span class="line">    <span class="keyword">for</span> f, img, lbl <span class="keyword">in</span> zip(figs, images, labels):</span><br><span class="line">        f.imshow(img.view((<span class="number">28</span>, <span class="number">28</span>)).numpy())</span><br><span class="line">        f.set_title(lbl)</span><br><span class="line">        f.axes.get_xaxis().set_visible(<span class="literal">False</span>)</span><br><span class="line">        f.axes.get_yaxis().set_visible(<span class="literal">False</span>)</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> Xdata,ylabel <span class="keyword">in</span> train_iter:</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">X, y = [], []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>):</span><br><span class="line">    print(Xdata[i].shape,ylabel[i].numpy())</span><br><span class="line">    X.append(Xdata[i]) <span class="comment"># 将第i个feature加到X中</span></span><br><span class="line">    y.append(ylabel[i].numpy()) <span class="comment"># 将第i个label加到y中</span></span><br><span class="line">show_fashion_mnist(X, y)</span><br></pre></td></tr></table></figure>
+<hr>
+<p>因为卷积神经网络计算比多层感知机要复杂，建议使用GPU来加速计算。我们查看看是否可以用GPU，如果成功则使用 cuda:0，否则仍然使用 cpu。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># This function has been saved in the d2l package for future use</span></span><br><span class="line"><span class="comment">#use GPU</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">try_gpu</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">"""If GPU is available, return torch.device as cuda:0; else return torch.device as cpu."""</span></span><br><span class="line">    <span class="keyword">if</span> torch.cuda.is_available():</span><br><span class="line">        device = torch.device(<span class="string">'cuda:0'</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        device = torch.device(<span class="string">'cpu'</span>)</span><br><span class="line">    <span class="keyword">return</span> device</span><br><span class="line"></span><br><span class="line">device = try_gpu()</span><br><span class="line">device</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h3><h4 id="计算准确率"><a href="#计算准确率" class="headerlink" title="计算准确率"></a>计算准确率</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">(1). net.train()</span></span><br><span class="line"><span class="string">  启用 BatchNormalization 和 Dropout，将BatchNormalization和Dropout置为True</span></span><br><span class="line"><span class="string">(2). net.eval()</span></span><br><span class="line"><span class="string">不启用 BatchNormalization 和 Dropout，将BatchNormalization和Dropout置为False</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">:param:data_iter:测试集</span></span><br><span class="line"><span class="string">:param:acc_sum:模型预测正确的总数</span></span><br><span class="line"><span class="string">:param:n:预测总数</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">evaluate_accuracy</span><span class="params">(data_iter, net,device=torch.device<span class="params">(<span class="string">'cpu'</span>)</span>)</span>:</span></span><br><span class="line">    <span class="string">"""Evaluate accuracy of a model on the given data set."""</span></span><br><span class="line">    acc_sum,n = torch.tensor([<span class="number">0</span>],dtype=torch.float32,device=device),<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> X,y <span class="keyword">in</span> data_iter:</span><br><span class="line">        <span class="comment"># If device is the GPU, copy the data to the GPU.</span></span><br><span class="line">        <span class="comment"># 把tensorc传到device中</span></span><br><span class="line">        X,y = X.to(device),y.to(device)</span><br><span class="line">        <span class="comment"># 网络正在进行预测</span></span><br><span class="line">        net.eval()</span><br><span class="line">        该区域涉及到的数据不需要计算梯度，也不进行反向传播</span><br><span class="line">        <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">            y = y.long()</span><br><span class="line">            <span class="comment"># 将一个批次的训练数据X通过网络模型net输出</span></span><br><span class="line">            <span class="comment"># 经过argmax得到预测值</span></span><br><span class="line">            <span class="comment"># dim维度选择为1</span></span><br><span class="line">            acc_sum += torch.sum((torch.argmax(net(X), dim=<span class="number">1</span>) == y))  <span class="comment">#[[0.2 ,0.4 ,0.5 ,0.6 ,0.8] ,[ 0.1,0.2 ,0.4 ,0.3 ,0.1]] =&gt; [ 4 , 2 ]</span></span><br><span class="line">            <span class="comment"># 预测的总数相加</span></span><br><span class="line">            n += y.shape[<span class="number">0</span>]</span><br><span class="line">    <span class="comment"># 预测准确率</span></span><br><span class="line">    <span class="keyword">return</span> acc_sum.item()/n</span><br></pre></td></tr></table></figure>
+<h4 id="训练函数"><a href="#训练函数" class="headerlink" title="训练函数"></a>训练函数</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#训练函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train_ch5</span><span class="params">(net, train_iter, test_iter,criterion, num_epochs, batch_size, device,lr=None)</span>:</span></span><br><span class="line">    <span class="string">"""Train and evaluate a model with CPU or GPU."""</span></span><br><span class="line">    print(<span class="string">'training on'</span>, device)</span><br><span class="line">    net.to(device)</span><br><span class="line">    optimizer = optim.SGD(net.parameters(), lr=lr)</span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> range(num_epochs):</span><br><span class="line">        train_l_sum = torch.tensor([<span class="number">0.0</span>],dtype=torch.float32,device=device)</span><br><span class="line">        train_acc_sum = torch.tensor([<span class="number">0.0</span>],dtype=torch.float32,device=device)</span><br><span class="line">        n, start = <span class="number">0</span>, time.time()</span><br><span class="line">        <span class="keyword">for</span> X, y <span class="keyword">in</span> train_iter:</span><br><span class="line">            net.train()</span><br><span class="line">            <span class="comment"># 梯度清零 不同批次的梯度不相关</span></span><br><span class="line">            optimizer.zero_grad()</span><br><span class="line">            X,y = X.to(device),y.to(device) </span><br><span class="line">            <span class="comment"># 预测值</span></span><br><span class="line">            y_hat = net(X)</span><br><span class="line">            loss = criterion(y_hat, y)</span><br><span class="line">            <span class="comment"># 梯度回传</span></span><br><span class="line">            loss.backward()</span><br><span class="line">            optimizer.step()</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">                y = y.long()</span><br><span class="line">                train_l_sum += loss.float()</span><br><span class="line">                <span class="comment"># 训练集中预测正确的总数</span></span><br><span class="line">                train_acc_sum += (torch.sum((torch.argmax(y_hat, dim=<span class="number">1</span>) == y))).float()</span><br><span class="line">                n += y.shape[<span class="number">0</span>]</span><br><span class="line">        test_acc = evaluate_accuracy(test_iter, net,device)</span><br><span class="line">        print(<span class="string">'epoch %d, loss %.4f, train acc %.3f, test acc %.3f, '</span></span><br><span class="line">              <span class="string">'time %.1f sec'</span></span><br><span class="line">              % (epoch + <span class="number">1</span>, train_l_sum/n, train_acc_sum/n, test_acc,</span><br><span class="line">                 time.time() - start))</span><br></pre></td></tr></table></figure>
+<h4 id="训练进程"><a href="#训练进程" class="headerlink" title="训练进程"></a>训练进程</h4><p>模型参数初始化到 device 中，并使用 Xavier 随机初始化。损失函数和训练算法则依然使用交叉熵损失函数和小批量随机梯度下降。</p>
+<blockquote>
+<p>Xavier 随机初始化 —参考<a href="https://blog.csdn.net/RokoBasilisk/article/details/104349123" target="_blank" rel="noopener">学而后思,方能发展;思而立行,终将卓越</a></p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 训练 学习率0.9</span></span><br><span class="line">lr, num_epochs = <span class="number">0.9</span>, <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_weights</span><span class="params">(m)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> type(m) == nn.Linear <span class="keyword">or</span> type(m) == nn.Conv2d:</span><br><span class="line">        torch.nn.init.xavier_uniform_(m.weight)</span><br><span class="line"></span><br><span class="line">net.apply(init_weights)</span><br><span class="line">net = net.to(device)</span><br><span class="line"></span><br><span class="line">criterion = nn.CrossEntropyLoss()   <span class="comment">#交叉熵描述了两个概率分布之间的距离，交叉熵越小说明两者之间越接近</span></span><br><span class="line">train_ch5(net, train_iter, test_iter, criterion,num_epochs, batch_size,device, lr)</span><br></pre></td></tr></table></figure>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># test</span></span><br><span class="line"><span class="keyword">for</span> testdata,testlabe <span class="keyword">in</span> test_iter:</span><br><span class="line">    testdata,testlabe = testdata.to(device),testlabe.to(device)</span><br><span class="line">    <span class="keyword">break</span></span><br><span class="line">print(testdata.shape,testlabe.shape)</span><br><span class="line">net.eval()</span><br><span class="line">y_pre = net(testdata)</span><br><span class="line"><span class="comment"># 预测值</span></span><br><span class="line">print(torch.argmax(y_pre,dim=<span class="number">1</span>)[:<span class="number">10</span>])</span><br><span class="line"><span class="comment"># 真实标签</span></span><br><span class="line">print(testlabe[:<span class="number">10</span>])</span><br></pre></td></tr></table></figure>
+<h2 id="深度卷积神经网络（AlexNet）"><a href="#深度卷积神经网络（AlexNet）" class="headerlink" title="深度卷积神经网络（AlexNet）"></a>深度卷积神经网络（AlexNet）</h2><blockquote>
+<p>2014年ImgNet竞赛中</p>
+<blockquote>
+<p>证明了学习到的特征可以超过手工设计的特征, 打破计算机视觉研究的前状</p>
+</blockquote>
+</blockquote>
+<center><b><font size=5>知缺陷方能进步</font></b></center><br/>
+
+<blockquote>
+<p>LeNet:  在大的真实数据集上的表现并不尽如⼈意。     </p>
+<blockquote>
+<p>1.神经网络计算复杂。  <br/><br>2.还没有⼤量深⼊研究参数初始化和⾮凸优化算法等诸多领域。  </p>
+</blockquote>
+</blockquote>
+<p>在此之后，针对特征的选择分为两派：</p>
+<ul>
+<li>机器学习的特征提取:手工定义的特征提取函数  </li>
+<li>神经网络的特征提取：通过学习得到数据的多级表征，并逐级表⽰越来越抽象的概念或模式。  </li>
+</ul>
+<p>神经网络发展的限制:数据、硬件</p>
+<h3 id="AlexNet"><a href="#AlexNet" class="headerlink" title="AlexNet"></a>AlexNet</h3><blockquote>
+<p>设计理念核Lenet相似</p>
+</blockquote>
+<p><strong>特征：</strong></p>
+<ol>
+<li>8层变换，其中有5层卷积和2层全连接隐藏层，以及1个全连接输出层。</li>
+<li>将sigmoid激活函数改成了更加简单的ReLU激活函数。</li>
+<li>用Dropout来控制全连接层的模型复杂度。</li>
+<li>引入数据增强，如翻转、裁剪和颜色变化，从而进一步扩大数据集来缓解泛化能力不好导致的过拟合。</li>
+</ol>
+<center><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWt2NGdweDg4LnBuZw?x-oss-process=image/format,png" /></center>
+
+<p>$$<br>数据集.MINIST(Left) IMAGENET(Right)<br>$$</p>
+<blockquote>
+<p>利用padding 的作用：使得输入和输出的形状相同<br/><br>可以参考 <a href="https://blog.csdn.net/RokoBasilisk/article/details/104380762" target="_blank" rel="noopener">Fundamentals of Convolutional Neural Networks</a></p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn, optim</span><br><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">"path to FashionMNIST2065"</span>) </span><br><span class="line"><span class="keyword">import</span> d2lzh1981 <span class="keyword">as</span> d2l</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"></span><br><span class="line">device = torch.device(<span class="string">'cuda'</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">'cpu'</span>)</span><br></pre></td></tr></table></figure>
+<h4 id="实现-AlexNet-模型"><a href="#实现-AlexNet-模型" class="headerlink" title="实现 AlexNet 模型"></a>实现 AlexNet 模型</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AlexNet</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(AlexNet, self).__init__()</span><br><span class="line">        self.conv = nn.Sequential(</span><br><span class="line">            <span class="comment"># 默认不做padding</span></span><br><span class="line">            nn.Conv2d(<span class="number">1</span>, <span class="number">96</span>, <span class="number">11</span>, <span class="number">4</span>), <span class="comment"># in_channels, out_channels, kernel_size, stride, padding</span></span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.MaxPool2d(<span class="number">3</span>, <span class="number">2</span>), <span class="comment"># kernel_size, stride</span></span><br><span class="line">            <span class="comment"># 减小卷积窗口，使用填充为2来使得输入与输出的高和宽一致，且增大输出通道数</span></span><br><span class="line">            nn.Conv2d(<span class="number">96</span>, <span class="number">256</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">2</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.MaxPool2d(<span class="number">3</span>, <span class="number">2</span>),</span><br><span class="line">            <span class="comment"># 连续3个卷积层，且使用更小的卷积窗口。除了最后的卷积层外，进一步增大了输出通道数。</span></span><br><span class="line">            <span class="comment"># 前两个卷积层后不使用池化层来减小输入的高和宽</span></span><br><span class="line">            nn.Conv2d(<span class="number">256</span>, <span class="number">384</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Conv2d(<span class="number">384</span>, <span class="number">384</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Conv2d(<span class="number">384</span>, <span class="number">256</span>, <span class="number">3</span>, <span class="number">1</span>, <span class="number">1</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.MaxPool2d(<span class="number">3</span>, <span class="number">2</span>)</span><br><span class="line">        )</span><br><span class="line">        <span class="comment"># 这里全连接层的输出个数比LeNet中的大数倍。使用丢弃层来缓解过拟合</span></span><br><span class="line">        self.fc = nn.Sequential(</span><br><span class="line">            nn.Linear(<span class="number">256</span>*<span class="number">5</span>*<span class="number">5</span>, <span class="number">4096</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Dropout(<span class="number">0.5</span>),</span><br><span class="line">            <span class="comment">#由于使用CPU镜像，精简网络，若为GPU镜像可添加该层</span></span><br><span class="line">            <span class="comment">#nn.Linear(4096, 4096),</span></span><br><span class="line">            <span class="comment">#nn.ReLU(),</span></span><br><span class="line">            <span class="comment">#nn.Dropout(0.5),</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># 输出层。由于这里使用Fashion-MNIST，所以用类别数为10，而非论文中的1000</span></span><br><span class="line">            nn.Linear(<span class="number">4096</span>, <span class="number">10</span>),</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, img)</span>:</span></span><br><span class="line"></span><br><span class="line">        feature = self.conv(img)</span><br><span class="line">        output = self.fc(feature.view(img.shape[<span class="number">0</span>], <span class="number">-1</span>))</span><br><span class="line">        <span class="keyword">return</span> output</span><br></pre></td></tr></table></figure>
+<h4 id="载入数据"><a href="#载入数据" class="headerlink" title="载入数据"></a>载入数据</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_data_fashion_mnist</span><span class="params">(batch_size, resize=None, root=<span class="string">'/home/kesci/input/FashionMNIST2065'</span>)</span>:</span></span><br><span class="line">    <span class="string">"""Download the fashion mnist dataset and then load into memory."""</span></span><br><span class="line">    trans = []</span><br><span class="line">    <span class="keyword">if</span> resize:</span><br><span class="line">        trans.append(torchvision.transforms.Resize(size=resize))</span><br><span class="line">    trans.append(torchvision.transforms.ToTensor())</span><br><span class="line">    </span><br><span class="line">    transform = torchvision.transforms.Compose(trans)</span><br><span class="line">    mnist_train = torchvision.datasets.FashionMNIST(root=root, train=<span class="literal">True</span>, download=<span class="literal">True</span>, transform=transform)</span><br><span class="line">    mnist_test = torchvision.datasets.FashionMNIST(root=root, train=<span class="literal">False</span>, download=<span class="literal">True</span>, transform=transform)</span><br><span class="line"></span><br><span class="line">    train_iter = torch.utils.data.DataLoader(mnist_train, batch_size=batch_size, shuffle=<span class="literal">True</span>, num_workers=<span class="number">2</span>)</span><br><span class="line">    test_iter = torch.utils.data.DataLoader(mnist_test, batch_size=batch_size, shuffle=<span class="literal">False</span>, num_workers=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> train_iter, test_iter</span><br><span class="line"></span><br><span class="line"><span class="comment">#batchsize=128</span></span><br><span class="line">batch_size = <span class="number">16</span></span><br><span class="line"><span class="comment"># 如出现“out of memory”的报错信息，可减小batch_size或resize</span></span><br><span class="line">train_iter, test_iter = load_data_fashion_mnist(batch_size,<span class="number">224</span>)</span><br><span class="line"><span class="keyword">for</span> X, Y <span class="keyword">in</span> train_iter:</span><br><span class="line">    print(<span class="string">'X ='</span>, X.shape,</span><br><span class="line">        <span class="string">'\nY ='</span>, Y.type(torch.int32))</span><br><span class="line">    <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<h4 id="训练-1"><a href="#训练-1" class="headerlink" title="训练"></a>训练</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lr, num_epochs = <span class="number">0.001</span>, <span class="number">3</span></span><br><span class="line">optimizer = torch.optim.Adam(net.parameters(), lr=lr)</span><br><span class="line">d2l.train_ch5(net, train_iter, test_iter, batch_size, optimizer, device, num_epochs)</span><br></pre></td></tr></table></figure>
+<h2 id="使用重复元素的网络（VGG）"><a href="#使用重复元素的网络（VGG）" class="headerlink" title="使用重复元素的网络（VGG）"></a>使用重复元素的网络（VGG）</h2><center><b><font size=5>知缺陷方能进步</font></b></center><br/>
+
+<blockquote>
+<p>AlxNet</p>
+<blockquote>
+<p>并没有提供简单的规则来制造新的网络</p>
+</blockquote>
+<p>结构比较死板</p>
+</blockquote>
+<p><strong>所以</strong> VGG：通过重复使⽤简单的基础块来构建深度模型。  </p>
+<p>Block:数个相同的填充为1、窗口形状为$3\times 3$的卷积层,接上一个步幅为2、窗口形状为$2\times 2$的最大池化层。  </p>
+<p>卷积层保持输入的高和宽不变，而池化层则对其减半</p>
+<p><img src="https://img-blog.csdnimg.cn/20200218210146126.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="VGG11的实现"><a href="#VGG11的实现" class="headerlink" title="VGG11的实现"></a>VGG11的实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 可以修改的参数 e每个vgg_block结构相同但是参数可能不相同</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">vgg_block</span><span class="params">(num_convs, in_channels, out_channels)</span>:</span> <span class="comment">#卷积层个数，输入通道数，输出通道数</span></span><br><span class="line">    blk = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(num_convs):</span><br><span class="line">        <span class="keyword">if</span> i == <span class="number">0</span>:</span><br><span class="line">            blk.append(nn.Conv2d(in_channels, out_channels, kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>))</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            blk.append(nn.Conv2d(out_channels, out_channels, kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>))</span><br><span class="line">        blk.append(nn.ReLU())</span><br><span class="line">    blk.append(nn.MaxPool2d(kernel_size=<span class="number">2</span>, stride=<span class="number">2</span>)) <span class="comment"># 这里会使宽高减半</span></span><br><span class="line">    <span class="keyword">return</span> nn.Sequential(*blk)</span><br><span class="line">conv_arch = ((<span class="number">1</span>, <span class="number">1</span>, <span class="number">64</span>), (<span class="number">1</span>, <span class="number">64</span>, <span class="number">128</span>), (<span class="number">2</span>, <span class="number">128</span>, <span class="number">256</span>), (<span class="number">2</span>, <span class="number">256</span>, <span class="number">512</span>), (<span class="number">2</span>, <span class="number">512</span>, <span class="number">512</span>))</span><br><span class="line"><span class="comment"># 经过5个vgg_block, 宽高会减半5次, 变成 224/32 = 7</span></span><br><span class="line">fc_features = <span class="number">512</span> * <span class="number">7</span> * <span class="number">7</span> <span class="comment"># c * w * h</span></span><br><span class="line">fc_hidden_units = <span class="number">4096</span> <span class="comment"># 任意</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vgg模型</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">vgg</span><span class="params">(conv_arch, fc_features, fc_hidden_units=<span class="number">4096</span>)</span>:</span></span><br><span class="line">    net = nn.Sequential()</span><br><span class="line">    <span class="comment"># 卷积层部分</span></span><br><span class="line">    <span class="keyword">for</span> i, (num_convs, in_channels, out_channels) <span class="keyword">in</span> enumerate(conv_arch):</span><br><span class="line">        <span class="comment"># 每经过一个vgg_block都会使宽高减半</span></span><br><span class="line">        net.add_module(<span class="string">"vgg_block_"</span> + str(i+<span class="number">1</span>), vgg_block(num_convs, in_channels, out_channels))</span><br><span class="line">    <span class="comment"># 全连接层部分</span></span><br><span class="line">    net.add_module(<span class="string">"fc"</span>, nn.Sequential(d2l.FlattenLayer(),</span><br><span class="line">                                 nn.Linear(fc_features, fc_hidden_units),</span><br><span class="line">                                 nn.ReLU(),</span><br><span class="line">                                 nn.Dropout(<span class="number">0.5</span>),</span><br><span class="line">                                 nn.Linear(fc_hidden_units, fc_hidden_units),</span><br><span class="line">                                 nn.ReLU(),</span><br><span class="line">                                 nn.Dropout(<span class="number">0.5</span>),</span><br><span class="line">                                 nn.Linear(fc_hidden_units, <span class="number">10</span>)</span><br><span class="line">                                ))</span><br><span class="line">    <span class="keyword">return</span> net</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">net = vgg(conv_arch, fc_features, fc_hidden_units)</span><br><span class="line">X = torch.rand(<span class="number">1</span>, <span class="number">1</span>, <span class="number">224</span>, <span class="number">224</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># named_children获取一级子模块及其名字(named_modules会返回所有子模块,包括子模块的子模块)</span></span><br><span class="line"><span class="keyword">for</span> name, blk <span class="keyword">in</span> net.named_children(): </span><br><span class="line">    X = blk(X)</span><br><span class="line">    print(name, <span class="string">'output shape: '</span>, X.shape)</span><br><span class="line">ratio = <span class="number">8</span></span><br><span class="line"><span class="comment"># 减小vgg结构，针对minist数据集较小，数据少参数多容易造成过拟合</span></span><br><span class="line">small_conv_arch = [(<span class="number">1</span>, <span class="number">1</span>, <span class="number">64</span>//ratio), (<span class="number">1</span>, <span class="number">64</span>//ratio, <span class="number">128</span>//ratio), (<span class="number">2</span>, <span class="number">128</span>//ratio, <span class="number">256</span>//ratio), </span><br><span class="line">                   (<span class="number">2</span>, <span class="number">256</span>//ratio, <span class="number">512</span>//ratio), (<span class="number">2</span>, <span class="number">512</span>//ratio, <span class="number">512</span>//ratio)]</span><br><span class="line">net = vgg(small_conv_arch, fc_features // ratio, fc_hidden_units // ratio)</span><br><span class="line">print(net)</span><br><span class="line"></span><br><span class="line">batchsize=<span class="number">16</span></span><br><span class="line"><span class="comment">#batch_size = 64</span></span><br><span class="line"><span class="comment"># 如出现“out of memory”的报错信息，可减小batch_size或resize</span></span><br><span class="line"><span class="comment"># train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size, resize=224)</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lr, num_epochs = <span class="number">0.001</span>, <span class="number">5</span></span><br><span class="line">optimizer = torch.optim.Adam(net.parameters(), lr=lr)</span><br><span class="line">d2l.train_ch5(net, train_iter, test_iter, batch_size, optimizer, device, num_epochs)</span><br></pre></td></tr></table></figure>
+<h2 id="网络中的网络（NiN）"><a href="#网络中的网络（NiN）" class="headerlink" title="网络中的网络（NiN）"></a>网络中的网络（NiN）</h2><center><b><font size=5>知缺陷方能进步</font></b></center><br/>
+
+<blockquote>
+<p>LeNet、AlexNet和VGG</p>
+<blockquote>
+<p>先以由卷积层构成的模块充分抽取 空间特征<br/><br>再以由全连接层构成的模块来输出分类结果</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>NiN</p>
+<blockquote>
+<p>串联多个由卷积层和 “全连接” 层构成的小⽹络来构建⼀个深层⽹络。  </p>
+</blockquote>
+<p>NiN去掉了全连接层，而是用平均池化层</p>
+</blockquote>
+<p>⽤了输出通道数等于标签类别数的NiN块，然后使⽤全局平均池化层对每个通道中所有元素求平均并直接⽤于分类。  这样的设计显著的<strong>减少了参数尺寸防止过拟合</strong>，但是<strong>增加了训练时间</strong></p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWw2dTFwNXZ5LnBuZw?x-oss-process=image/format,png" alt="Image Name"></p>
+<hr>
+<p>$1\times1$卷积核作用:</p>
+<ol>
+<li>放缩通道数：通过控制卷积核的数量达到通道数的放缩。  </li>
+<li>增加非线性。1×1卷积核的卷积过程相当于全连接层的计算过程，并且还加入了非线性激活函数，从而可以增加网络的非线性。  </li>
+<li>计算参数少   </li>
+</ol>
+<hr>
+<h3 id="NiN-的实现"><a href="#NiN-的实现" class="headerlink" title="NiN 的实现"></a>NiN 的实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 构建组成模块nin_block</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">nin_block</span><span class="params">(in_channels, out_channels, kernel_size, stride, padding)</span>:</span></span><br><span class="line">    blk = nn.Sequential(nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding),</span><br><span class="line">                        nn.ReLU(),</span><br><span class="line">                        nn.Conv2d(out_channels, out_channels, kernel_size=<span class="number">1</span>),</span><br><span class="line">                        nn.ReLU(),</span><br><span class="line">                        nn.Conv2d(out_channels, out_channels, kernel_size=<span class="number">1</span>),</span><br><span class="line">                        nn.ReLU())</span><br><span class="line">    <span class="keyword">return</span> blk</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GlobalAvgPool2d</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="comment"># 全局平均池化层可通过将池化窗口形状设置成输入的高和宽实现</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(GlobalAvgPool2d, self).__init__()</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> F.avg_pool2d(x, kernel_size=x.size()[<span class="number">2</span>:])</span><br><span class="line"></span><br><span class="line">net = nn.Sequential(</span><br><span class="line">    nin_block(<span class="number">1</span>, <span class="number">96</span>, kernel_size=<span class="number">11</span>, stride=<span class="number">4</span>, padding=<span class="number">0</span>),</span><br><span class="line">    nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>),</span><br><span class="line">    nin_block(<span class="number">96</span>, <span class="number">256</span>, kernel_size=<span class="number">5</span>, stride=<span class="number">1</span>, padding=<span class="number">2</span>),</span><br><span class="line">    nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>),</span><br><span class="line">    nin_block(<span class="number">256</span>, <span class="number">384</span>, kernel_size=<span class="number">3</span>, stride=<span class="number">1</span>, padding=<span class="number">1</span>),</span><br><span class="line">    nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>), </span><br><span class="line">    nn.Dropout(<span class="number">0.5</span>),</span><br><span class="line">    <span class="comment"># 标签类别数是10</span></span><br><span class="line">    nin_block(<span class="number">384</span>, <span class="number">10</span>, kernel_size=<span class="number">3</span>, stride=<span class="number">1</span>, padding=<span class="number">1</span>),</span><br><span class="line">    GlobalAvgPool2d(), </span><br><span class="line">    <span class="comment"># 将四维的输出转成二维的输出，其形状为(批量大小, 10)</span></span><br><span class="line">    d2l.FlattenLayer())</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">batch_size = <span class="number">128</span></span><br><span class="line"><span class="comment"># 如出现“out of memory”的报错信息，可减小batch_size或resize</span></span><br><span class="line"><span class="comment">#train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size, resize=224)</span></span><br><span class="line"></span><br><span class="line">lr, num_epochs = <span class="number">0.002</span>, <span class="number">5</span></span><br><span class="line">optimizer = torch.optim.Adam(net.parameters(), lr=lr)</span><br><span class="line">d2l.train_ch5(net, train_iter, test_iter, batch_size, optimizer, device, num_epochs)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>NiN</p>
+<blockquote>
+<ul>
+<li>NiN重复使⽤由卷积层和代替全连接层的1×1卷积层构成的NiN块来构建深层⽹络 ;  </li>
+<li>NiN去除了容易造成过拟合的全连接输出层，而是将其替换成输出通道数等于标签类别数 的NiN块和全局平均池化层 ;</li>
+<li>NiN的以上设计思想影响了后⾯⼀系列卷积神经⽹络的设计 ;</li>
+</ul>
+</blockquote>
+</blockquote>
+<h2 id="GoogLeNet"><a href="#GoogLeNet" class="headerlink" title="GoogLeNet"></a>GoogLeNet</h2><blockquote>
+<p>牺牲了串联网络的思想</p>
+</blockquote>
+<ol>
+<li>由 Inception 基础块组成。  </li>
+<li>Inception 块相当于⼀个有4条线路的⼦⽹络。它通过不同窗口形状的卷积层和最⼤池化层来并⾏抽取信息，并使⽤1×1卷积层减少通道数从而降低模型复杂度。   </li>
+<li>可以⾃定义的超参数是每个层的输出通道数，我们以此来控制模型复杂度。 </li>
+<li>使用 padding 来保证输入输出形状相同<br><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWw2dW9ydHcucG5n?x-oss-process=image/format,png" alt="Image Name"><h3 id="Inception-基础块实现"><a href="#Inception-基础块实现" class="headerlink" title="Inception 基础块实现"></a>Inception 基础块实现</h3></li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Inception</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="comment"># c1 - c4为每条线路里的层的输出通道数</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, in_c, c1, c2, c3, c4)</span>:</span></span><br><span class="line">        super(Inception, self).__init__()</span><br><span class="line">        <span class="comment"># 线路1，单1 x 1卷积层</span></span><br><span class="line">        self.p1_1 = nn.Conv2d(in_c, c1, kernel_size=<span class="number">1</span>)</span><br><span class="line">        <span class="comment"># 线路2，1 x 1卷积层后接3 x 3卷积层</span></span><br><span class="line">        self.p2_1 = nn.Conv2d(in_c, c2[<span class="number">0</span>], kernel_size=<span class="number">1</span>)</span><br><span class="line">        self.p2_2 = nn.Conv2d(c2[<span class="number">0</span>], c2[<span class="number">1</span>], kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>)</span><br><span class="line">        <span class="comment"># 线路3，1 x 1卷积层后接5 x 5卷积层</span></span><br><span class="line">        self.p3_1 = nn.Conv2d(in_c, c3[<span class="number">0</span>], kernel_size=<span class="number">1</span>)</span><br><span class="line">        self.p3_2 = nn.Conv2d(c3[<span class="number">0</span>], c3[<span class="number">1</span>], kernel_size=<span class="number">5</span>, padding=<span class="number">2</span>)</span><br><span class="line">        <span class="comment"># 线路4，3 x 3最大池化层后接1 x 1卷积层</span></span><br><span class="line">        self.p4_1 = nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">1</span>, padding=<span class="number">1</span>)</span><br><span class="line">        self.p4_2 = nn.Conv2d(in_c, c4, kernel_size=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        p1 = F.relu(self.p1_1(x))</span><br><span class="line">        p2 = F.relu(self.p2_2(F.relu(self.p2_1(x))))</span><br><span class="line">        p3 = F.relu(self.p3_2(F.relu(self.p3_1(x))))</span><br><span class="line">        p4 = F.relu(self.p4_2(self.p4_1(x)))</span><br><span class="line">        <span class="keyword">return</span> torch.cat((p1, p2, p3, p4), dim=<span class="number">1</span>)  <span class="comment"># 在通道维上连结输出</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="完整模型结构"><a href="#完整模型结构" class="headerlink" title="完整模型结构"></a>完整模型结构</h3><center><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWw2eDBmeXluLnBuZw?x-oss-process=image/format,png" /></center> 
+
+<p>$$<br>input -1\times96\times96<br>$$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 抽取特征来减小大小</span></span><br><span class="line">b1 = nn.Sequential(nn.Conv2d(<span class="number">1</span>, <span class="number">64</span>, kernel_size=<span class="number">7</span>, stride=<span class="number">2</span>, padding=<span class="number">3</span>),</span><br><span class="line">                   nn.ReLU(),</span><br><span class="line">                   nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">b2 = nn.Sequential(nn.Conv2d(<span class="number">64</span>, <span class="number">64</span>, kernel_size=<span class="number">1</span>),</span><br><span class="line">                   nn.Conv2d(<span class="number">64</span>, <span class="number">192</span>, kernel_size=<span class="number">3</span>, padding=<span class="number">1</span>),</span><br><span class="line">                   nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">b3 = nn.Sequential(Inception(<span class="number">192</span>, <span class="number">64</span>, (<span class="number">96</span>, <span class="number">128</span>), (<span class="number">16</span>, <span class="number">32</span>), <span class="number">32</span>),</span><br><span class="line">                   Inception(<span class="number">256</span>, <span class="number">128</span>, (<span class="number">128</span>, <span class="number">192</span>), (<span class="number">32</span>, <span class="number">96</span>), <span class="number">64</span>),</span><br><span class="line">                   nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">b4 = nn.Sequential(Inception(<span class="number">480</span>, <span class="number">192</span>, (<span class="number">96</span>, <span class="number">208</span>), (<span class="number">16</span>, <span class="number">48</span>), <span class="number">64</span>),</span><br><span class="line">                   Inception(<span class="number">512</span>, <span class="number">160</span>, (<span class="number">112</span>, <span class="number">224</span>), (<span class="number">24</span>, <span class="number">64</span>), <span class="number">64</span>),</span><br><span class="line">                   Inception(<span class="number">512</span>, <span class="number">128</span>, (<span class="number">128</span>, <span class="number">256</span>), (<span class="number">24</span>, <span class="number">64</span>), <span class="number">64</span>),</span><br><span class="line">                   Inception(<span class="number">512</span>, <span class="number">112</span>, (<span class="number">144</span>, <span class="number">288</span>), (<span class="number">32</span>, <span class="number">64</span>), <span class="number">64</span>),</span><br><span class="line">                   Inception(<span class="number">528</span>, <span class="number">256</span>, (<span class="number">160</span>, <span class="number">320</span>), (<span class="number">32</span>, <span class="number">128</span>), <span class="number">128</span>),</span><br><span class="line">                   nn.MaxPool2d(kernel_size=<span class="number">3</span>, stride=<span class="number">2</span>, padding=<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">b5 = nn.Sequential(Inception(<span class="number">832</span>, <span class="number">256</span>, (<span class="number">160</span>, <span class="number">320</span>), (<span class="number">32</span>, <span class="number">128</span>), <span class="number">128</span>),</span><br><span class="line">                   Inception(<span class="number">832</span>, <span class="number">384</span>, (<span class="number">192</span>, <span class="number">384</span>), (<span class="number">48</span>, <span class="number">128</span>), <span class="number">128</span>),</span><br><span class="line">                   d2l.GlobalAvgPool2d())</span><br><span class="line"></span><br><span class="line">net = nn.Sequential(b1, b2, b3, b4, b5, </span><br><span class="line">                    d2l.FlattenLayer(), nn.Linear(<span class="number">1024</span>, <span class="number">10</span>))</span><br><span class="line"></span><br><span class="line">net = nn.Sequential(b1, b2, b3, b4, b5, d2l.FlattenLayer(), nn.Linear(<span class="number">1024</span>, <span class="number">10</span>))</span><br><span class="line"></span><br><span class="line">X = torch.rand(<span class="number">1</span>, <span class="number">1</span>, <span class="number">96</span>, <span class="number">96</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> blk <span class="keyword">in</span> net.children(): </span><br><span class="line">    X = blk(X)</span><br><span class="line">    print(<span class="string">'output shape: '</span>, X.shape)</span><br><span class="line"></span><br><span class="line"><span class="comment">#batchsize=128</span></span><br><span class="line">batch_size = <span class="number">16</span></span><br><span class="line"><span class="comment"># 如出现“out of memory”的报错信息，可减小batch_size或resize</span></span><br><span class="line"><span class="comment">#train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size, resize=96)</span></span><br><span class="line"></span><br><span class="line">lr, num_epochs = <span class="number">0.001</span>, <span class="number">5</span></span><br><span class="line">optimizer = torch.optim.Adam(net.parameters(), lr=lr)</span><br><span class="line">d2l.train_ch5(net, train_iter, test_iter, batch_size, optimizer, device, num_epochs)</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/CNN/"># CNN</a>
+                    
+                        <a href="/tags/LeNet/"># LeNet</a>
+                    
+                        <a href="/tags/AlexNet/"># AlexNet</a>
+                    
+                        <a href="/tags/VGG/"># VGG</a>
+                    
+                        <a href="/tags/NiN/"># NiN</a>
+                    
+                        <a href="/tags/GoogLeNet/"># GoogLeNet</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/02/28/%E6%89%B9%E9%87%8F%E5%BD%92%E4%B8%80%E5%8C%96%20&&%20%E6%AE%8B%E5%B7%AE%E7%BD%91%E7%BB%9C/">批量归一化 && 残差网络</a>
+            
+            
+            <a class="next" rel="next" href="/2020/02/28/Fundamentals%20of%20Convolutional%20Neural%20Networks/">Fundamentals of Convolutional Neural Networks</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+</footer>
+
+    </div>
+</body>
+</html>

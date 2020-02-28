@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>Language Model &amp; Data Sampling | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Language Model &amp; Data Sampling</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">February 28, 2020&nbsp;&nbsp;10:06:04</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Machine-Learning/">Machine Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="语言模型"><a href="#语言模型" class="headerlink" title="语言模型"></a>语言模型</h1><p>一段自然语言文本可以看作是一个离散时间序列，给定一个长度为$T$的词的序列$w_1, w_2, \ldots, w_T$。</p>
+<p>语言模型的目标就是评估该序列是否合理，即计算该序列的概率：</p>
+<p>$$<br>P(w_1, w_2, \ldots, w_T).<br>$$<br>假设序列$w_1, w_2, \ldots, w_T$中的每个词是依次生成的，则有</p>
+<p>$$<br>\begin{aligned}<br>P(w_1, w_2, \ldots, w_T)<br>&amp;= \prod_{t=1}^T P(w_t \mid w_1, \ldots, w_{t-1})\<br>&amp;= P(w_1)P(w_2 \mid w_1) \cdots P(w_T \mid w_1w_2\cdots w_{T-1})<br>\end {aligned}<br>$$<br>例如，一段含有4个词的文本序列的概率</p>
+<p>$$<br>P(w_1, w_2, w_3, w_4) =  P(w_1) P(w_2 \mid w_1) P(w_3 \mid w_1, w_2) P(w_4 \mid w_1, w_2, w_3).<br>$$</p>
+<p>语言模型的参数就是词的概率以及给定前几个词情况下的条件概率。设训练数据集为一个大型文本语料库，如维基百科的所有条目.</p>
+<p>词的概率可以通过该词在训练数据集中的相对词频来计算，例如，$w_1$的概率可以计算为：</p>
+<p>$$<br>\hat P(w_1) = \frac{n(w_1)}{n}<br>$$</p>
+<blockquote>
+<p>其中$n(w_1)$为语料库中以$w_1$作为第一个词的文本的数量，$n$为语料库中文本的总数量。</p>
+</blockquote>
+<p>类似的，给定$w_1$情况下，$w_2$的条件概率可以计算为：</p>
+<p>$$<br>\hat P(w_2 \mid w_1) = \frac{n(w_1, w_2)}{n(w_1)}<br>$$</p>
+<blockquote>
+<p>其中$n(w_1, w_2)$为语料库中以$w_1$作为第一个词，$w_2$作为第二个词的文本的数量。</p>
+</blockquote>
+<hr>
+<div align=center>加点料 < 统计学知识 >
+
+<h2 id="n-元语法"><a href="#n-元语法" class="headerlink" title="n 元语法"></a>n 元语法</h2><p>序列长度增加，计算和存储多个词共同出现的概率的复杂度会呈指数级增加。$n$元语法通过马尔可夫假设简化模型，马尔科夫假设是指一个词的出现只与前面$n$个词相关，即$n$阶马尔可夫链（Markov chain of order $n$），如果$n=1$，那么有$P(w_3 \mid w_1, w_2) = P(w_3 \mid w_2)$。基于$n-1$阶马尔可夫链，我们可以将语言模型改写为</p>
+<p>$$<br>P(w_1, w_2, \ldots, w_T) = \prod_{t=1}^T P(w_t \mid w_{t-(n-1)}, \ldots, w_{t-1}) .<br>$$</p>
+<p>以上也叫$n$元语法（$n$-grams），它是基于$n - 1$阶马尔可夫链的概率语言模型。例如，当$n=2$时，含有4个词的文本序列的概率就可以改写为:</p>
+<p>$$<br>\begin{aligned}<br>P(w_1, w_2, w_3, w_4)<br>&amp;= P(w_1) P(w_2 \mid w_1) P(w_3 \mid w_1, w_2) P(w_4 \mid w_1, w_2, w_3)\<br>&amp;= P(w_1) P(w_2 \mid w_1) P(w_3 \mid w_2) P(w_4 \mid w_3)<br>\end{aligned}<br>$$</p>
+<p>当$n$分别为1、2和3时，我们将其分别称作一元语法（unigram）、二元语法（bigram）和三元语法（trigram）。例如，长度为4的序列$w_1, w_2, w_3, w_4$在一元语法、二元语法和三元语法中的概率分别为</p>
+<p>$$<br>\begin{aligned}<br>P(w_1, w_2, w_3, w_4) &amp;=  P(w_1) P(w_2) P(w_3) P(w_4) ,\<br>P(w_1, w_2, w_3, w_4) &amp;=  P(w_1) P(w_2 \mid w_1) P(w_3 \mid w_2) P(w_4 \mid w_3) ,\<br>P(w_1, w_2, w_3, w_4) &amp;=  P(w_1) P(w_2 \mid w_1) P(w_3 \mid w_1, w_2) P(w_4 \mid w_2, w_3) .<br>\end{aligned}<br>$$</p>
+<p>当$n$较小时，$n$元语法往往并不准确。例如，在一元语法中，由三个词组成的句子“你走先”和“你先走”的概率是一样的。然而，当$n$较大时，$n$元语法需要计算并存储大量的词频和多词相邻频率。</p>
+<hr>
+<blockquote>
+<p>深入理解元语法的缺陷</p>
+</blockquote>
+<ul>
+<li><p>参数空间过大 </p>
+<p>  n 元语法当 n 足够大的时候词频和使用频率的计算会越来越大</p>
+</li>
+<li><p>数据稀疏 </p>
+<p>  齐夫定律：按频率递减顺序排列的频率词表中，单词的频率与它的序号之间存在“幂律”(power law)关系，即如果把单词按使用频率排序，那么使用频率与序号之间几乎恰好成反比。</p>
+</li>
+</ul>
+<blockquote>
+<p>在缺陷的基础上寻找问题的解决办法</p>
+<blockquote>
+<p>数据采样</p>
+</blockquote>
+<p>随机采样 &amp;&amp; 相邻采样</p>
+</blockquote>
+<h3 id="引入数据集"><a href="#引入数据集" class="headerlink" title="引入数据集"></a>引入数据集</h3><blockquote>
+<p>利用周杰伦的歌词作为数据集 jaychou_lyrics.txt</p>
+<blockquote>
+<p><a href="https://github.com/ShusenTang/Dive-into-DL-PyTorch/blob/master/data/jaychou_lyrics.txt.zip?raw=true" target="_blank" rel="noopener">下载地址</a></p>
+</blockquote>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># read data</span></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'path to jaychou_lyrics.txt'</span>) <span class="keyword">as</span> f:</span><br><span class="line">    corpus_chars = f.read()</span><br><span class="line">print(len(corpus_chars))</span><br><span class="line">print(corpus_chars[: <span class="number">40</span>])</span><br><span class="line">corpus_chars = corpus_chars.replace(<span class="string">'\n'</span>, <span class="string">' '</span>).replace(<span class="string">'\r'</span>, <span class="string">' '</span>)</span><br><span class="line">corpus_chars = corpus_chars[: <span class="number">10000</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># build character index</span></span><br><span class="line">idx_to_char = list(set(corpus_chars)) <span class="comment"># 去重，得到索引到字符的映射</span></span><br><span class="line">char_to_idx = &#123;char: i <span class="keyword">for</span> i, char <span class="keyword">in</span> enumerate(idx_to_char)&#125; <span class="comment"># 字符到索引的映射 enumerate枚举</span></span><br><span class="line">vocab_size = len(char_to_idx)</span><br><span class="line">print(vocab_size)</span><br><span class="line">corpus_indices = [char_to_idx[char] <span class="keyword">for</span> char <span class="keyword">in</span> corpus_chars]  <span class="comment"># 将每个字符转化为索引，得到一个索引的序列</span></span><br><span class="line">sample = corpus_indices[: <span class="number">20</span>]</span><br><span class="line">print(<span class="string">'chars:'</span>, <span class="string">''</span>.join([idx_to_char[idx] <span class="keyword">for</span> idx <span class="keyword">in</span> sample])) <span class="comment">#join 进行字符的拼接</span></span><br><span class="line">print(<span class="string">'indices:'</span>, sample)</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据采样"><a href="#数据采样" class="headerlink" title="数据采样"></a>数据采样</h3><p>在训练中我们需要每次随机读取小批量样本和标签。时序数据的一个样本通常包含连续的字符。假设时间步数为5，样本序列为5个字符，即“想”“要”“有”“直”“升”。该样本的标签序列为这些字符分别在训练集中的下一个字符，即“要”“有”“直”“升”“机”，即$X$=“想要有直升”，$Y$=“要有直升机”。</p>
+<p>现在我们考虑序列“想要有直升机，想要和你飞到宇宙去”，如果时间步数为5，有以下可能的样本和标签：</p>
+<ul>
+<li>$X$：“想要有直升”，$Y$：“要有直升机”</li>
+<li>$X$：“要有直升机”，$Y$：“有直升机，”</li>
+<li>$X$：“有直升机，”，$Y$：“直升机，想”</li>
+<li>…</li>
+<li>$X$：“要和你飞到”，$Y$：“和你飞到宇”</li>
+<li>$X$：“和你飞到宇”，$Y$：“你飞到宇宙”</li>
+<li>$X$：“你飞到宇宙”，$Y$：“飞到宇宙去”</li>
+</ul>
+<p>可以看到，如果序列的长度为$T$，时间步数为$n$，那么一共有$T-n$个合法的样本，但是这些样本有大量的重合，我们通常采用更加高效的采样方式。我们有两种方式对时序数据进行采样，分别是随机采样和相邻采样。</p>
+<h3 id="随机采样"><a href="#随机采样" class="headerlink" title="随机采样"></a>随机采样</h3><p>下面的代码每次从数据里随机采样一个小批量。其中批量大小<code>batch_size</code>是每个小批量的样本数，<code>num_steps</code>是每个样本所包含的时间步数。<br>在随机采样中，每个样本是原始序列上任意截取的一段序列，相邻的两个随机小批量在原始序列上的位置不一定相毗邻。</p>
+<div align=center>
+<img src= "https://img-blog.csdnimg.cn/20200214095637385.png" />
+</div>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">data_iter_random</span><span class="params">(corpus_indices, batch_size, num_steps, device=None)</span>:</span></span><br><span class="line">    <span class="comment"># 减1是因为对于长度为n的序列，X最多只有包含其中的前n - 1个字符</span></span><br><span class="line">    num_examples = (len(corpus_indices) - <span class="number">1</span>) // num_steps  <span class="comment"># 下取整，得到不重叠情况下的样本个数</span></span><br><span class="line">    example_indices = [i * num_steps <span class="keyword">for</span> i <span class="keyword">in</span> range(num_examples)]  <span class="comment"># 每个样本的第一个字符在corpus_indices中的下标</span></span><br><span class="line">    random.shuffle(example_indices) <span class="comment">#因为做随机采样，shuffle进行捣乱</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_data</span><span class="params">(i)</span>:</span></span><br><span class="line">        <span class="comment"># 返回从i开始的长为num_steps的序列</span></span><br><span class="line">        <span class="keyword">return</span> corpus_indices[i: i + num_steps]</span><br><span class="line">    <span class="keyword">if</span> device <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        device = torch.device(<span class="string">'cuda'</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">'cpu'</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, num_examples, batch_size):</span><br><span class="line">        <span class="comment"># 每次选出batch_size个随机样本</span></span><br><span class="line">        batch_indices = example_indices[i: i + batch_size]  <span class="comment"># 当前batch的各个样本的首字符的下标</span></span><br><span class="line">        X = [_data(j) <span class="keyword">for</span> j <span class="keyword">in</span> batch_indices]</span><br><span class="line">        Y = [_data(j + <span class="number">1</span>) <span class="keyword">for</span> j <span class="keyword">in</span> batch_indices]</span><br><span class="line">        <span class="keyword">yield</span> torch.tensor(X, device=device), torch.tensor(Y, device=device)</span><br></pre></td></tr></table></figure>
+
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">my_seq = list(range(<span class="number">30</span>))</span><br><span class="line"><span class="keyword">for</span> X, Y <span class="keyword">in</span> data_iter_random(my_seq, batch_size=<span class="number">2</span>, num_steps=<span class="number">6</span>):</span><br><span class="line">    print(<span class="string">'X: '</span>, X, <span class="string">'\nY:'</span>, Y, <span class="string">'\n'</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Result:</span><br><span class="line">X:  tensor([[ <span class="number">6</span>,  <span class="number">7</span>,  <span class="number">8</span>,  <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>],</span><br><span class="line">        [<span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>, <span class="number">16</span>, <span class="number">17</span>]]) </span><br><span class="line">Y: tensor([[ <span class="number">7</span>,  <span class="number">8</span>,  <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>],</span><br><span class="line">        [<span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>, <span class="number">16</span>, <span class="number">17</span>, <span class="number">18</span>]]) </span><br><span class="line"></span><br><span class="line">X:  tensor([[ <span class="number">0</span>,  <span class="number">1</span>,  <span class="number">2</span>,  <span class="number">3</span>,  <span class="number">4</span>,  <span class="number">5</span>],</span><br><span class="line">        [<span class="number">18</span>, <span class="number">19</span>, <span class="number">20</span>, <span class="number">21</span>, <span class="number">22</span>, <span class="number">23</span>]]) </span><br><span class="line">Y: tensor([[ <span class="number">1</span>,  <span class="number">2</span>,  <span class="number">3</span>,  <span class="number">4</span>,  <span class="number">5</span>,  <span class="number">6</span>],</span><br><span class="line">        [<span class="number">19</span>, <span class="number">20</span>, <span class="number">21</span>, <span class="number">22</span>, <span class="number">23</span>, <span class="number">24</span>]])</span><br></pre></td></tr></table></figure>
+
+<h3 id="相邻采样"><a href="#相邻采样" class="headerlink" title="相邻采样"></a>相邻采样</h3><p>在相邻采样中，相邻的两个随机小批量在原始序列上的位置相毗邻。</p>
+<div align=center> <img src="https://img-blog.csdnimg.cn/20200214101159177.png" /></div>
+
+<blockquote>
+<p>三部分堆叠构成二维的 tensor</p>
+</blockquote>
+<div align=center><img src="https://img-blog.csdnimg.cn/20200214101954759.png" /></div>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">data_iter_consecutive</span><span class="params">(corpus_indices, batch_size, num_steps, device=None)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> device <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        device = torch.device(<span class="string">'cuda'</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">'cpu'</span>)</span><br><span class="line">    corpus_len = len(corpus_indices) // batch_size * batch_size  <span class="comment"># 保留下来的序列的长度</span></span><br><span class="line">    corpus_indices = corpus_indices[: corpus_len]  <span class="comment"># 仅保留前corpus_len个字符</span></span><br><span class="line">    indices = torch.tensor(corpus_indices, device=device)</span><br><span class="line">    indices = indices.view(batch_size, <span class="number">-1</span>)  <span class="comment"># resize成(batch_size, )</span></span><br><span class="line">    batch_num = (indices.shape[<span class="number">1</span>] - <span class="number">1</span>) // num_steps</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(batch_num):</span><br><span class="line">        i = i * num_steps</span><br><span class="line">        X = indices[:, i: i + num_steps] <span class="comment">#构建索引 Ｘ是样本</span></span><br><span class="line">        Y = indices[:, i + <span class="number">1</span>: i + num_steps + <span class="number">1</span>]　<span class="comment"># Y 是标签</span></span><br><span class="line">        <span class="keyword">yield</span> X, Y</span><br></pre></td></tr></table></figure>
+
+<h4 id="测试-1"><a href="#测试-1" class="headerlink" title="测试"></a>测试</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> X, Y <span class="keyword">in</span> data_iter_consecutive(my_seq, batch_size=<span class="number">2</span>, num_steps=<span class="number">6</span>):</span><br><span class="line">    print(<span class="string">'X: '</span>, X, <span class="string">'\nY:'</span>, Y, <span class="string">'\n'</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Result:</span><br><span class="line">X:  tensor([[ <span class="number">0</span>,  <span class="number">1</span>,  <span class="number">2</span>,  <span class="number">3</span>,  <span class="number">4</span>,  <span class="number">5</span>],</span><br><span class="line">        [<span class="number">15</span>, <span class="number">16</span>, <span class="number">17</span>, <span class="number">18</span>, <span class="number">19</span>, <span class="number">20</span>]]) </span><br><span class="line">Y: tensor([[ <span class="number">1</span>,  <span class="number">2</span>,  <span class="number">3</span>,  <span class="number">4</span>,  <span class="number">5</span>,  <span class="number">6</span>],</span><br><span class="line">        [<span class="number">16</span>, <span class="number">17</span>, <span class="number">18</span>, <span class="number">19</span>, <span class="number">20</span>, <span class="number">21</span>]]) </span><br><span class="line"></span><br><span class="line">X:  tensor([[ <span class="number">6</span>,  <span class="number">7</span>,  <span class="number">8</span>,  <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>],</span><br><span class="line">        [<span class="number">21</span>, <span class="number">22</span>, <span class="number">23</span>, <span class="number">24</span>, <span class="number">25</span>, <span class="number">26</span>]]) </span><br><span class="line">Y: tensor([[ <span class="number">7</span>,  <span class="number">8</span>,  <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>],</span><br><span class="line">        [<span class="number">22</span>, <span class="number">23</span>, <span class="number">24</span>, <span class="number">25</span>, <span class="number">26</span>, <span class="number">27</span>]])</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"># 语言模型</a>
+                    
+                        <a href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/"># 概率论</a>
+                    
+                        <a href="/tags/%E5%85%83%E8%AF%AD%E6%B3%95/"># 元语法</a>
+                    
+                        <a href="/tags/%E6%95%B0%E6%8D%AE%E9%87%87%E6%A0%B7/"># 数据采样</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/02/28/Fundamentals%20of%20Recurrent%20Neural%20Network/">Fundamentals of Recurrent Neural Network</a>
+            
+            
+            <a class="next" rel="next" href="/2020/02/28/Text%20Preprocessing/">Text Preprocessing</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+</footer>
+
+    </div>
+</body>
+</html>

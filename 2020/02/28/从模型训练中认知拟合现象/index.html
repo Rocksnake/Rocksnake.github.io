@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>从模型训练中认知拟合现象 | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">从模型训练中认知拟合现象</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">February 28, 2020&nbsp;&nbsp;10:12:37</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Machine-Learning/">Machine Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>机器学习中模型训练是必需的，在模型训练中存在两类典型的问题：</p>
+<blockquote>
+<p>欠拟合 (underfitting) </p>
+<blockquote>
+<p>模型无法得到较低的训练误差</p>
+</blockquote>
+<p>过拟合 (overfitting)</p>
+<blockquote>
+<p>模型的训练误差远小于它在测试数据集上的误差</p>
+</blockquote>
+</blockquote>
+<p>实际训练过程中可能会出现两类问题的并发症，而且会有多种因素直接或间接地导致这种情况出现</p>
+<h2 id="影响因素"><a href="#影响因素" class="headerlink" title="影响因素"></a>影响因素</h2><center>介绍其中两个因素：模型复杂度和训练数据集大小。</center>
+
+<h3 id="模型复杂度"><a href="#模型复杂度" class="headerlink" title="模型复杂度"></a>模型复杂度</h3><p>以多项式函数拟合为例。给定一个由标量数据特征$x$和对应的标量标签$y$组成的训练数据集，多项式函数拟合的目标是找一个$K$阶多项式函数</p>
+<p>$$<br> \hat{y} = b + \sum_{k=1}^K x^k w_k<br>$$</p>
+<p>来近似 $y$。</p>
+<p>在上式中，$w_k$是模型的权重参数，$b$是偏差参数。与线性回归相同，多项式函数拟合也使用平方损失函数。特别地，一阶多项式函数拟合又叫线性函数拟合。</p>
+<p>给定训练数据集，模型复杂度和误差之间的关系：</p>
+<center><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWpjMjd3eG9qLnBuZw?x-oss-process=image/format,png"></center>
+
+<h3 id="训练数据集大小"><a href="#训练数据集大小" class="headerlink" title="训练数据集大小"></a>训练数据集大小</h3><p>一般来说，如果训练数据集中<strong>样本数过少</strong>，特别是比模型参数数量（按元素计）更少时，<strong>过拟合</strong>更容易发生。</p>
+<p>此外，<strong>泛化误差</strong>不会随训练数据集里样本数量增加而增大。因此，在计算资源允许的范围之内，我们通常希望训练数据集大一些，特别是在模型复杂度较高时，例如层数较多的深度学习模型。</p>
+<hr>
+<center>训练误差和泛化误差<center/><br/>
+
+<p>&ensp;&ensp;&ensp;&ensp;通俗来讲，前者指模型在训练数据集上表现出的误差，后者指模型在任意一个测试数据样本上表现出的误差的期望，并常常通过测试数据集上的误差来近似。</p>
+<p>&ensp;&ensp;&ensp;&ensp;计算训练误差和泛化误差可以使用之前介绍过的损失函数，例如线性回归用到的平方损失函数和softmax回归用到的交叉熵损失函数。</p>
+<p>&ensp;&ensp;&ensp;&ensp;机器学习模型应关注降低泛化误差。</p>
+<hr>
+<h2 id="多项式函数拟合实验"><a href="#多项式函数拟合实验" class="headerlink" title="多项式函数拟合实验"></a>多项式函数拟合实验</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># import package and module</span></span><br><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">"path to file storge d2lzh1981"</span>)</span><br><span class="line"><span class="keyword">import</span> d2lzh1981 <span class="keyword">as</span> d2l</span><br></pre></td></tr></table></figure>
+
+<h3 id="初始化模型参数"><a href="#初始化模型参数" class="headerlink" title="初始化模型参数"></a>初始化模型参数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">n_train, n_test, true_w, true_b = <span class="number">100</span>, <span class="number">100</span>, [<span class="number">1.2</span>, <span class="number">-3.4</span>, <span class="number">5.6</span>], <span class="number">5</span></span><br><span class="line">features = torch.randn((n_train + n_test, <span class="number">1</span>))</span><br><span class="line">poly_features = torch.cat((features, torch.pow(features, <span class="number">2</span>), torch.pow(features, <span class="number">3</span>)), <span class="number">1</span>) </span><br><span class="line">labels = (true_w[<span class="number">0</span>] * poly_features[:, <span class="number">0</span>] + true_w[<span class="number">1</span>] * poly_features[:, <span class="number">1</span>]</span><br><span class="line">          + true_w[<span class="number">2</span>] * poly_features[:, <span class="number">2</span>] + true_b)</span><br><span class="line">labels += torch.tensor(np.random.normal(<span class="number">0</span>, <span class="number">0.01</span>, size=labels.size()), dtype=torch.float)</span><br></pre></td></tr></table></figure>
+
+<h3 id="定义和训练参数模型"><a href="#定义和训练参数模型" class="headerlink" title="定义和训练参数模型"></a>定义和训练参数模型</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">semilogy</span><span class="params">(x_vals, y_vals, x_label, y_label, x2_vals=None, y2_vals=None,</span></span></span><br><span class="line"><span class="function"><span class="params">             legend=None, figsize=<span class="params">(<span class="number">3.5</span>, <span class="number">2.5</span>)</span>)</span>:</span></span><br><span class="line">    <span class="comment"># d2l.set_figsize(figsize)</span></span><br><span class="line">    d2l.plt.xlabel(x_label)</span><br><span class="line">    d2l.plt.ylabel(y_label)</span><br><span class="line">    d2l.plt.semilogy(x_vals, y_vals)</span><br><span class="line">    <span class="keyword">if</span> x2_vals <span class="keyword">and</span> y2_vals:</span><br><span class="line">        d2l.plt.semilogy(x2_vals, y2_vals, linestyle=<span class="string">':'</span>)</span><br><span class="line">        d2l.plt.legend(legend)</span><br><span class="line"></span><br><span class="line">num_epochs, loss = <span class="number">100</span>, torch.nn.MSELoss()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fit_and_plot</span><span class="params">(train_features, test_features, train_labels, test_labels)</span>:</span></span><br><span class="line">    <span class="comment"># 初始化网络模型</span></span><br><span class="line">    net = torch.nn.Linear(train_features.shape[<span class="number">-1</span>], <span class="number">1</span>)</span><br><span class="line">    <span class="comment"># 通过Linear文档可知，pytorch已经将参数初始化了，所以我们这里就不手动初始化了</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 设置批量大小</span></span><br><span class="line">    batch_size = min(<span class="number">10</span>, train_labels.shape[<span class="number">0</span>])    </span><br><span class="line">     <span class="comment"># 设置数据集</span></span><br><span class="line">    dataset = torch.utils.data.TensorDataset(train_features, train_labels)</span><br><span class="line">    <span class="comment"># 设置获取数据方式     </span></span><br><span class="line">    train_iter = torch.utils.data.DataLoader(dataset, batch_size, shuffle=<span class="literal">True</span>) </span><br><span class="line">    <span class="comment"># 设置优化函数，使用的是随机梯度下降优化</span></span><br><span class="line">    optimizer = torch.optim.SGD(net.parameters(), lr=<span class="number">0.01</span>)                      </span><br><span class="line">    train_ls, test_ls = [], []</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(num_epochs):</span><br><span class="line">    	<span class="comment"># 取一个批量的数据</span></span><br><span class="line">        <span class="keyword">for</span> X, y <span class="keyword">in</span> train_iter:               </span><br><span class="line">        	<span class="comment"># 输入到网络中计算输出，并和标签比较求得损失函数                                  </span></span><br><span class="line">            l = loss(net(X), y.view(<span class="number">-1</span>, <span class="number">1</span>)) </span><br><span class="line">            <span class="comment"># 梯度清零，防止梯度累加干扰优化                                   </span></span><br><span class="line">            optimizer.zero_grad()                                               </span><br><span class="line">            l.backward() <span class="comment"># 求梯度</span></span><br><span class="line">            optimizer.step() <span class="comment"># 迭代优化函数，进行参数优化</span></span><br><span class="line">        train_labels = train_labels.view(<span class="number">-1</span>, <span class="number">1</span>)</span><br><span class="line">        test_labels = test_labels.view(<span class="number">-1</span>, <span class="number">1</span>)</span><br><span class="line">        <span class="comment"># 将训练损失保存到train_ls中</span></span><br><span class="line">        train_ls.append(loss(net(train_features), train_labels).item())</span><br><span class="line">        <span class="comment"># 将测试损失保存到test_ls中         </span></span><br><span class="line">        test_ls.append(loss(net(test_features), test_labels).item())            </span><br><span class="line">    print(<span class="string">'final epoch: train loss'</span>, train_ls[<span class="number">-1</span>], <span class="string">'test loss'</span>, test_ls[<span class="number">-1</span>])    </span><br><span class="line">    semilogy(range(<span class="number">1</span>, num_epochs + <span class="number">1</span>), train_ls, <span class="string">'epochs'</span>, <span class="string">'loss'</span>,</span><br><span class="line">             range(<span class="number">1</span>, num_epochs + <span class="number">1</span>), test_ls, [<span class="string">'train'</span>, <span class="string">'test'</span>])</span><br><span class="line">    print(<span class="string">'weight:'</span>, net.weight.data,</span><br><span class="line">          <span class="string">'\nbias:'</span>, net.bias.data)</span><br></pre></td></tr></table></figure>
+
+<h3 id="对比三种拟合现象"><a href="#对比三种拟合现象" class="headerlink" title="对比三种拟合现象"></a>对比三种拟合现象</h3><blockquote>
+<p>正常</p>
+<blockquote>
+<p>fit_and_plot(poly_features[:n_train, :], poly_features[n_train:, :], labels[:n_train], labels[n_train:])<br><img src="https://img-blog.csdnimg.cn/20200216165618535.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" /></p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>欠拟合</p>
+<blockquote>
+<p>fit_and_plot(features[:n_train, :], features[n_train:, :], labels[:n_train], labels[n_train:])<br><img src="https://img-blog.csdnimg.cn/20200216172452546.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" width=400 /></p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>过拟合</p>
+<blockquote>
+<p>fit_and_plot(poly_features[0:2, :], poly_features[n_train:, :], labels[0:2], labels[n_train:])<br><img src="https://img-blog.csdnimg.cn/20200216172416864.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" width=400/></p>
+</blockquote>
+</blockquote>
+<h2 id="针对两类拟合问题的解决办法"><a href="#针对两类拟合问题的解决办法" class="headerlink" title="针对两类拟合问题的解决办法"></a>针对两类拟合问题的解决办法</h2><h3 id="权重衰减–过拟合"><a href="#权重衰减–过拟合" class="headerlink" title="权重衰减–过拟合"></a>权重衰减–过拟合</h3><h4 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h4><p>&ensp;&ensp;&ensp;&ensp;权重衰减等价于 $L_2$ 范数正则化（regularization）。正则化通过为模型损失函数添加惩罚项使学出的模型参数值较小，是应对过拟合的常用手段。</p>
+<h4 id="L2-范数正则化（regularization）"><a href="#L2-范数正则化（regularization）" class="headerlink" title="L2 范数正则化（regularization）"></a>L2 范数正则化（regularization）</h4><p>&ensp;&ensp;&ensp;&ensp;$L_2$范数正则化在模型原损失函数基础上添加$L_2$范数惩罚项，从而得到训练所需要最小化的函数。$L_2$范数惩罚项指的是模型权重参数每个元素的平方和与一个正的常数的乘积。以线性回归中的线性回归损失函数为例</p>
+<p>$$<br> \ell(w_1, w_2, b) = \frac{1}{n} \sum_{i=1}^n \frac{1}{2}\left(x_1^{(i)} w_1 + x_2^{(i)} w_2 + b - y^{(i)}\right)^2<br>$$</p>
+<p>其中$w_1, w_2$是权重参数，$b$是偏差参数，样本$i$的输入为$x_1^{(i)}, x_2^{(i)}$，标签为$y^{(i)}$，样本数为$n$。将权重参数用向量$\boldsymbol{w} = [w_1, w_2]$表示，带有$L_2$范数惩罚项的新损失函数为</p>
+<p>$$<br>\ell(w_1, w_2, b) + \frac{\lambda}{2n} |\boldsymbol{w}|^2,<br>$$</p>
+<p>其中超参数$\lambda &gt; 0$。当权重参数均为0时，惩罚项最小。当$\lambda$较大时，惩罚项在损失函数中的比重较大，这通常会使学到的权重参数的元素较接近0。当$\lambda$设为0时，惩罚项完全不起作用。上式中$L_2$范数平方$|\boldsymbol{w}|^2$展开后得到$w_1^2 + w_2^2$。</p>
+<p>&ensp;&ensp;&ensp;&ensp;有了$L_2$范数惩罚项后，在小批量随机梯度下降中，我们将 <a href="https://blog.csdn.net/RokoBasilisk/article/details/104269986" target="_blank" rel="noopener">Design and Realization of Linear Regression</a> 中权重$w_1$和$w_2$的迭代方式更改为</p>
+<p>$$<br> \begin{aligned} w_1 &amp;\leftarrow \left(1- \frac{\eta\lambda}{|\mathcal{B}|} \right)w_1 - \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}}x_1^{(i)} \left(x_1^{(i)} w_1 + x_2^{(i)} w_2 + b - y^{(i)}\right),\ w_2 &amp;\leftarrow \left(1- \frac{\eta\lambda}{|\mathcal{B}|} \right)w_2 - \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}}x_2^{(i)} \left(x_1^{(i)} w_1 + x_2^{(i)} w_2 + b - y^{(i)}\right). \end{aligned}<br>$$</p>
+<p>可见，$L_2$范数正则化令权重$w_1$和$w_2$先自乘小于1的数，再减去不含惩罚项的梯度。</p>
+<p>因此，<code>$L_2$范数正则化又叫权重衰减</code>。权重衰减通过惩罚绝对值较大的模型参数为需要学习的模型增加了限制，<code>这可能对过拟合有效</code>。</p>
+<h4 id="应用【剑指高维线性回归带来的过拟合】"><a href="#应用【剑指高维线性回归带来的过拟合】" class="headerlink" title="应用【剑指高维线性回归带来的过拟合】"></a>应用【剑指高维线性回归带来的过拟合】</h4><p>&ensp;&ensp;&ensp;&ensp;设数据样本特征的维度为$p$。对于训练数据集和测试数据集中特征为$x_1, x_2, \ldots, x_p$的任一样本，使用如下的线性函数来生成该样本的标签：</p>
+<p>$$<br> y = 0.05 + \sum_{i = 1}^p 0.01x_i + \epsilon<br>$$</p>
+<p>其中噪声项$\epsilon$服从均值为0、标准差为0.01的正态分布。为了较容易地观察过拟合，我们考虑高维线性回归问题，如设维度$p=200$；同时，我们特意把训练数据集的样本数设低，如20。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">"path to file storge d2lzh1981"</span>)</span><br><span class="line"><span class="keyword">import</span> d2lzh1981 <span class="keyword">as</span> d2l</span><br></pre></td></tr></table></figure>
+<h5 id="初始化模型参数-1"><a href="#初始化模型参数-1" class="headerlink" title="初始化模型参数"></a>初始化模型参数</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">n_train, n_test, num_inputs = <span class="number">20</span>, <span class="number">100</span>, <span class="number">200</span></span><br><span class="line">true_w, true_b = torch.ones(num_inputs, <span class="number">1</span>) * <span class="number">0.01</span>, <span class="number">0.05</span></span><br><span class="line"></span><br><span class="line">features = torch.randn((n_train + n_test, num_inputs))</span><br><span class="line">labels = torch.matmul(features, true_w) + true_b</span><br><span class="line">labels += torch.tensor(np.random.normal(<span class="number">0</span>, <span class="number">0.01</span>, size=labels.size()), dtype=torch.float)</span><br><span class="line">train_features, test_features = features[:n_train, :], features[n_train:, :]</span><br><span class="line">train_labels, test_labels = labels[:n_train], labels[n_train:]</span><br><span class="line"><span class="comment"># 定义参数初始化函数，初始化模型参数并且附上梯度</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_params</span><span class="params">()</span>:</span></span><br><span class="line">    w = torch.randn((num_inputs, <span class="number">1</span>), requires_grad=<span class="literal">True</span>)</span><br><span class="line">    b = torch.zeros(<span class="number">1</span>, requires_grad=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> [w, b]</span><br></pre></td></tr></table></figure>
+<h5 id="定义L2范数惩罚项"><a href="#定义L2范数惩罚项" class="headerlink" title="定义L2范数惩罚项"></a>定义L2范数惩罚项</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">l2_penalty</span><span class="params">(w)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> (w**<span class="number">2</span>).sum() / <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="训练和测试"><a href="#训练和测试" class="headerlink" title="训练和测试"></a>训练和测试</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">batch_size, num_epochs, lr = <span class="number">1</span>, <span class="number">100</span>, <span class="number">0.003</span></span><br><span class="line">net, loss = d2l.linreg, d2l.squared_loss</span><br><span class="line"></span><br><span class="line">dataset = torch.utils.data.TensorDataset(train_features, train_labels)</span><br><span class="line">train_iter = torch.utils.data.DataLoader(dataset, batch_size, shuffle=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fit_and_plot</span><span class="params">(lambd)</span>:</span></span><br><span class="line">    w, b = init_params()</span><br><span class="line">    train_ls, test_ls = [], []</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(num_epochs):</span><br><span class="line">        <span class="keyword">for</span> X, y <span class="keyword">in</span> train_iter:</span><br><span class="line">            <span class="comment"># 添加了L2范数惩罚项</span></span><br><span class="line">            l = loss(net(X, w, b), y) + lambd * l2_penalty(w)</span><br><span class="line">            l = l.sum()</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> w.grad <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">                w.grad.data.zero_()</span><br><span class="line">                b.grad.data.zero_()</span><br><span class="line">            l.backward()</span><br><span class="line">            d2l.sgd([w, b], lr, batch_size)</span><br><span class="line">        train_ls.append(loss(net(train_features, w, b), train_labels).mean().item())</span><br><span class="line">        test_ls.append(loss(net(test_features, w, b), test_labels).mean().item())</span><br><span class="line">    d2l.semilogy(range(<span class="number">1</span>, num_epochs + <span class="number">1</span>), train_ls, <span class="string">'epochs'</span>, <span class="string">'loss'</span>,</span><br><span class="line">                 range(<span class="number">1</span>, num_epochs + <span class="number">1</span>), test_ls, [<span class="string">'train'</span>, <span class="string">'test'</span>])</span><br><span class="line">    print(<span class="string">'L2 norm of w:'</span>, w.norm().item())</span><br></pre></td></tr></table></figure>
+<h5 id="对比过拟合与权重衰减处理"><a href="#对比过拟合与权重衰减处理" class="headerlink" title="对比过拟合与权重衰减处理"></a>对比过拟合与权重衰减处理</h5><blockquote>
+<p>过拟合</p>
+<blockquote>
+<p>fit_and_plot(lambd=0)<br><img src="https://img-blog.csdnimg.cn/20200216172039167.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" /></p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>权重衰减处理</p>
+<blockquote>
+<p>fit_and_plot(lambd=3)<br><img src="https://img-blog.csdnimg.cn/20200216172215405.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" /></p>
+</blockquote>
+</blockquote>
+<h4 id="权重衰减的简化"><a href="#权重衰减的简化" class="headerlink" title="权重衰减的简化"></a>权重衰减的简化</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fit_and_plot_pytorch</span><span class="params">(wd)</span>:</span></span><br><span class="line">    <span class="comment"># 对权重参数衰减。权重名称一般是以weight结尾</span></span><br><span class="line">    net = nn.Linear(num_inputs, <span class="number">1</span>)</span><br><span class="line">    nn.init.normal_(net.weight, mean=<span class="number">0</span>, std=<span class="number">1</span>)</span><br><span class="line">    nn.init.normal_(net.bias, mean=<span class="number">0</span>, std=<span class="number">1</span>)</span><br><span class="line">    optimizer_w = torch.optim.SGD(params=[net.weight], lr=lr, weight_decay=wd) <span class="comment"># 对权重参数衰减</span></span><br><span class="line">    optimizer_b = torch.optim.SGD(params=[net.bias], lr=lr)  <span class="comment"># 不对偏差参数衰减</span></span><br><span class="line">    </span><br><span class="line">    train_ls, test_ls = [], []</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(num_epochs):</span><br><span class="line">        <span class="keyword">for</span> X, y <span class="keyword">in</span> train_iter:</span><br><span class="line">            l = loss(net(X), y).mean()</span><br><span class="line">            optimizer_w.zero_grad()</span><br><span class="line">            optimizer_b.zero_grad()</span><br><span class="line">            </span><br><span class="line">            l.backward()</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 对两个optimizer实例分别调用step函数，从而分别更新权重和偏差</span></span><br><span class="line">            optimizer_w.step()</span><br><span class="line">            optimizer_b.step()</span><br><span class="line">        train_ls.append(loss(net(train_features), train_labels).mean().item())</span><br><span class="line">        test_ls.append(loss(net(test_features), test_labels).mean().item())</span><br><span class="line">    d2l.semilogy(range(<span class="number">1</span>, num_epochs + <span class="number">1</span>), train_ls, <span class="string">'epochs'</span>, <span class="string">'loss'</span>,</span><br><span class="line">                 range(<span class="number">1</span>, num_epochs + <span class="number">1</span>), test_ls, [<span class="string">'train'</span>, <span class="string">'test'</span>])</span><br><span class="line">    print(<span class="string">'L2 norm of w:'</span>, net.weight.data.norm().item())</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>训练结果与手动实现基本一致</p>
+</blockquote>
+<h3 id="丢弃法–过拟合"><a href="#丢弃法–过拟合" class="headerlink" title="丢弃法–过拟合"></a>丢弃法–过拟合</h3><blockquote>
+<p>只能用于模型训练</p>
+</blockquote>
+<p><a href="https://blog.csdn.net/RokoBasilisk/article/details/104287595" target="_blank" rel="noopener">Multilayer Perceptron &amp; Classify image</a> 中神经网络图描述了一个单隐藏层的多层感知机。其中输入个数为4，隐藏单元个数为5，且隐藏单元$h_i$（$i=1, \ldots, 5$）的计算表达式为</p>
+<p>$$<br> h_i = \phi\left(x_1 w_{1i} + x_2 w_{2i} + x_3 w_{3i} + x_4 w_{4i} + b_i\right)<br>$$</p>
+<p>这里$\phi$是激活函数，$x_1, \ldots, x_4$是输入，隐藏单元$i$的权重参数为$w_{1i}, \ldots, w_{4i}$，偏差参数为$b_i$。</p>
+<p>当对该隐藏层使用丢弃法时，该层的隐藏单元将有一定概率被丢弃掉。设丢弃概率为$p$，那么有$p$的概率$h_i$会被清零，有$1-p$的概率$h_i$会除以$1-p$做拉伸。</p>
+<p>丢弃概率是丢弃法的超参数。具体来说，设随机变量$\xi_i$为0和1的概率分别为$p$和$1-p$。使用丢弃法时我们计算新的隐藏单元$h_i’$</p>
+<p>$$<br> h_i’ = \frac{\xi_i}{1-p} h_i<br>$$</p>
+<p>由于$E(\xi_i) = 1-p$，因此</p>
+<p>$$<br> E(h_i’) = \frac{E(\xi_i)}{1-p}h_i = h_i<br>$$</p>
+<p>即丢弃法不改变其输入的期望值。</p>
+<p>对之前多层感知机的神经网络中的隐藏层使用丢弃法，一种可能的结果如图所示，其中$h_2$和$h_5$被清零。这时输出值的计算不再依赖$h_2$和$h_5$，在反向传播时，与这两个隐藏单元相关的权重的梯度均为0。由于在训练中隐藏层神经元的丢弃是随机的，即$h_1, \ldots, h_5$都有可能被清零，输出层的计算无法过度依赖$h_1, \ldots, h_5$中的任一个。</p>
+<center><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWpkNjlpbjNtLnBuZw?x-oss-process=image/format,png" /></center>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">"path to file storge d2lzh1981"</span>)</span><br><span class="line"><span class="keyword">import</span> d2lzh1981 <span class="keyword">as</span> d2l</span><br></pre></td></tr></table></figure>
+<h4 id="丢弃函数"><a href="#丢弃函数" class="headerlink" title="丢弃函数"></a>丢弃函数</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">‘’‘</span><br><span class="line">:param:drop_prob:丢失率</span><br><span class="line">:param:keep_prob:保存率</span><br><span class="line">’‘’</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dropout</span><span class="params">(X, drop_prob)</span>:</span></span><br><span class="line">    X = X.float()</span><br><span class="line">    <span class="keyword">assert</span> <span class="number">0</span> &lt;= drop_prob &lt;= <span class="number">1</span></span><br><span class="line">    keep_prob = <span class="number">1</span> - drop_prob</span><br><span class="line">    <span class="comment"># 这种情况下把全部元素都丢弃 keep_prob 是保存率</span></span><br><span class="line">    <span class="keyword">if</span> keep_prob == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> torch.zeros_like(X)</span><br><span class="line">    mask = (torch.rand(X.shape) &lt; keep_prob).float()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> mask * X / keep_prob</span><br></pre></td></tr></table></figure>
+
+<h4 id="初始化参数"><a href="#初始化参数" class="headerlink" title="初始化参数"></a>初始化参数</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 参数的初始化</span></span><br><span class="line">num_inputs, num_outputs, num_hiddens1, num_hiddens2 = <span class="number">784</span>, <span class="number">10</span>, <span class="number">256</span>, <span class="number">256</span></span><br><span class="line"></span><br><span class="line">W1 = torch.tensor(np.random.normal(<span class="number">0</span>, <span class="number">0.01</span>, size=(num_inputs, num_hiddens1)), dtype=torch.float, requires_grad=<span class="literal">True</span>)</span><br><span class="line">b1 = torch.zeros(num_hiddens1, requires_grad=<span class="literal">True</span>)</span><br><span class="line">W2 = torch.tensor(np.random.normal(<span class="number">0</span>, <span class="number">0.01</span>, size=(num_hiddens1, num_hiddens2)), dtype=torch.float, requires_grad=<span class="literal">True</span>)</span><br><span class="line">b2 = torch.zeros(num_hiddens2, requires_grad=<span class="literal">True</span>)</span><br><span class="line">W3 = torch.tensor(np.random.normal(<span class="number">0</span>, <span class="number">0.01</span>, size=(num_hiddens2, num_outputs)), dtype=torch.float, requires_grad=<span class="literal">True</span>)</span><br><span class="line">b3 = torch.zeros(num_outputs, requires_grad=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">params = [W1, b1, W2, b2, W3, b3]</span><br></pre></td></tr></table></figure>
+
+<h4 id="添加丢弃层"><a href="#添加丢弃层" class="headerlink" title="添加丢弃层"></a>添加丢弃层</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">drop_prob1, drop_prob2 = <span class="number">0.2</span>, <span class="number">0.5</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">net</span><span class="params">(X, is_training=True)</span>:</span></span><br><span class="line">    X = X.view(<span class="number">-1</span>, num_inputs)</span><br><span class="line">    H1 = (torch.matmul(X, W1) + b1).relu()</span><br><span class="line">    <span class="keyword">if</span> is_training:  <span class="comment"># 只在训练模型时使用丢弃法</span></span><br><span class="line">        H1 = dropout(H1, drop_prob1)  <span class="comment"># 在第一层全连接后添加丢弃层</span></span><br><span class="line">    H2 = (torch.matmul(H1, W2) + b2).relu()</span><br><span class="line">    <span class="keyword">if</span> is_training:</span><br><span class="line">        H2 = dropout(H2, drop_prob2)  <span class="comment"># 在第二层全连接后添加丢弃层</span></span><br><span class="line">    <span class="keyword">return</span> torch.matmul(H2, W3) + b3</span><br></pre></td></tr></table></figure>
+
+<h4 id="模型评估"><a href="#模型评估" class="headerlink" title="模型评估"></a>模型评估</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">evaluate_accuracy</span><span class="params">(data_iter, net)</span>:</span></span><br><span class="line">    acc_sum, n = <span class="number">0.0</span>, <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> X, y <span class="keyword">in</span> data_iter:</span><br><span class="line">        <span class="keyword">if</span> isinstance(net, torch.nn.Module):</span><br><span class="line">            net.eval()  <span class="comment"># 评估模式, 这会关闭dropout</span></span><br><span class="line">            acc_sum += (net(X).argmax(dim=<span class="number">1</span>) == y).float().sum().item()</span><br><span class="line">            net.train()  <span class="comment"># 改回训练模式</span></span><br><span class="line">        <span class="keyword">else</span>:  <span class="comment"># 自定义的模型</span></span><br><span class="line">            <span class="keyword">if</span>(<span class="string">'is_training'</span> <span class="keyword">in</span> net.__code__.co_varnames):  <span class="comment"># 如果有is_training这个参数</span></span><br><span class="line">                <span class="comment"># 将is_training设置成False</span></span><br><span class="line">                acc_sum += (net(X, is_training=<span class="literal">False</span>).argmax(dim=<span class="number">1</span>)</span><br><span class="line">                            == y).float().sum().item()</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                acc_sum += (net(X).argmax(dim=<span class="number">1</span>) == y).float().sum().item()</span><br><span class="line">        n += y.shape[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">return</span> acc_sum / n</span><br></pre></td></tr></table></figure>
+<h4 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">num_epochs, lr, batch_size = <span class="number">5</span>, <span class="number">100.0</span>, <span class="number">256</span>  <span class="comment"># 这里的学习率设置的很大，原因与之前相同。</span></span><br><span class="line">loss = torch.nn.CrossEntropyLoss()</span><br><span class="line">train_iter, test_iter = d2l.load_data_fashion_mnist(</span><br><span class="line">    batch_size, root=<span class="string">'path to FashionMNIST2065'</span>)</span><br><span class="line">d2l.train_ch3(</span><br><span class="line">    net,</span><br><span class="line">    train_iter,</span><br><span class="line">    test_iter,</span><br><span class="line">    loss,</span><br><span class="line">    num_epochs,</span><br><span class="line">    batch_size,</span><br><span class="line">    params,</span><br><span class="line">    lr)</span><br></pre></td></tr></table></figure>
+<h4 id="丢弃法的简化"><a href="#丢弃法的简化" class="headerlink" title="丢弃法的简化"></a>丢弃法的简化</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">net = nn.Sequential(</span><br><span class="line">        d2l.FlattenLayer(),</span><br><span class="line">        nn.Linear(num_inputs, num_hiddens1),</span><br><span class="line">        nn.ReLU(),</span><br><span class="line">        nn.Dropout(drop_prob1),</span><br><span class="line">        nn.Linear(num_hiddens1, num_hiddens2), </span><br><span class="line">        nn.ReLU(),</span><br><span class="line">        nn.Dropout(drop_prob2),</span><br><span class="line">        nn.Linear(num_hiddens2, <span class="number">10</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> param <span class="keyword">in</span> net.parameters():</span><br><span class="line">    nn.init.normal_(param, mean=<span class="number">0</span>, std=<span class="number">0.01</span>)</span><br></pre></td></tr></table></figure>
+
+<center><b>综上<b/><center/><br/>
+
+<p>对于训练误差较低但是泛化误差依然较高，二者相差较大的过拟合 </p>
+<ul>
+<li>权重衰减</li>
+<li>丢弃法</li>
+<li>更加全面的方案【<a href="https://www.cnblogs.com/XDU-Lakers/p/10536101.html" target="_blank" rel="noopener">https://www.cnblogs.com/XDU-Lakers/p/10536101.html</a>】</li>
+</ul>
+<p>对于模型无法达到一个较低的误差的欠拟合</p>
+<ul>
+<li><p>增加新特征，可以考虑加入进特征组合、高次特征，来增大假设空间</p>
+</li>
+<li><p>添加多项式特征，这个在机器学习算法里面用的很普遍，例如将线性模型通过添加二次项或者三次项使模型泛化能力更强</p>
+</li>
+<li><p>减少正则化参数，正则化的目的是用来防止过拟合的，但是模型出现了欠拟合，则需要减少正则化参数</p>
+</li>
+<li><p>使用非线性模型，比如核SVM 、决策树、深度学习等模型</p>
+</li>
+<li><p>调整模型的容量(capacity)，通俗地，模型的容量是指其拟合各种函数的能力</p>
+</li>
+<li><p>容量低的模型可能很难拟合训练集；使用集成学习方法，如Bagging ,将多个弱学习器Bagging</p>
+</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/%E6%8B%9F%E5%90%88%E7%8E%B0%E8%B1%A1/"># 拟合现象</a>
+                    
+                        <a href="/tags/%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE/"># 训练误差</a>
+                    
+                        <a href="/tags/%E6%B3%9B%E5%8C%96%E8%AF%AF%E5%B7%AE/"># 泛化误差</a>
+                    
+                        <a href="/tags/L2%E8%8C%83%E6%95%B0%E6%AD%A3%E5%88%99%E5%8C%96/"># L2范数正则化</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/02/28/%E5%AD%A6%E8%80%8C%E5%90%8E%E6%80%9D,%E6%96%B9%E8%83%BD%E5%8F%91%E5%B1%95;%E6%80%9D%E8%80%8C%E7%AB%8B%E8%A1%8C,%E7%BB%88%E5%B0%86%E5%8D%93%E8%B6%8A/">学而后思,方能发展;思而立行,终将卓越</a>
+            
+            
+            <a class="next" rel="next" href="/2020/02/28/ModernRNN/">ModernRNN</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+</footer>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>机器翻译及其相关技术介绍 | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">机器翻译及其相关技术介绍</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">February 28, 2020&nbsp;&nbsp;10:20:01</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Machine-Learning/">Machine Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="机器翻译-MT-实践"><a href="#机器翻译-MT-实践" class="headerlink" title="机器翻译(MT)_实践"></a>机器翻译(MT)_实践</h1><blockquote>
+<p>将一段文本从一种语言自动翻译为另一种语言<br/><br>用神经网络解决这个问题通常称为神经机器翻译（NMT）。</p>
+</blockquote>
+<p>主要特征：输出是单词序列而不是单个单词。 输出序列的长度可能与源序列的长度不同。</p>
+<center><b>实现一个从英语到法语的机器翻译</b></center><br/>
+
+<p>首先准备一个数据集，汇总一些常见单词和日用句子，数据集中有足够且保证正确的对应数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># For Example</span></span><br><span class="line">Go.	Va !	CC-BY <span class="number">2.0</span> (France) Attribution: tatoeba.org <span class="comment">#2877272 (CM) &amp; #1158250 (Wittydev)</span></span><br><span class="line">Hi.	Salut !	CC-BY <span class="number">2.0</span> (France) Attribution: tatoeba.org <span class="comment">#538123 (CM) &amp; #509819 (Aiji)</span></span><br><span class="line">Hi.	Salut.	CC-BY <span class="number">2.0</span> (France) Attribution: tatoeba.org <span class="comment">#538123 (CM) &amp; #4320462 (gillux)</span></span><br><span class="line">Run!	Cours !	CC-BY <span class="number">2.0</span> (France) Attribution: tatoeba.org <span class="comment">#906328 (papabear) &amp; #906331 (sacredceltic)</span></span><br><span class="line">Run!	Courez !	CC-BY <span class="number">2.0</span> (France) Attribution: tatoeba.org <span class="comment">#906328 (papabear) &amp; #906332 (sacredceltic)</span></span><br><span class="line">Who?	Qui ?	CC-BY 2.0 (France) Attribution: tatoeba.org #2083030 (CK) &amp; #4366796 (gillux)</span><br><span class="line">Wow!	Ça alors !	CC-BY <span class="number">2.0</span> (France) Attribution: tatoeba.org <span class="comment">#52027 (Zifre) &amp; #374631 (zmoo)</span></span><br><span class="line">Fire!	Au feu !	CC-BY <span class="number">2.0</span> (France) Attribution: tatoeba.org <span class="comment">#1829639 (Spamster) &amp; #4627939 (sacredceltic)</span></span><br><span class="line">Help!	À l<span class="string">'aide !	CC-BY 2.0 (France) Attribution: tatoeba.org #435084 (lukaszpp) &amp; #128430 (sysko)</span></span><br><span class="line"><span class="string">Jump.	Saute.	CC-BY 2.0 (France) Attribution: tatoeba.org #631038 (Shishir) &amp; #2416938 (Phoenix)</span></span><br><span class="line"><span class="string">Stop!	Ça suffit !	CC-BY 2.0 (France) Attribution: tato</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="导入包和模块以及数据文件"><a href="#导入包和模块以及数据文件" class="headerlink" title="导入包和模块以及数据文件"></a>导入包和模块以及数据文件</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># import dataset</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.listdir(<span class="string">'path to storaged file of dataset'</span>)</span><br><span class="line"><span class="comment"># import package and module</span></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">'path to file storge d2lzh1981'</span>)</span><br><span class="line"><span class="keyword">import</span> collections</span><br><span class="line"><span class="keyword">import</span> d2l</span><br><span class="line"><span class="keyword">import</span> zipfile</span><br><span class="line"><span class="keyword">from</span> d2l.data.base <span class="keyword">import</span> Vocab</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"><span class="keyword">from</span> torch.utils <span class="keyword">import</span> data</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> optim</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h3><p>将数据集清洗、转化为神经网络的输入minbatch</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">'data file'</span>, <span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">      raw_text = f.read()</span><br><span class="line">print(raw_text[<span class="number">0</span>:<span class="number">1000</span>])</span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string">针对上边的example data 进行处理</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="comment"># 去掉乱码</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">preprocess_raw</span><span class="params">(text)</span>:</span></span><br><span class="line">    <span class="comment"># 去掉法文中的空格</span></span><br><span class="line">    text = text.replace(<span class="string">'\u202f'</span>, <span class="string">' '</span>).replace(<span class="string">'\xa0'</span>, <span class="string">' '</span>)</span><br><span class="line">    out = <span class="string">''</span></span><br><span class="line">    <span class="comment"># 大小写归一</span></span><br><span class="line">    <span class="keyword">for</span> i, char <span class="keyword">in</span> enumerate(text.lower()):</span><br><span class="line">        <span class="comment"># 在单词和标点符号之间加上空格</span></span><br><span class="line">        <span class="keyword">if</span> char <span class="keyword">in</span> (<span class="string">','</span>, <span class="string">'!'</span>, <span class="string">'.'</span>) <span class="keyword">and</span> i &gt; <span class="number">0</span> <span class="keyword">and</span> text[i<span class="number">-1</span>] != <span class="string">' '</span>:</span><br><span class="line">            out += <span class="string">' '</span></span><br><span class="line">        out += char</span><br><span class="line">    <span class="keyword">return</span> out</span><br><span class="line"></span><br><span class="line">text = preprocess_raw(raw_text)</span><br><span class="line">print(text[<span class="number">0</span>:<span class="number">1000</span>])</span><br></pre></td></tr></table></figure>
+<p>&ensp;&ensp;&ensp;&ensp;字符在计算机里是以编码的形式存在，我们通常所用的空格是 \x20 ，是在标准ASCII可见字符 0x20~0x7e 范围内。</p>
+<p>&ensp;&ensp;&ensp;&ensp;而 \xa0 属于 latin1 （ISO/IEC_8859-1）中的扩展字符集字符，代表不间断空白符nbsp(non-breaking space)，超出gbk编码范围，是需要去除的特殊字符。再数据预处理的过程中，我们首先需要对数据进行清洗。</p>
+<h3 id="分词"><a href="#分词" class="headerlink" title="分词"></a>分词</h3><blockquote>
+<p>字符串：单词组成的列表</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">num_examples = <span class="number">50000</span></span><br><span class="line">source, target = [], []</span><br><span class="line"><span class="comment"># 分开每个样本</span></span><br><span class="line"><span class="keyword">for</span> i, line <span class="keyword">in</span> enumerate(text.split(<span class="string">'\n'</span>)):</span><br><span class="line">    <span class="keyword">if</span> i &gt; num_examples:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    <span class="comment"># 取元素</span></span><br><span class="line">    parts = line.split(<span class="string">'\t'</span>)</span><br><span class="line">    <span class="keyword">if</span> len(parts) &gt;= <span class="number">2</span>:</span><br><span class="line">        source.append(parts[<span class="number">0</span>].split(<span class="string">' '</span>))</span><br><span class="line">        target.append(parts[<span class="number">1</span>].split(<span class="string">' '</span>))</span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string"># test     </span></span><br><span class="line"><span class="string">source[0:3], target[0:3]</span></span><br><span class="line"><span class="string"># result</span></span><br><span class="line"><span class="string">([['go', '.'], ['hi', '.'], ['hi', '.']],</span></span><br><span class="line"><span class="string"> [['va', '!'], ['salut', '!'], ['salut', '.']])</span></span><br><span class="line"><span class="string">'''</span></span><br><span class="line">d2l.set_figsize()</span><br><span class="line">d2l.plt.hist([[len(l) <span class="keyword">for</span> l <span class="keyword">in</span> source], [len(l) <span class="keyword">for</span> l <span class="keyword">in</span> target]],label=[<span class="string">'source'</span>, <span class="string">'target'</span>])</span><br><span class="line">d2l.plt.legend(loc=<span class="string">'upper right'</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="建立词典"><a href="#建立词典" class="headerlink" title="建立词典"></a>建立词典</h3><blockquote>
+<p>此处利用 <a href="https://blog.csdn.net/RokoBasilisk/article/details/104297072" target="_blank" rel="noopener"><strong>文本预处理Text Preprocessing</strong></a>中的 Vocab 类</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_vocab</span><span class="params">(tokens)</span>:</span></span><br><span class="line">    <span class="comment"># 取出单词连成列表</span></span><br><span class="line">    tokens = [token <span class="keyword">for</span> line <span class="keyword">in</span> tokens <span class="keyword">for</span> token <span class="keyword">in</span> line]</span><br><span class="line">    <span class="keyword">return</span> d2l.data.base.Vocab(tokens, min_freq=<span class="number">3</span>, use_special_tokens=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">src_vocab = build_vocab(source)</span><br><span class="line">len(src_vocab)</span><br></pre></td></tr></table></figure>
+
+<h3 id="载入数据集得到数据生成器"><a href="#载入数据集得到数据生成器" class="headerlink" title="载入数据集得到数据生成器"></a>载入数据集得到数据生成器</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">pad</span><span class="params">(line, max_len, padding_token)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> len(line) &gt; max_len:</span><br><span class="line">        <span class="keyword">return</span> line[:max_len]</span><br><span class="line">    <span class="keyword">return</span> line + [padding_token] * (max_len - len(line))</span><br><span class="line">pad(src_vocab[source[<span class="number">0</span>]], <span class="number">10</span>, src_vocab.pad)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># is_source a判断是否是法语</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">build_array</span><span class="params">(lines, vocab, max_len, is_source)</span>:</span></span><br><span class="line">    lines = [vocab[line] <span class="keyword">for</span> line <span class="keyword">in</span> lines]</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> is_source:</span><br><span class="line">        lines = [[vocab.bos] + line + [vocab.eos] <span class="keyword">for</span> line <span class="keyword">in</span> lines]</span><br><span class="line">    array = torch.tensor([pad(line, max_len, vocab.pad) <span class="keyword">for</span> line <span class="keyword">in</span> lines])</span><br><span class="line">    <span class="comment"># 有效长度：保留句子的有效长度</span></span><br><span class="line">    valid_len = (array != vocab.pad).sum(<span class="number">1</span>) <span class="comment">#第一个维度</span></span><br><span class="line">    <span class="keyword">return</span> array, valid_len</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 数据生成器</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_data_nmt</span><span class="params">(batch_size, max_len)</span>:</span> <span class="comment"># This function is saved in d2l.</span></span><br><span class="line">    src_vocab, tgt_vocab = build_vocab(source), build_vocab(target)</span><br><span class="line">    src_array, src_valid_len = build_array(source, src_vocab, max_len, <span class="literal">True</span>)</span><br><span class="line">    tgt_array, tgt_valid_len = build_array(target, tgt_vocab, max_len, <span class="literal">False</span>)</span><br><span class="line">    <span class="comment"># 验证四个参数是否都相同</span></span><br><span class="line">    train_data = data.TensorDataset(src_array, src_valid_len, tgt_array, tgt_valid_len)</span><br><span class="line">    train_iter = data.DataLoader(train_data, batch_size, shuffle=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> src_vocab, tgt_vocab, train_iter</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>机器翻译</p>
+<blockquote>
+<p>困难：输入和输出不等价</p>
+</blockquote>
+</blockquote>
+<h2 id="Encoder-Decoder"><a href="#Encoder-Decoder" class="headerlink" title="Encoder-Decoder"></a>Encoder-Decoder</h2><p>Encoder经常用循环神经网络，Decoder通过判断对后一个输出是不是eos来判断翻译是否结束</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWpjYXQzYzhtLnBuZw?x-oss-process=image/format,png" alt="Image Name"></p>
+<blockquote>
+<p>应用</p>
+<blockquote>
+<p>Encoder-Decoder常应用于输入序列和输出序列的长度是可变的，而分类问题的输出是固定的类别，不需要使用Encoder-Decoder</p>
+</blockquote>
+<p>机器翻译 、语音识别任务、对话机器人【属于】<br>文本分类任务【不属于】</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Encoder</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, **kwargs)</span>:</span></span><br><span class="line">        super(Encoder, self).__init__(**kwargs)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, X, *args)</span>:</span></span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Decoder</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, **kwargs)</span>:</span></span><br><span class="line">        super(Decoder, self).__init__(**kwargs)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">init_state</span><span class="params">(self, enc_outputs, *args)</span>:</span></span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, X, state)</span>:</span></span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EncoderDecoder</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, encoder, decoder, **kwargs)</span>:</span></span><br><span class="line">        super(EncoderDecoder, self).__init__(**kwargs)</span><br><span class="line">        self.encoder = encoder</span><br><span class="line">        self.decoder = decoder</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, enc_X, dec_X, *args)</span>:</span></span><br><span class="line">        <span class="comment"># 类似于H_&#123;-1&#125;</span></span><br><span class="line">        enc_outputs = self.encoder(enc_X, *args)</span><br><span class="line">        dec_state = self.decoder.init_state(enc_outputs, *args)</span><br><span class="line">        <span class="keyword">return</span> self.decoder(dec_X, dec_state)</span><br></pre></td></tr></table></figure>
+<h2 id="Sequence-to-Sequence模型"><a href="#Sequence-to-Sequence模型" class="headerlink" title="Sequence to Sequence模型"></a>Sequence to Sequence模型</h2><h3 id="模型："><a href="#模型：" class="headerlink" title="模型："></a>模型：</h3><p>训练<br><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWpjN2E1M3B0LnBuZw?x-oss-process=image/format,png" alt="Image Name"><br>预测</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWpjZWN4Y2JhLnBuZw?x-oss-process=image/format,png" alt="Image Name"></p>
+<h3 id="具体结构：-LSTM"><a href="#具体结构：-LSTM" class="headerlink" title="具体结构：(LSTM)"></a>具体结构：(LSTM)</h3><center><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWpjY2poa2lpLnBuZw?x-oss-process=image/format,png" /></center>
+
+<h4 id="Encoder-–-state"><a href="#Encoder-–-state" class="headerlink" title="Encoder – state"></a>Encoder – state</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Seq2SeqEncoder</span><span class="params">(d2l.Encoder)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, vocab_size, embed_size, num_hiddens, num_layers,</span></span></span><br><span class="line"><span class="function"><span class="params">                 dropout=<span class="number">0</span>, **kwargs)</span>:</span></span><br><span class="line">        super(Seq2SeqEncoder, self).__init__(**kwargs)</span><br><span class="line">        self.num_hiddens=num_hiddens</span><br><span class="line">        self.num_layers=num_layers</span><br><span class="line">        self.embedding = nn.Embedding(vocab_size, embed_size)</span><br><span class="line">        self.rnn = nn.LSTM(embed_size,num_hiddens, num_layers, dropout=dropout)</span><br><span class="line">   </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">begin_state</span><span class="params">(self, batch_size, device)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> [torch.zeros(size=(self.num_layers, batch_size, self.num_hiddens),  device=device),</span><br><span class="line">                torch.zeros(size=(self.num_layers, batch_size, self.num_hiddens),  device=device)]</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, X, *args)</span>:</span></span><br><span class="line">        X = self.embedding(X) <span class="comment"># X shape: (batch_size, seq_len, embed_size)</span></span><br><span class="line">        <span class="comment"># 第0维和第1维之间调换</span></span><br><span class="line">        X = X.transpose(<span class="number">0</span>, <span class="number">1</span>)  <span class="comment"># RNN needs first axes to be time</span></span><br><span class="line">        <span class="comment"># state = self.begin_state(X.shape[1], device=X.device)</span></span><br><span class="line">        out, state = self.rnn(X)</span><br><span class="line">        <span class="comment"># The shape of out is (seq_len, batch_size, num_hiddens).</span></span><br><span class="line">        <span class="comment"># state contains the hidden state and the memory cell</span></span><br><span class="line">        <span class="comment"># of the last time step, the shape is (num_layers, batch_size, num_hiddens)</span></span><br><span class="line">        <span class="keyword">return</span> out, state</span><br></pre></td></tr></table></figure>
+<h4 id="Decoder-–-out"><a href="#Decoder-–-out" class="headerlink" title="Decoder – out"></a>Decoder – out</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Seq2SeqDecoder</span><span class="params">(d2l.Decoder)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, vocab_size, embed_size, num_hiddens, num_layers,</span></span></span><br><span class="line"><span class="function"><span class="params">                 dropout=<span class="number">0</span>, **kwargs)</span>:</span></span><br><span class="line">        super(Seq2SeqDecoder, self).__init__(**kwargs)</span><br><span class="line">        self.embedding = nn.Embedding(vocab_size, embed_size)</span><br><span class="line">        self.rnn = nn.LSTM(embed_size,num_hiddens, num_layers, dropout=dropout)</span><br><span class="line">        <span class="comment"># 输出的全连接层 映射翻译结果</span></span><br><span class="line">        self.dense = nn.Linear(num_hiddens,vocab_size)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">init_state</span><span class="params">(self, enc_outputs, *args)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> enc_outputs[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, X, state)</span>:</span></span><br><span class="line">        X = self.embedding(X).transpose(<span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">        out, state = self.rnn(X, state)</span><br><span class="line">        <span class="comment"># Make the batch to be the first dimension to simplify loss computation.</span></span><br><span class="line">        out = self.dense(out).transpose(<span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> out, state</span><br></pre></td></tr></table></figure>
+<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">SequenceMask</span><span class="params">(X, X_len,value=<span class="number">0</span>)</span>:</span></span><br><span class="line">    maxlen = X.size(<span class="number">1</span>)</span><br><span class="line">    mask = torch.arange(maxlen)[<span class="literal">None</span>, :].to(X_len.device) &lt; X_len[:, <span class="literal">None</span>]   </span><br><span class="line">    X[~mask]=value</span><br><span class="line">    <span class="keyword">return</span> X</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 继承交叉损失熵函数</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MaskedSoftmaxCELoss</span><span class="params">(nn.CrossEntropyLoss)</span>:</span></span><br><span class="line">    <span class="comment"># pred shape: (batch_size, seq_len, vocab_size)</span></span><br><span class="line">    <span class="comment"># label shape: (batch_size, seq_len)</span></span><br><span class="line">    <span class="comment"># valid_length shape: (batch_size, )</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, pred, label, valid_length)</span>:</span></span><br><span class="line">        <span class="comment"># the sample weights shape should be (batch_size, seq_len)</span></span><br><span class="line">        weights = torch.ones_like(label)</span><br><span class="line">        weights = SequenceMask(weights, valid_length).float()</span><br><span class="line">        self.reduction=<span class="string">'none'</span></span><br><span class="line">        output=super(MaskedSoftmaxCELoss, self).forward(pred.transpose(<span class="number">1</span>,<span class="number">2</span>), label)</span><br><span class="line">        <span class="keyword">return</span> (output*weights).mean(dim=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train_ch7</span><span class="params">(model, data_iter, lr, num_epochs, device)</span>:</span>  <span class="comment"># Saved in d2l</span></span><br><span class="line">    model.to(device)</span><br><span class="line">    optimizer = optim.Adam(model.parameters(), lr=lr)</span><br><span class="line">    loss = MaskedSoftmaxCELoss()</span><br><span class="line">    tic = time.time()</span><br><span class="line">    <span class="keyword">for</span> epoch <span class="keyword">in</span> range(<span class="number">1</span>, num_epochs+<span class="number">1</span>):</span><br><span class="line">        l_sum, num_tokens_sum = <span class="number">0.0</span>, <span class="number">0.0</span></span><br><span class="line">        <span class="keyword">for</span> batch <span class="keyword">in</span> data_iter:</span><br><span class="line">            optimizer.zero_grad()</span><br><span class="line">            X, X_vlen, Y, Y_vlen = [x.to(device) <span class="keyword">for</span> x <span class="keyword">in</span> batch]</span><br><span class="line">            <span class="comment"># bos word eos</span></span><br><span class="line">            Y_input, Y_label, Y_vlen = Y[:,:<span class="number">-1</span>], Y[:,<span class="number">1</span>:], Y_vlen<span class="number">-1</span></span><br><span class="line">            </span><br><span class="line">            Y_hat, _ = model(X, Y_input, X_vlen, Y_vlen)</span><br><span class="line">            <span class="comment"># 评估训练好坏</span></span><br><span class="line">            l = loss(Y_hat, Y_label, Y_vlen).sum()</span><br><span class="line">            l.backward()</span><br><span class="line">            <span class="comment"># 梯度裁剪</span></span><br><span class="line">            <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">                d2l.grad_clipping_nn(model, <span class="number">5</span>, device)</span><br><span class="line">            num_tokens = Y_vlen.sum().item()</span><br><span class="line">            optimizer.step()</span><br><span class="line">            l_sum += l.sum().item()</span><br><span class="line">            num_tokens_sum += num_tokens</span><br><span class="line">        <span class="keyword">if</span> epoch % <span class="number">50</span> == <span class="number">0</span>:</span><br><span class="line">            print(<span class="string">"epoch &#123;0:4d&#125;,loss &#123;1:.3f&#125;, time &#123;2:.1f&#125; sec"</span>.format( </span><br><span class="line">                  epoch, (l_sum/num_tokens_sum), time.time()-tic))</span><br><span class="line">            tic = time.time()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">embed_size, num_hiddens, num_layers, dropout = <span class="number">32</span>, <span class="number">32</span>, <span class="number">2</span>, <span class="number">0.0</span></span><br><span class="line">batch_size, num_examples, max_len = <span class="number">64</span>, <span class="number">1e3</span>, <span class="number">10</span></span><br><span class="line">lr, num_epochs, ctx = <span class="number">0.005</span>, <span class="number">300</span>, d2l.try_gpu()</span><br><span class="line">src_vocab, tgt_vocab, train_iter = d2l.load_data_nmt(</span><br><span class="line">    batch_size, max_len,num_examples)</span><br><span class="line">encoder = Seq2SeqEncoder(</span><br><span class="line">    len(src_vocab), embed_size, num_hiddens, num_layers, dropout)</span><br><span class="line">decoder = Seq2SeqDecoder(</span><br><span class="line">    len(tgt_vocab), embed_size, num_hiddens, num_layers, dropout)</span><br><span class="line">model = d2l.EncoderDecoder(encoder, decoder)</span><br><span class="line">train_ch7(model, train_iter, lr, num_epochs, ctx)</span><br></pre></td></tr></table></figure>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">translate_ch7</span><span class="params">(model, src_sentence, src_vocab, tgt_vocab, max_len, device)</span>:</span></span><br><span class="line">    src_tokens = src_vocab[src_sentence.lower().split(<span class="string">' '</span>)]</span><br><span class="line">    src_len = len(src_tokens)</span><br><span class="line">    <span class="keyword">if</span> src_len &lt; max_len:</span><br><span class="line">        src_tokens += [src_vocab.pad] * (max_len - src_len)</span><br><span class="line">    enc_X = torch.tensor(src_tokens, device=device)</span><br><span class="line">    enc_valid_length = torch.tensor([src_len], device=device)</span><br><span class="line">    <span class="comment"># use expand_dim to add the batch_size dimension.</span></span><br><span class="line">    enc_outputs = model.encoder(enc_X.unsqueeze(dim=<span class="number">0</span>), enc_valid_length)</span><br><span class="line">    dec_state = model.decoder.init_state(enc_outputs, enc_valid_length)</span><br><span class="line">    dec_X = torch.tensor([tgt_vocab.bos], device=device).unsqueeze(dim=<span class="number">0</span>)</span><br><span class="line">    predict_tokens = []</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(max_len):</span><br><span class="line">        Y, dec_state = model.decoder(dec_X, dec_state)</span><br><span class="line">        <span class="comment"># The token with highest score is used as the next time step input.</span></span><br><span class="line">        dec_X = Y.argmax(dim=<span class="number">2</span>)</span><br><span class="line">        py = dec_X.squeeze(dim=<span class="number">0</span>).int().item()</span><br><span class="line">        <span class="keyword">if</span> py == tgt_vocab.eos:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        predict_tokens.append(py)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">' '</span>.join(tgt_vocab.to_tokens(predict_tokens))</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> sentence <span class="keyword">in</span> [<span class="string">'Go .'</span>, <span class="string">'Wow !'</span>, <span class="string">"I'm OK ."</span>, <span class="string">'I love you !'</span>]:</span><br><span class="line">    print(sentence + <span class="string">' =&gt; '</span> + translate_ch7(</span><br><span class="line">        model, sentence, src_vocab, tgt_vocab, max_len, ctx))</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Result</span></span><br><span class="line">Go . =&gt; va !</span><br><span class="line">Wow ! =&gt; &lt;unk&gt; !</span><br><span class="line">I<span class="string">'m OK . =&gt; je vais bien .</span></span><br><span class="line"><span class="string">I love you ! =&gt; reste &lt;unk&gt; !</span></span><br></pre></td></tr></table></figure>
+<h2 id="Beam-Search"><a href="#Beam-Search" class="headerlink" title="Beam Search"></a>Beam Search</h2><ul>
+<li>简单 贪心搜索（greedy search）：</li>
+</ul>
+<blockquote>
+<p>针对每一个 out 取最大概率<br><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWpjaHFvcHBuLnBuZw?x-oss-process=image/format,png" alt="Image Name"></p>
+</blockquote>
+<ul>
+<li>维特比算法：选择整体分数最高的句子（搜索空间太大）</li>
+<li>集束搜索：<blockquote>
+<p>集束搜索是维特比算法的贪心形式，所以集束搜索得到的并非是全局最优解<br/><br>集束搜索使用 beam size 参数来限制在每一步保留下来的可能性词的数量</p>
+</blockquote>
+</li>
+</ul>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWpjaWE4NnoxLnBuZw?x-oss-process=image/format,png" alt="Image Name"></p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/MT/"># MT</a>
+                    
+                        <a href="/tags/encoder-decoder/"># encoder-decoder</a>
+                    
+                        <a href="/tags/Seq2seq%E6%A8%A1%E5%9E%8B/"># Seq2seq模型</a>
+                    
+                        <a href="/tags/%E9%9B%86%E6%9D%9F%E6%90%9C%E7%B4%A2/"># 集束搜索</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/02/28/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%E5%92%8CSeq2seq%E6%A8%A1%E5%9E%8B/">注意力机制和Seq2seq模型</a>
+            
+            
+            <a class="next" rel="next" href="/2020/02/28/%E5%AD%A6%E8%80%8C%E5%90%8E%E6%80%9D,%E6%96%B9%E8%83%BD%E5%8F%91%E5%B1%95;%E6%80%9D%E8%80%8C%E7%AB%8B%E8%A1%8C,%E7%BB%88%E5%B0%86%E5%8D%93%E8%B6%8A/">学而后思,方能发展;思而立行,终将卓越</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+</footer>
+
+    </div>
+</body>
+</html>

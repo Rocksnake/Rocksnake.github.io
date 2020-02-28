@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>Text Preprocessing | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Text Preprocessing</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">February 28, 2020&nbsp;&nbsp;10:04:02</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Machine-Learning/">Machine Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <blockquote>
+<blockquote>
+<p>打开 Google， 输入搜索关键词，显示上百条搜索结果</p>
+</blockquote>
+<blockquote>
+<p>打开 Google Translate， 输入待翻译文本，翻译结果框中显示出翻译结果</p>
+</blockquote>
+<p>以上二者的共同点便是文本预处理 Pre-Processing</p>
+</blockquote>
+<p>在 NLP 项目中，文本预处理占据了超过半数的时间，其重要性不言而喻。</p>
+<hr>
+<div align=center>
+当然<br>
+也可以利用完备且效率可观的工具可以快速完成项目
+</div>
+For Example： 我一直在使用的由 哈工大社会计算与信息检索研究中心开发的 （LTP，Language Technology Platform ）语言技术平台
+
+<hr>
+<h1 id="文本预处理"><a href="#文本预处理" class="headerlink" title="文本预处理"></a>文本预处理</h1><p>文本是一类序列数据，一篇文章可以看作是字符或单词的序列，本节将介绍文本数据的常见预处理步骤，预处理通常包括四个步骤：</p>
+<p>【较为简单的步骤，如果需要专门做NLP相关的时候，要进行特殊的预处理】</p>
+<ol>
+<li>读入文本</li>
+<li>分词</li>
+<li>建立字典，将每个词映射到一个唯一的索引（index）</li>
+<li>将文本从词的序列转换为索引的序列，方便输入模型</li>
+</ol>
+<h2 id="中英文文本预处理的特点"><a href="#中英文文本预处理的特点" class="headerlink" title="中英文文本预处理的特点"></a>中英文文本预处理的特点</h2><ul>
+<li><p>中文文本是没有像英文的单词空格那样隔开的，因此不能直接像英文一样可以直接用最简单的空格和标点符号完成分词。所以一般我们需要用分词算法来完成分词。</p>
+</li>
+<li><p>英文文本的预处理特殊在拼写问题，很多时候，对英文预处理要包括拼写检查，比如“Helo World”这样的错误，我们不能在分析的时候再去纠错。还有就是词干提取(stemming)和词形还原(lemmatization)，主要是因为英文中一个词会存在不同的形式，这个步骤有点像孙悟空的火眼金睛，直接得到单词的原始形态。For Example：” faster “、” fastest “ -&gt; “ fast “；“ leafs ”、“ leaves ” -&gt;  “ leaf “ 。</p>
+</li>
+</ul>
+<blockquote>
+<p>本文进行简要的介绍和实现<br>详细可参考：<a href="https://www.analyticsvidhya.com/blog/2017/06/word-embeddings-count-word2veec/" target="_blank" rel="noopener">https://www.analyticsvidhya.com/blog/2017/06/word-embeddings-count-word2veec/</a></p>
+</blockquote>
+<h3 id="读入文本"><a href="#读入文本" class="headerlink" title="读入文本"></a>读入文本</h3><p>引入数据源：<a href="http://www.gutenberg.org/ebooks/35" target="_blank" rel="noopener">http://www.gutenberg.org/ebooks/35</a>【小说 Time Machine】</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> collections</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_time_machine</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'path to timemachine.txt'</span>, <span class="string">'r'</span>) <span class="keyword">as</span> f: <span class="comment">#每次处理一行</span></span><br><span class="line">        lines = [re.sub(<span class="string">'[^a-z]+'</span>, <span class="string">' '</span>, line.strip().lower()) <span class="keyword">for</span> line <span class="keyword">in</span> f]  <span class="comment">#正则表达式</span></span><br><span class="line">    <span class="keyword">return</span> lines</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">lines = read_time_machine()</span><br><span class="line">print(<span class="string">'# sentences %d'</span> % len(lines))</span><br></pre></td></tr></table></figure>
+
+<h3 id="分词"><a href="#分词" class="headerlink" title="分词"></a>分词</h3><p>对每个句子进行分词，也就是将一个句子划分成若干个词（token），转换为一个词的序列。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tokenize</span><span class="params">(sentences, token=<span class="string">'word'</span>)</span>:</span></span><br><span class="line">    <span class="string">"""Split sentences into word or char tokens"""</span></span><br><span class="line">    <span class="keyword">if</span> token == <span class="string">'word'</span>:</span><br><span class="line">        <span class="keyword">return</span> [sentence.split(<span class="string">' '</span>) <span class="keyword">for</span> sentence <span class="keyword">in</span> sentences]</span><br><span class="line">    <span class="keyword">elif</span> token == <span class="string">'char'</span>:</span><br><span class="line">        <span class="keyword">return</span> [list(sentence) <span class="keyword">for</span> sentence <span class="keyword">in</span> sentences]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">'ERROR: unkown token type '</span>+token)</span><br><span class="line"></span><br><span class="line">tokens = tokenize(lines)</span><br><span class="line">tokens[<span class="number">0</span>:<span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#分词结果:</span></span><br><span class="line">[[<span class="string">'the'</span>, <span class="string">'time'</span>, <span class="string">'machine'</span>, <span class="string">'by'</span>, <span class="string">'h'</span>, <span class="string">'g'</span>, <span class="string">'wells'</span>, <span class="string">''</span>], [<span class="string">''</span>]]</span><br></pre></td></tr></table></figure>
+
+<h3 id="建立字典"><a href="#建立字典" class="headerlink" title="建立字典"></a>建立字典</h3><p>为了方便模型处理，将字符串转换为数字。因此先构建一个字典（vocabulary），将每个词映射到一个唯一的索引编号。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Vocab</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="comment"># 构建Vocab类时注意：句子长度统计与构建字典无关 | 所以不必要进行句子长度统计</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, tokens, min_freq=<span class="number">0</span>, use_special_tokens=False)</span>:</span></span><br><span class="line">        counter = count_corpus(tokens)  <span class="comment">#&lt;key,value&gt;:&lt;词，词频&gt; </span></span><br><span class="line">        self.token_freqs = list(counter.items()) <span class="comment">#去重并统计词频</span></span><br><span class="line">        self.idx_to_token = []</span><br><span class="line">        <span class="keyword">if</span> use_special_tokens:</span><br><span class="line">            <span class="comment"># padding, begin of sentence, end of sentence, unknown</span></span><br><span class="line">            self.pad, self.bos, self.eos, self.unk = (<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">            self.idx_to_token += [<span class="string">'&lt;pad&gt;'</span>, <span class="string">'&lt;bos&gt;'</span>, <span class="string">'&lt;eos&gt;'</span>, <span class="string">'&lt;unk&gt;'</span>]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.unk = <span class="number">0</span></span><br><span class="line">            self.idx_to_token += [<span class="string">'&lt;unk&gt;'</span>]</span><br><span class="line">        self.idx_to_token += [token <span class="keyword">for</span> token, freq <span class="keyword">in</span> self.token_freqs</span><br><span class="line">                        <span class="keyword">if</span> freq &gt;= min_freq <span class="keyword">and</span> token <span class="keyword">not</span> <span class="keyword">in</span> self.idx_to_token]</span><br><span class="line">        self.token_to_idx = dict()</span><br><span class="line">        <span class="keyword">for</span> idx, token <span class="keyword">in</span> enumerate(self.idx_to_token):</span><br><span class="line">            self.token_to_idx[token] = idx</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span><span class="params">(self)</span>:</span> <span class="comment"># 返回字典的大小</span></span><br><span class="line">        <span class="keyword">return</span> len(self.idx_to_token)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span><span class="params">(self, tokens)</span>:</span>  <span class="comment"># 词到索引的映射</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> isinstance(tokens, (list, tuple)):</span><br><span class="line">            <span class="keyword">return</span> self.token_to_idx.get(tokens, self.unk)</span><br><span class="line">        <span class="keyword">return</span> [self.__getitem__(token) <span class="keyword">for</span> token <span class="keyword">in</span> tokens]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">to_tokens</span><span class="params">(self, indices)</span>:</span>  <span class="comment">#索引到词的映射</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> isinstance(indices, (list, tuple)):</span><br><span class="line">            <span class="keyword">return</span> self.idx_to_token[indices]</span><br><span class="line">        <span class="keyword">return</span> [self.idx_to_token[index] <span class="keyword">for</span> index <span class="keyword">in</span> indices]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">count_corpus</span><span class="params">(sentences)</span>:</span></span><br><span class="line">    tokens = [tk <span class="keyword">for</span> st <span class="keyword">in</span> sentences <span class="keyword">for</span> tk <span class="keyword">in</span> st]</span><br><span class="line">    <span class="keyword">return</span> collections.Counter(tokens)  <span class="comment"># 返回一个字典，记录每个词的出现次数</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>&lt; unk &gt;    较为特殊，表示为登录词，无论 use_special_token 参数是否为真，都会用到</p>
+</blockquote>
+<h3 id="将词转为索引"><a href="#将词转为索引" class="headerlink" title="将词转为索引"></a>将词转为索引</h3><p>使用字典，我们可以将原文本中的句子从单词序列转换为索引序列</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">8</span>, <span class="number">10</span>):</span><br><span class="line">    print(<span class="string">'words:'</span>, tokens[i])</span><br><span class="line">    print(<span class="string">'indices:'</span>, vocab[tokens[i]])</span><br></pre></td></tr></table></figure>
+<hr>
+<p>到此，按照常见步骤已经介绍完了</p>
+<p>我们对于分词这一重要关卡需要考虑的更多，上边实现的简要分词许多情形还未完善，只能实现部分特定的分词</p>
+<ol>
+<li>标点符号通常可以提供语义信息，但是我们的方法直接将其丢弃了</li>
+<li>类似“shouldn’t”, “doesn’t”这样的词会被错误地处理</li>
+<li>类似”Mr.”, “Dr.”这样的词会被错误地处理</li>
+</ol>
+<p>一者，我们可以通过引入更复杂的规则来解决这些问题，但是事实上，有一些现有的工具可以很好地进行分词，在这里简单介绍其中的两个：<a href="https://spacy.io/" target="_blank" rel="noopener">spaCy</a>和<a href="https://www.nltk.org/" target="_blank" rel="noopener">NLTK</a>。</p>
+<p>For Example :</p>
+<blockquote>
+<p>text = “Mr. Chen doesn’t agree with my suggestion.”</p>
+</blockquote>
+<h2 id="spaCy"><a href="#spaCy" class="headerlink" title="spaCy"></a>spaCy</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> spacy</span><br><span class="line">nlp = spacy.load(<span class="string">'en_core_web_sm'</span>)</span><br><span class="line">doc = nlp(text)</span><br><span class="line">print([token.text <span class="keyword">for</span> token <span class="keyword">in</span> doc])</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Result:</span><br><span class="line">[<span class="string">'Mr.'</span>, <span class="string">'Chen'</span>, <span class="string">'does'</span>, <span class="string">"n't"</span>, <span class="string">'agree'</span>, <span class="string">'with'</span>, <span class="string">'my'</span>, <span class="string">'suggestion'</span>, <span class="string">'.'</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="NLTK"><a href="#NLTK" class="headerlink" title="NLTK"></a>NLTK</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> nltk.tokenize <span class="keyword">import</span> word_tokenize</span><br><span class="line"><span class="keyword">from</span> nltk <span class="keyword">import</span> data</span><br><span class="line">data.path.append(<span class="string">'/home/kesci/input/nltk_data3784/nltk_data'</span>)</span><br><span class="line">print(word_tokenize(text))</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Result:</span><br><span class="line">[<span class="string">'Mr.'</span>, <span class="string">'Chen'</span>, <span class="string">'does'</span>, <span class="string">"n't"</span>, <span class="string">'agree'</span>, <span class="string">'with'</span>, <span class="string">'my'</span>, <span class="string">'suggestion'</span>, <span class="string">'.'</span>]</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/NLP/"># NLP</a>
+                    
+                        <a href="/tags/%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86/"># 文本预处理</a>
+                    
+                        <a href="/tags/spaCy/"># spaCy</a>
+                    
+                        <a href="/tags/NLTK/"># NLTK</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/02/28/Language%20Model%20&%20Data%20Sampling/">Language Model & Data Sampling</a>
+            
+            
+            <a class="next" rel="next" href="/2020/02/28/Multilayer%20Perceptron%20&%20Classify%20image/">Multilayer Perceptron & Classify image</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+</footer>
+
+    </div>
+</body>
+</html>

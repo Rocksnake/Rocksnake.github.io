@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>学而后思,方能发展;思而立行,终将卓越 | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">学而后思,方能发展;思而立行,终将卓越</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">February 28, 2020&nbsp;&nbsp;10:15:37</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Machine-Learning/">Machine Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <center><b><font size=5>学而后思</font></b></center>
+
+<blockquote>
+<p>梯度爆炸和梯度衰减问题</p>
+</blockquote>
+<p>深度模型有关数值稳定性的典型问题是消失（vanishing）和爆炸（explosion）。</p>
+<p><strong>当神经网络的层数较多时，模型的数值稳定性容易变差。</strong></p>
+<p>假设一个层数为 $L$ 的多层感知机的第 $l$ 层 $\boldsymbol{H}^{(l)}$ 的权重参数为$\boldsymbol{W}^{(l)}$，输出层 $\boldsymbol{H}^{(L)}$ 的权重参数为 $\boldsymbol{W}^{(L)}$。</p>
+<p>为了便于讨论，不考虑偏差参数，且设所有隐藏层的激活函数为<code>恒等映射</code>（identity mapping）$\phi(x) = x$。</p>
+<p>给定输入$\boldsymbol{X}$，多层感知机的第$l$层的输出$\boldsymbol{H}^{(l)} = \boldsymbol{X} \boldsymbol{W}^{(1)} \boldsymbol{W}^{(2)} \ldots \boldsymbol{W}^{(l)}$。此时，如果层数$l$较大，$\boldsymbol{H}^{(l)}$的计算可能会出现衰减或爆炸。</p>
+<p>For Example：假设输入和所有层的权重参数都是标量，如权重参数为0.2和5，多层感知机的第30层输出为输入$\boldsymbol{X}$分别与$0.2^{30} \approx 1 \times 10^{-21}$（消失）和$5^{30} \approx 9 \times 10^{20}$（爆炸）的乘积。当层数较多时，梯度的计算也容易出现消失或爆炸。</p>
+<hr>
+<p>解决方案：</p>
+<ul>
+<li>梯度爆炸：<a href="https://blog.csdn.net/RokoBasilisk/article/details/104307813" target="_blank" rel="noopener">裁剪梯度</a></li>
+<li>梯度衰减：<a href="https://blog.csdn.net/RokoBasilisk/article/details/104340035" target="_blank" rel="noopener">GRU</a></li>
+</ul>
+<hr>
+<blockquote>
+<p>过拟合和欠拟合问题</p>
+</blockquote>
+<ul>
+<li><a href="https://blog.csdn.net/RokoBasilisk/article/details/104344237" target="_blank" rel="noopener">从模型训练中认知拟合现象</a></li>
+</ul>
+<blockquote>
+<p>随机初始化模型参数</p>
+<blockquote>
+<p>如何占据神经网络中不可或缺的位置？</p>
+</blockquote>
+</blockquote>
+<p>话起 <a href="https://blog.csdn.net/RokoBasilisk/article/details/104287595" target="_blank" rel="noopener">多层感知机 [ Multilayer Perceptron ]</a> </p>
+<p>假设输出层只保留一个输出单元$o_1$（删去$o_2$和$o_3$以及指向它们的箭头），且隐藏层使用相同的激活函数。</p>
+<p>如果将每个隐藏单元的参数都初始化为相等的值，那么在正向传播时每个隐藏单元将根据相同的输入计算出相同的值，并传递至输出层。</p>
+<p>在反向传播中，每个隐藏单元的参数梯度值相等。因此，这些参数在使用基于梯度的优化算法迭代后值依然相等。之后的迭代也是如此。</p>
+<p>在这种情况下，无论隐藏单元有多少，<code>隐藏层本质上只有1个隐藏单元在发挥作用</code>。因此通常将神经网络的模型参数，特别是权重参数，进行随机初始化。</p>
+<center><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWpnNzZrbG95LnBuZw?x-oss-process=image/format,png" /></center>
+
+<blockquote>
+<blockquote>
+<p>列举两种随机初始化方式</p>
+</blockquote>
+</blockquote>
+<h4 id="PyTorch的默认随机初始化"><a href="#PyTorch的默认随机初始化" class="headerlink" title="PyTorch的默认随机初始化"></a>PyTorch的默认随机初始化</h4><p><a href="https://blog.csdn.net/RokoBasilisk/article/details/104269986" target="_blank" rel="noopener">Design and Realization of Linear Regression</a> 中，使用 torch.nn.init.normal_() 使模型 net 的权重参数采用正态分布的随机初始化方式。</p>
+<p>PyTorch中 nn.Module 的模块参数都采取了较为合理的初始化策略（不同类型的layer具体采样的哪一种初始化方法的可参考<a href="https://github.com/pytorch/pytorch/tree/master/torch/nn/modules" target="_blank" rel="noopener">源代码</a>），因此一般不用我们考虑。</p>
+<h4 id="Xavier随机初始化"><a href="#Xavier随机初始化" class="headerlink" title="Xavier随机初始化"></a>Xavier随机初始化</h4><p>假设某全连接层的输入个数为$a$，输出个数为$b$，Xavier随机初始化将使该层中权重参数的每个元素都随机采样于均匀分布</p>
+<p>$$<br>U\left(-\sqrt{\frac{6}{a+b}}, \sqrt{\frac{6}{a+b}}\right).<br>$$</p>
+<p>模型参数初始化后，每层输出的方差不该受该层输入个数影响，且每层梯度的方差也不该受该层输出个数影响。</p>
+<blockquote>
+<p>环境因素带来的问题</p>
+<blockquote>
+<p>1.协变量偏移<br/><br>2.标签偏移<br/><br>3.概念偏移</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>协变量偏移</p>
+</blockquote>
+<p><strong>For Example : 一个在冬季部署的物品推荐系统在夏季的物品推荐列表中出现了圣诞礼物</strong></p>
+<p>我们假设，虽然输入的分布P(x)可能随时间而改变，但是标记函数，即条件分布P（y∣x）不会改变。【注意：容易忽视】</p>
+<p>对于区分猫和狗，假设我们的训练数据使用的是猫和狗的真实的照片，但是在测试时，我们被要求对猫和狗的卡通图片进行分类。显然，这不太可能奏效。</p>
+<p>训练集由照片组成，而测试集只包含卡通。在一个看起来与测试集有着本质不同的数据集上进行训练，而不考虑如何适应新的情况。</p>
+<p>问题的根源在于特征分布的变化 ( 即协变量的变化 ) , 统计学家称这种协变量变化。</p>
+<blockquote>
+<p>标签偏移</p>
+</blockquote>
+<p>如果数据量足够的情况下，确保训练数据集和测试集中的数据取自同一个数据集，可以防止协变量偏移和标签偏移是正确的。如果数据量很少，少到测试集中存在训练集中未包含的标签，就会发生标签偏移。</p>
+<p>当我们认为导致偏移的是标签P（y）上的边缘分布的变化，但类条件分布是不变的P（x∣y）时，就会出现相反的问题。当我们认为y导致x时，标签偏移是一个合理的假设。</p>
+<p>For Example：</p>
+<ul>
+<li>通常我们希望根据其表现来预测诊断结果。在这种情况下，我们认为诊断引起的表现，即疾病引起的症状。<br/><br>病因（要预测的诊断结果）导致 症状（观察到的结果）。  训练数据集，数据很少只包含流感p(y)的样本。  而测试数据集有流感p(y)和流感q(y)，其中不变的是流感症状p(x|y)。</li>
+<li>有时标签偏移和协变量移位假设可以同时成立。例如，当真正的标签函数是确定的和不变的。</li>
+</ul>
+<p><font color=#FF0000 >在概念转换中，有一种标签本身的定义发生变化的情况：<br></font></p>
+<blockquote>
+<p>概念偏移</p>
+</blockquote>
+<p>如果我们要建立一个机器翻译系统，分布P（y∣x）可能因我们的位置而异。这个问题很难发现。另一个可取之处是P（y∣x）通常只是逐渐变化。</p>
+<p>换句话说就是：<strong>概念偏移可以根据其缓慢变化的特点缓解。</strong></p>
+<center><b><font size=5>思而立行</font></b></center><br/>
+
+<p>Advanced Regression Techniques：House Prices</p>
+<h3 id="导入数据包和模块"><a href="#导入数据包和模块" class="headerlink" title="导入数据包和模块"></a>导入数据包和模块</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># import package and module</span></span><br><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">torch.set_default_tensor_type(torch.FloatTensor)</span><br><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> stats</span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span>  norm</span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler</span><br><span class="line"><span class="keyword">import</span> warnings</span><br><span class="line">warnings.filterwarnings(<span class="string">'ignore'</span>)</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> preprocessing</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> linear_model, svm, gaussian_process</span><br><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestRegressor</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据导入"><a href="#数据导入" class="headerlink" title="数据导入"></a>数据导入</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">test_data = pd.read_csv(<span class="string">"path to test.csv"</span>)</span><br><span class="line">train_data = pd.read_csv(<span class="string">"path to train.csv"</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="分析数据变化趋势"><a href="#分析数据变化趋势" class="headerlink" title="分析数据变化趋势"></a>分析数据变化趋势</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># analyze SalePrice of the train_data by describe</span></span><br><span class="line">train_data[<span class="string">'SalePrice'</span>].describe()</span><br><span class="line"><span class="comment"># show trend of SalePrice in train_data</span></span><br><span class="line">sns.distplot(train_data[<span class="string">'SalePrice'</span>])</span><br></pre></td></tr></table></figure>
+<center><img src="https://img-blog.csdnimg.cn/20200216221220752.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" /></center>
+
+<p><strong>根据SalePrice变化趋势分析为正态分布，设定两个图像特征峰度(Kurtosis)和偏度(Skewness)</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#skewness and kurtosis</span></span><br><span class="line">print(<span class="string">"Skewness: %f"</span> % train_data[<span class="string">'SalePrice'</span>].skew())</span><br><span class="line">print(<span class="string">"Kurtosis: %f"</span> % train_data[<span class="string">'SalePrice'</span>].kurt())</span><br></pre></td></tr></table></figure>
+<h3 id="提取有效特征"><a href="#提取有效特征" class="headerlink" title="提取有效特征"></a>提取有效特征</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">corrmat = train_data.corr()</span><br><span class="line">f, ax = plt.subplots(figsize=(<span class="number">20</span>, <span class="number">9</span>))</span><br><span class="line">sns.heatmap(corrmat, vmax=<span class="number">0.8</span>, square=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<center><img src="https://img-blog.csdnimg.cn/20200216220930264.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70"  width=500/></div>
+
+<h3 id="特征取舍和离散值参与分析"><a href="#特征取舍和离散值参与分析" class="headerlink" title="特征取舍和离散值参与分析"></a>特征取舍和离散值参与分析</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> preprocessing</span><br><span class="line">f_names = [<span class="string">'CentralAir'</span>, <span class="string">'Neighborhood'</span>]</span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> f_names:</span><br><span class="line">    label = preprocessing.LabelEncoder()</span><br><span class="line">    train_data[x] = label.fit_transform(train_data[x])</span><br><span class="line">corrmat = train_data.corr()</span><br><span class="line">f, ax = plt.subplots(figsize=(<span class="number">20</span>, <span class="number">9</span>))</span><br><span class="line">sns.heatmap(corrmat, vmax=<span class="number">0.8</span>, square=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>由相关性图可得：’CentralAir’, ‘Neighborhood’这两个特征对房价的影响并不大,舍去特征</strong></p>
+<h3 id="列出关系矩阵"><a href="#列出关系矩阵" class="headerlink" title="列出关系矩阵"></a>列出关系矩阵</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">k  = <span class="number">10</span> <span class="comment"># 关系矩阵中将显示10个特征</span></span><br><span class="line">cols = corrmat.nlargest(k, <span class="string">'SalePrice'</span>)[<span class="string">'SalePrice'</span>].index</span><br><span class="line">cm = np.corrcoef(train_data[cols].values.T)</span><br><span class="line">sns.set(font_scale=<span class="number">1.25</span>)</span><br><span class="line">hm = sns.heatmap(cm, cbar=<span class="literal">True</span>, annot=<span class="literal">True</span>, \</span><br><span class="line">                 square=<span class="literal">True</span>, fmt=<span class="string">'.2f'</span>, annot_kws=&#123;<span class="string">'size'</span>: <span class="number">10</span>&#125;, yticklabels=cols.values, xticklabels=cols.values)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<center><img src="https://img-blog.csdnimg.cn/20200216221404494.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" /></center>
+
+<h3 id="列出散点关系图"><a href="#列出散点关系图" class="headerlink" title="列出散点关系图"></a>列出散点关系图</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sns.set()</span><br><span class="line">cols = [<span class="string">'SalePrice'</span>,<span class="string">'OverallQual'</span>,<span class="string">'GrLivArea'</span>, <span class="string">'GarageCars'</span>,<span class="string">'TotalBsmtSF'</span>, <span class="string">'FullBath'</span>, <span class="string">'TotRmsAbvGrd'</span>, <span class="string">'YearBuilt'</span>]</span><br><span class="line">sns.pairplot(train_data[cols], size = <span class="number">2.5</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<h3 id="数据模拟"><a href="#数据模拟" class="headerlink" title="数据模拟"></a>数据模拟</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取数据</span></span><br><span class="line">cols = [<span class="string">'OverallQual'</span>,<span class="string">'GrLivArea'</span>, <span class="string">'GarageCars'</span>,<span class="string">'TotalBsmtSF'</span>, <span class="string">'FullBath'</span>, <span class="string">'TotRmsAbvGrd'</span>, <span class="string">'YearBuilt'</span>]</span><br><span class="line">x = train_data[cols].values</span><br><span class="line">y = train_data[<span class="string">'SalePrice'</span>].values</span><br><span class="line">x_scaled = preprocessing.StandardScaler().fit_transform(x)</span><br><span class="line">y_scaled = preprocessing.StandardScaler().fit_transform(y.reshape(<span class="number">-1</span>,<span class="number">1</span>))</span><br><span class="line">X_train,X_test, y_train, y_test = train_test_split(x_scaled, y_scaled, test_size=<span class="number">0.33</span>, random_state=<span class="number">42</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="随机森林回归"><a href="#随机森林回归" class="headerlink" title="随机森林回归"></a>随机森林回归</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 随机森林回归</span></span><br><span class="line">clfs = &#123;</span><br><span class="line">        <span class="string">'svm'</span>:svm.SVR(), </span><br><span class="line">        <span class="string">'RandomForestRegressor'</span>:RandomForestRegressor(n_estimators=<span class="number">400</span>),</span><br><span class="line">        <span class="string">'BayesianRidge'</span>:linear_model.BayesianRidge()</span><br><span class="line">       &#125;</span><br><span class="line"><span class="keyword">for</span> clf <span class="keyword">in</span> clfs:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        clfs[clf].fit(X_train, y_train)</span><br><span class="line">        y_pred = clfs[clf].predict(X_test)</span><br><span class="line">        print(clf + <span class="string">" cost:"</span> + str(np.sum(y_pred-y_test)/len(y_pred)) )</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        print(clf + <span class="string">" Error:"</span>)</span><br><span class="line">        print(str(e))</span><br></pre></td></tr></table></figure>
+<h3 id="预测"><a href="#预测" class="headerlink" title="预测"></a>预测</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 归一化数据的预测结果</span></span><br><span class="line">cols = [<span class="string">'OverallQual'</span>,<span class="string">'GrLivArea'</span>, <span class="string">'GarageCars'</span>,<span class="string">'TotalBsmtSF'</span>, <span class="string">'FullBath'</span>, <span class="string">'TotRmsAbvGrd'</span>, <span class="string">'YearBuilt'</span>]</span><br><span class="line">x = train_data[cols].values</span><br><span class="line">y = train_data[<span class="string">'SalePrice'</span>].values</span><br><span class="line">X_train,X_test, y_train, y_test = train_test_split(x, y, test_size=<span class="number">0.33</span>, random_state=<span class="number">42</span>)</span><br><span class="line"></span><br><span class="line">clf = RandomForestRegressor(n_estimators=<span class="number">400</span>)</span><br><span class="line">clf.fit(X_train, y_train)</span><br><span class="line">y_pred = clf.predict(X_test)</span><br><span class="line">print(y_pred)</span><br><span class="line">print(y_test)</span><br><span class="line">print(sum(abs(y_pred - y_test))/len(y_pred))</span><br></pre></td></tr></table></figure>
+
+<h3 id="检验"><a href="#检验" class="headerlink" title="检验"></a>检验</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># clf:训练模型</span></span><br><span class="line">rfr = clf</span><br><span class="line">test_data[cols].isnull().sum()</span><br><span class="line">test_data[<span class="string">'GarageCars'</span>].describe()</span><br><span class="line">test_data[<span class="string">'TotalBsmtSF'</span>].describe()</span><br><span class="line"></span><br><span class="line">cols2 = [<span class="string">'OverallQual'</span>,<span class="string">'GrLivArea'</span>, <span class="string">'FullBath'</span>, <span class="string">'TotRmsAbvGrd'</span>, <span class="string">'YearBuilt'</span>]</span><br><span class="line">cars = test_data[<span class="string">'GarageCars'</span>].fillna(<span class="number">1.766118</span>)</span><br><span class="line">bsmt = test_data[<span class="string">'TotalBsmtSF'</span>].fillna(<span class="number">1046.117970</span>)</span><br><span class="line">data_test_x = pd.concat( [test_data[cols2], cars, bsmt] ,axis=<span class="number">1</span>)</span><br><span class="line">data_test_x.isnull().sum()</span><br><span class="line"></span><br><span class="line">x = data_test_x.values</span><br><span class="line">y_te_pred = rfr.predict(x)</span><br><span class="line">print(y_te_pred)</span><br><span class="line"></span><br><span class="line">print(y_te_pred.shape)</span><br><span class="line">print(x.shape)</span><br><span class="line">print(data_test_x)</span><br></pre></td></tr></table></figure>
+<p><strong>输出数据表格式：1459 rows × 7 columns</strong></p>
+<h3 id="输出结果到文件"><a href="#输出结果到文件" class="headerlink" title="输出结果到文件"></a>输出结果到文件</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">prediction = pd.DataFrame(y_te_pred, columns=[<span class="string">'SalePrice'</span>])</span><br><span class="line">result = pd.concat([ test_data[<span class="string">'Id'</span>], prediction], axis=<span class="number">1</span>)</span><br><span class="line"><span class="comment"># result = result.drop(resultlt.columns[0], 1)</span></span><br><span class="line">result.columns</span><br><span class="line"><span class="comment"># 保存预测结果</span></span><br><span class="line">result.to_csv(<span class="string">'./Predictions.csv'</span>, index=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/kaggle/"># kaggle</a>
+                    
+                        <a href="/tags/%E6%A2%AF%E5%BA%A6%E9%97%AE%E9%A2%98/"># 梯度问题</a>
+                    
+                        <a href="/tags/%E6%8B%9F%E5%90%88%E7%8E%B0%E8%B1%A1/"># 拟合现象</a>
+                    
+                        <a href="/tags/%E7%8E%AF%E5%A2%83%E5%9B%A0%E7%B4%A0/"># 环境因素</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/02/28/%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E4%BB%8B%E7%BB%8D/">机器翻译及其相关技术介绍</a>
+            
+            
+            <a class="next" rel="next" href="/2020/02/28/%E4%BB%8E%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E4%B8%AD%E8%AE%A4%E7%9F%A5%E6%8B%9F%E5%90%88%E7%8E%B0%E8%B1%A1/">从模型训练中认知拟合现象</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+</footer>
+
+    </div>
+</body>
+</html>

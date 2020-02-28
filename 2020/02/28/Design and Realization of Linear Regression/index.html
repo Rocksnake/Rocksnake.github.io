@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>Design and Realization of Linear Regression | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Design and Realization of Linear Regression</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">February 28, 2020&nbsp;&nbsp;9:54:23</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Machine-Learning/">Machine Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h2 id="线性回归的基本要素"><a href="#线性回归的基本要素" class="headerlink" title="线性回归的基本要素"></a>线性回归的基本要素</h2><h3 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h3><p>$$<br>\mathrm{y} = w \cdot \mathrm{x} + b<br>$$</p>
+<h3 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h3><p>我们在收集到的数据中寻找合适的模型参数来使模型的预测价格与真实价格的误差最小。被训练的数据的集合称为训练数据集（training data set）或训练集（training set），每一条数据的主体作为一个样本（sample），被预测值称作标签（label），用来预测标签的因素叫作特征（feature）。特征用来表征样本的特点。</p>
+<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>在模型训练中，我们需要衡量价格预测值与真实值之间的误差。通常我们会选取一个非负数作为误差，且数值越小表示误差越小。一个常用的选择是平方函数。 它在评估索引为 $i$ 的样本误差的表达式为</p>
+<p>$$<br>l^{(i)}(\mathbf{w}, b) = \frac{1}{2} \left(\hat{y}^{(i)} - y^{(i)}\right)^2,<br>$$</p>
+<p>$$<br>L(\mathbf{w}, b) =\frac{1}{n}\sum_{i=1}^n l^{(i)}(\mathbf{w}, b) =\frac{1}{n} \sum_{i=1}^n \frac{1}{2}\left(\mathbf{w}^\top \mathbf{x}^{(i)} + b - y^{(i)}\right)^2.<br>$$</p>
+<h3 id="优化函数-随机梯度下降"><a href="#优化函数-随机梯度下降" class="headerlink" title="优化函数 - 随机梯度下降"></a>优化函数 - 随机梯度下降</h3><p>鉴于大多数深度学习模型并没有解析解，只能通过优化算法有限次迭代模型参数来尽可能降低损失函数的值，在这种求数值解的优化算法中，通常使用小批量随机梯度下降（mini-batch stochastic gradient descent）。</p>
+<blockquote>
+<p>算法</p>
+</blockquote>
+<p>先选取一组模型参数的初始值，如随机选取；接下来对参数进行多次迭代，使每次迭代都可能降低损失函数的值。在每次迭代中，先随机均匀采样一个由固定数目训练数据样本所组成的小批量（mini-batch）$\mathcal{B}$，然后求小批量中数据样本的平均损失有关模型参数的导数（梯度），最后用此结果与预先设定的一个正数的乘积作为模型参数在本次迭代的减小量。   </p>
+<p>$$<br>(\mathbf{w},b) \leftarrow (\mathbf{w},b) - \frac{\eta}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \partial_{(\mathbf{w},b)} l^{(i)}(\mathbf{w},b)<br>$$</p>
+<p>学习率: $\eta$代表在每次优化中，能够学习的步长的大小<br>批量大小: $\mathcal{B}$是小批量计算中的批量大小batch size   </p>
+<p>总结一下，优化函数的有以下两个步骤：</p>
+<ul>
+<li>初始化模型参数，一般使用随机初始化；</li>
+<li>在数据上迭代多次，通过在负梯度方向移动参数来更新每个参数。</li>
+</ul>
+<h2 id="线性回归模型的实现"><a href="#线性回归模型的实现" class="headerlink" title="线性回归模型的实现"></a>线性回归模型的实现</h2><blockquote>
+<p>以房屋为样本，价格为标签，面积和房龄为特征<br>$$<br>\mathrm{price} = w_{\mathrm{area}} \cdot \mathrm{area} + w_{\mathrm{age}} \cdot \mathrm{age} + b<br>$$</p>
+</blockquote>
+<h3 id="导入包和模块"><a href="#导入包和模块" class="headerlink" title="导入包和模块"></a>导入包和模块</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># import packages and modules</span></span><br><span class="line">%matplotlib inline</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> IPython <span class="keyword">import</span> display</span><br><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> random</span><br></pre></td></tr></table></figure>
+<h3 id="生成数据集"><a href="#生成数据集" class="headerlink" title="生成数据集"></a>生成数据集</h3><p>使用线性模型来生成数据集，生成一个 1000 个样本的数据集</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># set input feature number </span></span><br><span class="line">num_inputs = <span class="number">2</span></span><br><span class="line"><span class="comment"># set example number</span></span><br><span class="line">num_examples = <span class="number">1000</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># set true weight and bias in order to generate corresponded label</span></span><br><span class="line">true_w = [<span class="number">2</span>, <span class="number">-3.4</span>]</span><br><span class="line">true_b = <span class="number">4.2</span></span><br><span class="line"></span><br><span class="line">features = torch.randn(num_examples, num_inputs,</span><br><span class="line">                      dtype=torch.float32) <span class="comment">#1000*2 vector</span></span><br><span class="line">labels = true_w[<span class="number">0</span>] * features[:, <span class="number">0</span>] + true_w[<span class="number">1</span>] * features[:, <span class="number">1</span>] + true_b</span><br><span class="line">labels += torch.tensor(np.random.normal(<span class="number">0</span>, <span class="number">0.01</span>, size=labels.size()),</span><br><span class="line">                       dtype=torch.float32) <span class="comment">#偏差通过正态分布随机生成</span></span><br></pre></td></tr></table></figure>
+<h3 id="通过图像观察生成的数据合适程度"><a href="#通过图像观察生成的数据合适程度" class="headerlink" title="通过图像观察生成的数据合适程度"></a>通过图像观察生成的数据合适程度</h3><p><img src="https://img-blog.csdnimg.cn/20200211213555899.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="读取数据集"><a href="#读取数据集" class="headerlink" title="读取数据集"></a>读取数据集</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">data_iter</span><span class="params">(batch_size, features, labels)</span>:</span></span><br><span class="line">    num_examples = len(features)</span><br><span class="line">    indices = list(range(num_examples))</span><br><span class="line">    random.shuffle(indices)  <span class="comment"># random read 10 samples</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, num_examples, batch_size):</span><br><span class="line">        j = torch.LongTensor(indices[i: min(i + batch_size, num_examples)]) <span class="comment"># the last time may be not enough for a whole batch</span></span><br><span class="line">        <span class="keyword">yield</span>  features.index_select(<span class="number">0</span>, j), labels.index_select(<span class="number">0</span>, j)</span><br><span class="line"></span><br><span class="line">batch_size = <span class="number">10</span> <span class="comment"># read 10 samples</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">for</span> X, y <span class="keyword">in</span> data_iter(batch_size, features, labels): <span class="comment"># input features and labels</span></span><br><span class="line">    print(X, <span class="string">'\n'</span>, y)</span><br><span class="line">    <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<h3 id="初始化模型参数"><a href="#初始化模型参数" class="headerlink" title="初始化模型参数"></a>初始化模型参数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># init parameter</span></span><br><span class="line">w = torch.tensor(np.random.normal(<span class="number">0</span>, <span class="number">0.01</span>, (num_inputs, <span class="number">1</span>)), dtype=torch.float32)</span><br><span class="line">b = torch.zeros(<span class="number">1</span>, dtype=torch.float32)</span><br><span class="line"></span><br><span class="line">w.requires_grad_(requires_grad=<span class="literal">True</span>)</span><br><span class="line">b.requires_grad_(requires_grad=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="定义模型"><a href="#定义模型" class="headerlink" title="定义模型"></a>定义模型</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># define model</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">linreg</span><span class="params">(X, w, b)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> torch.mm(X, w) + b</span><br></pre></td></tr></table></figure>
+<h3 id="定义损失函数"><a href="#定义损失函数" class="headerlink" title="定义损失函数"></a>定义损失函数</h3><blockquote>
+<p>均方误差损失函数<br>$$<br>l^{(i)}(\mathbf{w}, b) = \frac{1}{2} \left(\hat{y}^{(i)} - y^{(i)}\right)^2,<br>$$</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># define loss function</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">squared_loss</span><span class="params">(y_hat, y)</span>:</span> </span><br><span class="line">    <span class="keyword">return</span> (y_hat - y.view(y_hat.size())) ** <span class="number">2</span> / <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<h3 id="定义优化函数"><a href="#定义优化函数" class="headerlink" title="定义优化函数"></a>定义优化函数</h3><blockquote>
+<p>小批量随机梯度下降优化</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># define optimization function</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sgd</span><span class="params">(params, lr, batch_size)</span>:</span> </span><br><span class="line">    <span class="keyword">for</span> param <span class="keyword">in</span> params:</span><br><span class="line">        param.data -= lr * param.grad / batch_size <span class="comment"># ues .data to operate param without gradient track</span></span><br></pre></td></tr></table></figure>
+<h3 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># super parameters init</span></span><br><span class="line">lr = <span class="number">0.03</span> <span class="comment">#学习率</span></span><br><span class="line">num_epochs = <span class="number">5</span> <span class="comment">#训练周期</span></span><br><span class="line"></span><br><span class="line">net = linreg <span class="comment">#单层网络</span></span><br><span class="line">loss = squared_loss <span class="comment">#均方误差损失函数</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># training</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> range(num_epochs):  <span class="comment"># training repeats num_epochs times</span></span><br><span class="line">    <span class="comment"># in each epoch, all the samples in dataset will be used once</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># X is the feature and y is the label of a batch sample</span></span><br><span class="line">    <span class="keyword">for</span> X, y <span class="keyword">in</span> data_iter(batch_size, features, labels):</span><br><span class="line">        l = loss(net(X, w, b), y).sum()  </span><br><span class="line">        <span class="comment"># calculate the gradient of batch sample loss </span></span><br><span class="line">        l.backward()  </span><br><span class="line">        <span class="comment"># using small batch random gradient descent to iter model parameters</span></span><br><span class="line">        sgd([w, b], lr, batch_size)  </span><br><span class="line">        <span class="comment"># reset parameter gradient</span></span><br><span class="line">        w.grad.data.zero_()<span class="comment">#参数梯度清零，为防止叠加</span></span><br><span class="line">        b.grad.data.zero_()</span><br><span class="line">    train_l = loss(net(features, w, b), labels)</span><br><span class="line">    print(<span class="string">'epoch %d, loss %f'</span> % (epoch + <span class="number">1</span>, train_l.mean().item()))</span><br></pre></td></tr></table></figure>
+<h3 id="检验训练结果"><a href="#检验训练结果" class="headerlink" title="检验训练结果"></a>检验训练结果</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># output result of trainning </span></span><br><span class="line">w, true_w, b, true_b</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="使用-torch-简化代码"><a href="#使用-torch-简化代码" class="headerlink" title="使用 torch 简化代码"></a>使用 torch 简化代码</h2><blockquote>
+<p>未单独重写的步骤默认与上一致</p>
+</blockquote>
+<h3 id="读取数据集-1"><a href="#读取数据集-1" class="headerlink" title="读取数据集"></a>读取数据集</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.utils.data <span class="keyword">as</span> Data</span><br><span class="line"></span><br><span class="line">batch_size = <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># combine featues and labels of dataset</span></span><br><span class="line">dataset = Data.TensorDataset(features, labels)</span><br><span class="line"></span><br><span class="line"><span class="comment"># put dataset into DataLoader</span></span><br><span class="line">data_iter = Data.DataLoader(</span><br><span class="line">    dataset=dataset,            <span class="comment"># torch TensorDataset format</span></span><br><span class="line">    batch_size=batch_size,      <span class="comment"># mini batch size</span></span><br><span class="line">    shuffle=<span class="literal">True</span>,               <span class="comment"># whether shuffle the data or not</span></span><br><span class="line">    num_workers=<span class="number">2</span>,              <span class="comment"># read data in multithreading</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> X, y <span class="keyword">in</span> data_iter:</span><br><span class="line">    print(X, <span class="string">'\n'</span>, y)</span><br><span class="line">    <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="定义模型-1"><a href="#定义模型-1" class="headerlink" title="定义模型"></a>定义模型</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LinearNet</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, n_feature)</span>:</span></span><br><span class="line">        super(LinearNet, self).__init__()      <span class="comment"># call father function to init </span></span><br><span class="line">        self.linear = nn.Linear(n_feature, <span class="number">1</span>)  <span class="comment"># function prototype: `torch.nn.Linear(in_features, out_features, bias=True)`</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span></span><br><span class="line">        y = self.linear(x)</span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line">    </span><br><span class="line">net = LinearNet(num_inputs) </span><br><span class="line">print(net) <span class="comment">#单层线性网络</span></span><br></pre></td></tr></table></figure>
+<h3 id="初始化模型参数-1"><a href="#初始化模型参数-1" class="headerlink" title="初始化模型参数"></a>初始化模型参数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> init</span><br><span class="line"></span><br><span class="line">init.normal_(net[<span class="number">0</span>].weight, mean=<span class="number">0.0</span>, std=<span class="number">0.01</span>)</span><br><span class="line">init.constant_(net[<span class="number">0</span>].bias, val=<span class="number">0.0</span>)  <span class="comment"># or you can use `net[0].bias.data.fill_(0)` to modify it directly</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> param <span class="keyword">in</span> net.parameters():</span><br><span class="line">    print(param)</span><br></pre></td></tr></table></figure>
+
+<h3 id="定义损失函数-1"><a href="#定义损失函数-1" class="headerlink" title="定义损失函数"></a>定义损失函数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">loss = nn.MSELoss()    <span class="comment"># nn built-in squared loss function</span></span><br><span class="line">                       <span class="comment"># function prototype: `torch.nn.MSELoss(size_average=None, reduce=None, reduction='mean')`</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="定义优化函数-1"><a href="#定义优化函数-1" class="headerlink" title="定义优化函数"></a>定义优化函数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="comment">#随机梯度下降</span></span><br><span class="line">optimizer = optim.SGD(net.parameters(), lr=<span class="number">0.03</span>)   <span class="comment"># built-in random gradient descent function</span></span><br><span class="line">print(optimizer)  <span class="comment"># function prototype: `torch.optim.SGD(params, lr=, momentum=0, dampening=0, weight_decay=0, nesterov=False)`</span></span><br></pre></td></tr></table></figure>
+<h3 id="训练-1"><a href="#训练-1" class="headerlink" title="训练"></a>训练</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="comment">#随机梯度下降</span></span><br><span class="line">optimizer = optim.SGD(net.parameters(), lr=<span class="number">0.03</span>)   <span class="comment"># built-in random gradient descent function</span></span><br><span class="line">print(optimizer)  <span class="comment"># function prototype: `torch.optim.SGD(params, lr=, momentum=0, dampening=0, weight_decay=0, nesterov=False)`</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="检验训练结果-1"><a href="#检验训练结果-1" class="headerlink" title="检验训练结果"></a>检验训练结果</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># result comparision</span></span><br><span class="line">dense = net[<span class="number">0</span>]</span><br><span class="line">print(true_w, dense.weight.data)</span><br><span class="line">print(true_b, dense.bias.data)</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Network/"># Network</a>
+                    
+                        <a href="/tags/Linear-Regression/"># Linear Regression</a>
+                    
+                        <a href="/tags/Pytorch/"># Pytorch</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/02/28/Softmax%20&%20%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B/">Softmax & 分类模型</a>
+            
+            
+            <a class="next" rel="next" href="/2020/02/26/Transformer(Goole%20%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91%E6%A8%A1%E5%9E%8B)/">Transformer(Google 机器翻译模型)</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+</footer>
+
+    </div>
+</body>
+</html>

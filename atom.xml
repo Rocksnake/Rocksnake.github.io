@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-02-27T02:01:53.610Z</updated>
+  <updated>2020-02-28T02:40:01.341Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,11 +17,596 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>词嵌入之 Word2Vec</title>
+    <link href="http://yoursite.com/2020/02/28/%E8%AF%8D%E5%B5%8C%E5%85%A5%E4%B9%8B%20Word2Vec/"/>
+    <id>http://yoursite.com/2020/02/28/%E8%AF%8D%E5%B5%8C%E5%85%A5%E4%B9%8B%20Word2Vec/</id>
+    <published>2020-02-28T02:33:15.863Z</published>
+    <updated>2020-02-28T02:40:01.341Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;词嵌入基础&quot;&gt;&lt;a href=&quot;#词嵌入基础&quot; class=&quot;headerlink&quot; title=&quot;词嵌入基础&quot;&gt;&lt;/a&gt;词嵌入基础&lt;/h1&gt;&lt;p&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="PTB" scheme="http://yoursite.com/tags/PTB/"/>
+    
+      <category term="Skip-Gram" scheme="http://yoursite.com/tags/Skip-Gram/"/>
+    
+      <category term="负近似采样" scheme="http://yoursite.com/tags/%E8%B4%9F%E8%BF%91%E4%BC%BC%E9%87%87%E6%A0%B7/"/>
+    
+      <category term="CBOW" scheme="http://yoursite.com/tags/CBOW/"/>
+    
+      <category term="Word2Vec" scheme="http://yoursite.com/tags/Word2Vec/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Advanced Optimization</title>
+    <link href="http://yoursite.com/2020/02/28/Advanced%20Optimization/"/>
+    <id>http://yoursite.com/2020/02/28/Advanced%20Optimization/</id>
+    <published>2020-02-28T02:31:41.029Z</published>
+    <updated>2020-02-28T02:38:33.716Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;基于&lt;a href=&quot;https://blog.csdn.net/RokoBasilisk/article/details/104413638&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;凸优化和梯度下降优化算法&lt;/a&gt;，进一步展开阐述
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="Momentum" scheme="http://yoursite.com/tags/Momentum/"/>
+    
+      <category term="AdaGrad" scheme="http://yoursite.com/tags/AdaGrad/"/>
+    
+      <category term="RMSProp" scheme="http://yoursite.com/tags/RMSProp/"/>
+    
+      <category term="AdaDelta" scheme="http://yoursite.com/tags/AdaDelta/"/>
+    
+      <category term="Adam" scheme="http://yoursite.com/tags/Adam/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Optimization including Convex Optimization and Gradient Descent</title>
+    <link href="http://yoursite.com/2020/02/28/Optimization%20including%20Convex%20Optimization%20and%20Gradient%20Descent/"/>
+    <id>http://yoursite.com/2020/02/28/Optimization%20including%20Convex%20Optimization%20and%20Gradient%20Descent/</id>
+    <published>2020-02-28T02:30:21.755Z</published>
+    <updated>2020-02-28T02:39:41.951Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;font color=red&gt;温馨提示：&lt;/font&gt;&lt;/p&gt;
+&lt;p&gt;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&lt;font color=red&gt;本文将介绍统计学中的优化知识，凸优化和梯度下降，多为公式推导和图形化展示，较为硬核&lt;/font&gt;&lt;/p&gt;
+&lt;h1
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="优化" scheme="http://yoursite.com/tags/%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="凸优化" scheme="http://yoursite.com/tags/%E5%87%B8%E4%BC%98%E5%8C%96/"/>
+    
+      <category term="梯度下降" scheme="http://yoursite.com/tags/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>批量归一化 &amp;&amp; 残差网络</title>
+    <link href="http://yoursite.com/2020/02/28/%E6%89%B9%E9%87%8F%E5%BD%92%E4%B8%80%E5%8C%96%20&amp;&amp;%20%E6%AE%8B%E5%B7%AE%E7%BD%91%E7%BB%9C/"/>
+    <id>http://yoursite.com/2020/02/28/%E6%89%B9%E9%87%8F%E5%BD%92%E4%B8%80%E5%8C%96%20&amp;&amp;%20%E6%AE%8B%E5%B7%AE%E7%BD%91%E7%BB%9C/</id>
+    <published>2020-02-28T02:28:43.763Z</published>
+    <updated>2020-02-28T02:40:20.564Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;基于此前对于CNN的介绍&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://blog.csdn.net/RokoBasilisk/article/details/104380762&quot; target=&quot;_blank&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="CNN" scheme="http://yoursite.com/tags/CNN/"/>
+    
+      <category term="批量归一化" scheme="http://yoursite.com/tags/%E6%89%B9%E9%87%8F%E5%BD%92%E4%B8%80%E5%8C%96/"/>
+    
+      <category term="残差网络" scheme="http://yoursite.com/tags/%E6%AE%8B%E5%B7%AE%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>LeNet &amp;&amp; ModernCNN</title>
+    <link href="http://yoursite.com/2020/02/28/LeNet%20&amp;&amp;%20ModernCNN/"/>
+    <id>http://yoursite.com/2020/02/28/LeNet%20&amp;&amp;%20ModernCNN/</id>
+    <published>2020-02-28T02:26:20.094Z</published>
+    <updated>2020-02-28T02:39:16.782Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;Convolutional-Neural-Networks&quot;&gt;&lt;a href=&quot;#Convolutional-Neural-Networks&quot; class=&quot;headerlink&quot; title=&quot;Convolutional Neural
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="CNN" scheme="http://yoursite.com/tags/CNN/"/>
+    
+      <category term="LeNet" scheme="http://yoursite.com/tags/LeNet/"/>
+    
+      <category term="AlexNet" scheme="http://yoursite.com/tags/AlexNet/"/>
+    
+      <category term="VGG" scheme="http://yoursite.com/tags/VGG/"/>
+    
+      <category term="NiN" scheme="http://yoursite.com/tags/NiN/"/>
+    
+      <category term="GoogLeNet" scheme="http://yoursite.com/tags/GoogLeNet/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Fundamentals of Convolutional Neural Networks</title>
+    <link href="http://yoursite.com/2020/02/28/Fundamentals%20of%20Convolutional%20Neural%20Networks/"/>
+    <id>http://yoursite.com/2020/02/28/Fundamentals%20of%20Convolutional%20Neural%20Networks/</id>
+    <published>2020-02-28T02:24:01.802Z</published>
+    <updated>2020-02-28T02:38:55.314Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;二维卷积层&quot;&gt;&lt;a href=&quot;#二维卷积层&quot; class=&quot;headerlink&quot; title=&quot;二维卷积层&quot;&gt;&lt;/a&gt;二维卷积层&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;常用于处理图像数据。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="CNN" scheme="http://yoursite.com/tags/CNN/"/>
+    
+      <category term="卷积-池化" scheme="http://yoursite.com/tags/%E5%8D%B7%E7%A7%AF-%E6%B1%A0%E5%8C%96/"/>
+    
+      <category term="特征与感受野" scheme="http://yoursite.com/tags/%E7%89%B9%E5%BE%81%E4%B8%8E%E6%84%9F%E5%8F%97%E9%87%8E/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>注意力机制和Seq2seq模型</title>
+    <link href="http://yoursite.com/2020/02/28/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%E5%92%8CSeq2seq%E6%A8%A1%E5%9E%8B/"/>
+    <id>http://yoursite.com/2020/02/28/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%E5%92%8CSeq2seq%E6%A8%A1%E5%9E%8B/</id>
+    <published>2020-02-28T02:22:14.915Z</published>
+    <updated>2020-02-28T02:40:33.786Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;center&gt;&lt;b&gt;&lt;font size=6&gt;Attention
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="MLP" scheme="http://yoursite.com/tags/MLP/"/>
+    
+      <category term="Seq2seq模型" scheme="http://yoursite.com/tags/Seq2seq%E6%A8%A1%E5%9E%8B/"/>
+    
+      <category term="注意力机制" scheme="http://yoursite.com/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>机器翻译及其相关技术介绍</title>
+    <link href="http://yoursite.com/2020/02/28/%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E4%BB%8B%E7%BB%8D/"/>
+    <id>http://yoursite.com/2020/02/28/%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E4%BB%8B%E7%BB%8D/</id>
+    <published>2020-02-28T02:20:01.572Z</published>
+    <updated>2020-02-28T02:40:14.731Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;机器翻译-MT-实践&quot;&gt;&lt;a href=&quot;#机器翻译-MT-实践&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="MT" scheme="http://yoursite.com/tags/MT/"/>
+    
+      <category term="encoder-decoder" scheme="http://yoursite.com/tags/encoder-decoder/"/>
+    
+      <category term="Seq2seq模型" scheme="http://yoursite.com/tags/Seq2seq%E6%A8%A1%E5%9E%8B/"/>
+    
+      <category term="集束搜索" scheme="http://yoursite.com/tags/%E9%9B%86%E6%9D%9F%E6%90%9C%E7%B4%A2/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>学而后思,方能发展;思而立行,终将卓越</title>
+    <link href="http://yoursite.com/2020/02/28/%E5%AD%A6%E8%80%8C%E5%90%8E%E6%80%9D,%E6%96%B9%E8%83%BD%E5%8F%91%E5%B1%95;%E6%80%9D%E8%80%8C%E7%AB%8B%E8%A1%8C,%E7%BB%88%E5%B0%86%E5%8D%93%E8%B6%8A/"/>
+    <id>http://yoursite.com/2020/02/28/%E5%AD%A6%E8%80%8C%E5%90%8E%E6%80%9D,%E6%96%B9%E8%83%BD%E5%8F%91%E5%B1%95;%E6%80%9D%E8%80%8C%E7%AB%8B%E8%A1%8C,%E7%BB%88%E5%B0%86%E5%8D%93%E8%B6%8A/</id>
+    <published>2020-02-28T02:15:37.295Z</published>
+    <updated>2020-02-28T02:40:26.783Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;center&gt;&lt;b&gt;&lt;font
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="kaggle" scheme="http://yoursite.com/tags/kaggle/"/>
+    
+      <category term="梯度问题" scheme="http://yoursite.com/tags/%E6%A2%AF%E5%BA%A6%E9%97%AE%E9%A2%98/"/>
+    
+      <category term="拟合现象" scheme="http://yoursite.com/tags/%E6%8B%9F%E5%90%88%E7%8E%B0%E8%B1%A1/"/>
+    
+      <category term="环境因素" scheme="http://yoursite.com/tags/%E7%8E%AF%E5%A2%83%E5%9B%A0%E7%B4%A0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>从模型训练中认知拟合现象</title>
+    <link href="http://yoursite.com/2020/02/28/%E4%BB%8E%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E4%B8%AD%E8%AE%A4%E7%9F%A5%E6%8B%9F%E5%90%88%E7%8E%B0%E8%B1%A1/"/>
+    <id>http://yoursite.com/2020/02/28/%E4%BB%8E%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E4%B8%AD%E8%AE%A4%E7%9F%A5%E6%8B%9F%E5%90%88%E7%8E%B0%E8%B1%A1/</id>
+    <published>2020-02-28T02:12:37.750Z</published>
+    <updated>2020-02-28T02:40:08.431Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;机器学习中模型训练是必需的，在模型训练中存在两类典型的问题：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;欠拟合 (underfitting) &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;模型无法得到较低的训练误差&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;过拟合
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="拟合现象" scheme="http://yoursite.com/tags/%E6%8B%9F%E5%90%88%E7%8E%B0%E8%B1%A1/"/>
+    
+      <category term="训练误差" scheme="http://yoursite.com/tags/%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE/"/>
+    
+      <category term="泛化误差" scheme="http://yoursite.com/tags/%E6%B3%9B%E5%8C%96%E8%AF%AF%E5%B7%AE/"/>
+    
+      <category term="L2范数正则化" scheme="http://yoursite.com/tags/L2%E8%8C%83%E6%95%B0%E6%AD%A3%E5%88%99%E5%8C%96/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>ModernRNN</title>
+    <link href="http://yoursite.com/2020/02/28/ModernRNN/"/>
+    <id>http://yoursite.com/2020/02/28/ModernRNN/</id>
+    <published>2020-02-28T02:10:09.548Z</published>
+    <updated>2020-02-28T02:39:23.201Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;在循环神经网络的基础上进行了 RNN
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="RNN" scheme="http://yoursite.com/tags/RNN/"/>
+    
+      <category term="梯度现象" scheme="http://yoursite.com/tags/%E6%A2%AF%E5%BA%A6%E7%8E%B0%E8%B1%A1/"/>
+    
+      <category term="GRU" scheme="http://yoursite.com/tags/GRU/"/>
+    
+      <category term="LSTM" scheme="http://yoursite.com/tags/LSTM/"/>
+    
+      <category term="深度循环神经网络" scheme="http://yoursite.com/tags/%E6%B7%B1%E5%BA%A6%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/"/>
+    
+      <category term="双向循环神经网络" scheme="http://yoursite.com/tags/%E5%8F%8C%E5%90%91%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Fundamentals of Recurrent Neural Network</title>
+    <link href="http://yoursite.com/2020/02/28/Fundamentals%20of%20Recurrent%20Neural%20Network/"/>
+    <id>http://yoursite.com/2020/02/28/Fundamentals%20of%20Recurrent%20Neural%20Network/</id>
+    <published>2020-02-28T02:08:12.222Z</published>
+    <updated>2020-02-28T02:39:02.041Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;基于循环神经网络实现语言模型。&quot;&gt;&lt;a href=&quot;#基于循环神经网络实现语言模型。&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="语言模型" scheme="http://yoursite.com/tags/%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"/>
+    
+      <category term="RNN" scheme="http://yoursite.com/tags/RNN/"/>
+    
+      <category term="梯度现象" scheme="http://yoursite.com/tags/%E6%A2%AF%E5%BA%A6%E7%8E%B0%E8%B1%A1/"/>
+    
+      <category term="广播" scheme="http://yoursite.com/tags/%E5%B9%BF%E6%92%AD/"/>
+    
+      <category term="one-hot" scheme="http://yoursite.com/tags/one-hot/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Language Model &amp; Data Sampling</title>
+    <link href="http://yoursite.com/2020/02/28/Language%20Model%20&amp;%20Data%20Sampling/"/>
+    <id>http://yoursite.com/2020/02/28/Language%20Model%20&amp;%20Data%20Sampling/</id>
+    <published>2020-02-28T02:06:04.369Z</published>
+    <updated>2020-02-28T02:39:09.312Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;语言模型&quot;&gt;&lt;a href=&quot;#语言模型&quot; class=&quot;headerlink&quot; title=&quot;语言模型&quot;&gt;&lt;/a&gt;语言模型&lt;/h1&gt;&lt;p&gt;一段自然语言文本可以看作是一个离散时间序列，给定一个长度为$T$的词的序列$w_1, w_2, \ldots,
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="语言模型" scheme="http://yoursite.com/tags/%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"/>
+    
+      <category term="概率论" scheme="http://yoursite.com/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/"/>
+    
+      <category term="元语法" scheme="http://yoursite.com/tags/%E5%85%83%E8%AF%AD%E6%B3%95/"/>
+    
+      <category term="数据采样" scheme="http://yoursite.com/tags/%E6%95%B0%E6%8D%AE%E9%87%87%E6%A0%B7/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Text Preprocessing</title>
+    <link href="http://yoursite.com/2020/02/28/Text%20Preprocessing/"/>
+    <id>http://yoursite.com/2020/02/28/Text%20Preprocessing/</id>
+    <published>2020-02-28T02:04:02.844Z</published>
+    <updated>2020-02-28T02:37:56.521Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;打开 Google， 输入搜索关键词，显示上百条搜索结果&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;打开 Google Translate，
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="NLP" scheme="http://yoursite.com/tags/NLP/"/>
+    
+      <category term="文本预处理" scheme="http://yoursite.com/tags/%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86/"/>
+    
+      <category term="spaCy" scheme="http://yoursite.com/tags/spaCy/"/>
+    
+      <category term="NLTK" scheme="http://yoursite.com/tags/NLTK/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Multilayer Perceptron &amp; Classify image</title>
+    <link href="http://yoursite.com/2020/02/28/Multilayer%20Perceptron%20&amp;%20Classify%20image/"/>
+    <id>http://yoursite.com/2020/02/28/Multilayer%20Perceptron%20&amp;%20Classify%20image/</id>
+    <published>2020-02-28T02:00:44.676Z</published>
+    <updated>2020-02-28T02:39:31.101Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;MLP&quot;&gt;&lt;a href=&quot;#MLP&quot; class=&quot;headerlink&quot; title=&quot;MLP&quot;&gt;&lt;/a&gt;MLP&lt;/h2&gt;&lt;p&gt;以多层感知机为例，概述多层神经网络&lt;/p&gt;
+&lt;h3 id=&quot;隐藏层&quot;&gt;&lt;a href=&quot;#隐藏层&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="MLP" scheme="http://yoursite.com/tags/MLP/"/>
+    
+      <category term="Network" scheme="http://yoursite.com/tags/Network/"/>
+    
+      <category term="激活函数" scheme="http://yoursite.com/tags/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Softmax &amp; 分类模型</title>
+    <link href="http://yoursite.com/2020/02/28/Softmax%20&amp;%20%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B/"/>
+    <id>http://yoursite.com/2020/02/28/Softmax%20&amp;%20%E5%88%86%E7%B1%BB%E6%A8%A1%E5%9E%8B/</id>
+    <published>2020-02-28T01:57:30.242Z</published>
+    <updated>2020-02-28T02:39:47.961Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;Softmax&quot;&gt;&lt;a href=&quot;#Softmax&quot; class=&quot;headerlink&quot; title=&quot;Softmax&quot;&gt;&lt;/a&gt;Softmax&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;与候选采样相对&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Softmax
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="Softmax" scheme="http://yoursite.com/tags/Softmax/"/>
+    
+      <category term="classify" scheme="http://yoursite.com/tags/classify/"/>
+    
+      <category term="Fashion-MNIST" scheme="http://yoursite.com/tags/Fashion-MNIST/"/>
+    
+      <category term="Computer Vision" scheme="http://yoursite.com/tags/Computer-Vision/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Design and Realization of Linear Regression</title>
+    <link href="http://yoursite.com/2020/02/28/Design%20and%20Realization%20of%20Linear%20Regression/"/>
+    <id>http://yoursite.com/2020/02/28/Design%20and%20Realization%20of%20Linear%20Regression/</id>
+    <published>2020-02-28T01:54:23.612Z</published>
+    <updated>2020-02-28T02:38:40.937Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;线性回归的基本要素&quot;&gt;&lt;a href=&quot;#线性回归的基本要素&quot; class=&quot;headerlink&quot; title=&quot;线性回归的基本要素&quot;&gt;&lt;/a&gt;线性回归的基本要素&lt;/h2&gt;&lt;h3 id=&quot;模型&quot;&gt;&lt;a href=&quot;#模型&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="Network" scheme="http://yoursite.com/tags/Network/"/>
+    
+      <category term="Linear Regression" scheme="http://yoursite.com/tags/Linear-Regression/"/>
+    
+      <category term="Pytorch" scheme="http://yoursite.com/tags/Pytorch/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Transformer(Google 机器翻译模型)</title>
     <link href="http://yoursite.com/2020/02/26/Transformer(Goole%20%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91%E6%A8%A1%E5%9E%8B)/"/>
     <id>http://yoursite.com/2020/02/26/Transformer(Goole%20%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91%E6%A8%A1%E5%9E%8B)/</id>
     <published>2020-02-26T03:42:36.280Z</published>
-    <updated>2020-02-27T02:01:53.610Z</updated>
+    <updated>2020-02-28T02:39:55.441Z</updated>
     
     <summary type="html">
     

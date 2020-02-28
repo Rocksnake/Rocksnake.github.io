@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>ModernRNN | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">ModernRNN</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">February 28, 2020&nbsp;&nbsp;10:10:09</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Machine-Learning/">Machine Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>在循环神经网络的基础上进行了 RNN 的改进，我将介绍四种进化版的循环神经网络</p>
+<ol>
+<li>GRU</li>
+<li>LSTM</li>
+<li>深度循环神经网络</li>
+<li>双向循环神经网络</li>
+</ol>
+<blockquote>
+<p>循环神经网络初识：<a href="https://blog.csdn.net/RokoBasilisk/article/details/104307813" target="_blank" rel="noopener">https://blog.csdn.net/RokoBasilisk/article/details/104307813</a><br/><br>RNN 出现的梯度爆炸和梯度衰减问题</p>
+<blockquote>
+<p>解决梯度爆炸的裁剪梯度方法：<a href="https://blog.csdn.net/RokoBasilisk/article/details/104307813" target="_blank" rel="noopener">https://blog.csdn.net/RokoBasilisk/article/details/104307813</a></p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>解决梯度衰减问题</p>
+</blockquote>
+<h2 id="GRU-RNN"><a href="#GRU-RNN" class="headerlink" title="GRU RNN"></a>GRU RNN</h2><p>称为 [ 门控循环神经网络 ] ：通过捕捉时间序列中时间步较大的依赖关系</p>
+<p>对比  <code>普通神经网络</code> 与 <code>GRU</code></p>
+<center>
+    <img src="https://img-blog.csdnimg.cn/20200216134327427.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70"/>
+</center>
+
+<center>
+<img src="https://img-blog.csdnimg.cn/20200216134348404.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70"/>
+</center>
+
+<p>• 重置⻔ : 有助于捕捉时间序列⾥短期的依赖关系;<br/><br>• 更新⻔ : 有助于捕捉时间序列⾥⻓期的依赖关系。  </p>
+<hr>
+<p><strong>参数详释</strong><br/><br>根据参数理解需要初始化的参数，首先表达式中的权重和偏置，6个W和3个b，是更新门、重置门和候选隐藏状态的初始化，紧接着作为下一个 GRU 的 $H_{t-1}$ ,此阶段输出时需要初始化输出层参数。</p>
+<p>那么假如是第一层这样没有再上一层的$H_{t-1}$输入,就需要初始化最初的状态</p>
+<hr>
+<h3 id="实践中理解设计"><a href="#实践中理解设计" class="headerlink" title="实践中理解设计"></a>实践中理解设计</h3><blockquote>
+<p>尽管一个 nn.GRU 包揽全盘，但是为了理解 GRU 的设计…</p>
+</blockquote>
+<h4 id="初始化参数"><a href="#初始化参数" class="headerlink" title="初始化参数"></a>初始化参数</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">num_inputs, num_hiddens, num_outputs = vocab_size, <span class="number">256</span>, vocab_size</span><br><span class="line"><span class="comment"># print('will use', device)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_params</span><span class="params">()</span>:</span>  </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_one</span><span class="params">(shape)</span>:</span></span><br><span class="line">        ts = torch.tensor(np.random.normal(<span class="number">0</span>, <span class="number">0.01</span>, size=shape), device=device, dtype=torch.float32) <span class="comment">#正态分布</span></span><br><span class="line">        <span class="keyword">return</span> torch.nn.Parameter(ts, requires_grad=<span class="literal">True</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_three</span><span class="params">()</span>:</span></span><br><span class="line">        <span class="keyword">return</span> (_one((num_inputs, num_hiddens)),</span><br><span class="line">                _one((num_hiddens, num_hiddens)),</span><br><span class="line">                torch.nn.Parameter(torch.zeros(num_hiddens, device=device, dtype=torch.float32), requires_grad=<span class="literal">True</span>))</span><br><span class="line">     </span><br><span class="line">    W_xz, W_hz, b_z = _three()  <span class="comment"># 更新门参数</span></span><br><span class="line">    W_xr, W_hr, b_r = _three()  <span class="comment"># 重置门参数</span></span><br><span class="line">    W_xh, W_hh, b_h = _three()  <span class="comment"># 候选隐藏状态参数</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出层参数</span></span><br><span class="line">    W_hq = _one((num_hiddens, num_outputs))</span><br><span class="line">    b_q = torch.nn.Parameter(torch.zeros(num_outputs, device=device, dtype=torch.float32), requires_grad=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> nn.ParameterList([W_xz, W_hz, b_z, W_xr, W_hr, b_r, W_xh, W_hh, b_h, W_hq, b_q])</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_gru_state</span><span class="params">(batch_size, num_hiddens, device)</span>:</span>   <span class="comment">#隐藏状态初始化</span></span><br><span class="line">    <span class="keyword">return</span> (torch.zeros((batch_size, num_hiddens), device=device), )</span><br></pre></td></tr></table></figure>
+<h4 id="GRU-模型"><a href="#GRU-模型" class="headerlink" title="GRU 模型"></a>GRU 模型</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gru</span><span class="params">(inputs, state, params)</span>:</span></span><br><span class="line">    W_xz, W_hz, b_z, W_xr, W_hr, b_r, W_xh, W_hh, b_h, W_hq, b_q = params</span><br><span class="line">    H, = state</span><br><span class="line">    outputs = []</span><br><span class="line">    <span class="keyword">for</span> X <span class="keyword">in</span> inputs:</span><br><span class="line">        Z = torch.sigmoid(torch.matmul(X, W_xz) + torch.matmul(H, W_hz) + b_z)</span><br><span class="line">        R = torch.sigmoid(torch.matmul(X, W_xr) + torch.matmul(H, W_hr) + b_r)</span><br><span class="line">        H_tilda = torch.tanh(torch.matmul(X, W_xh) + R * torch.matmul(H, W_hh) + b_h)</span><br><span class="line">        H = Z * H + (<span class="number">1</span> - Z) * H_tilda</span><br><span class="line">        Y = torch.matmul(H, W_hq) + b_q</span><br><span class="line">        outputs.append(Y)</span><br><span class="line">    <span class="keyword">return</span> outputs, (H,)</span><br></pre></td></tr></table></figure>
+<h2 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h2><blockquote>
+<p>较 GRUB，LSTM 多了记忆功能，也就是结构上多了个记忆细胞</p>
+</blockquote>
+<p>包含三个门，引入了记忆细胞，和隐藏状态相似，用来记忆额外的信息</p>
+<center>
+<img src="https://img-blog.csdnimg.cn/20200216140544366.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" />
+</center>
+
+<center>长短期记忆 ( long short-term memory )</center><br />
+
+<ul>
+<li>遗忘门:控制上一时间步的记忆细胞 </li>
+<li>输入门:控制当前时间步的输入  </li>
+<li>输出门:控制从记忆细胞到隐藏状态  </li>
+<li>记忆细胞：⼀种特殊的隐藏状态的信息的流动  </li>
+</ul>
+<h3 id="实践中理解设计-1"><a href="#实践中理解设计-1" class="headerlink" title="实践中理解设计"></a>实践中理解设计</h3><h4 id="初始化参数-1"><a href="#初始化参数-1" class="headerlink" title="初始化参数"></a>初始化参数</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">num_inputs, num_hiddens, num_outputs = vocab_size, <span class="number">256</span>, vocab_size</span><br><span class="line">print(<span class="string">'will use'</span>, device)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_params</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_one</span><span class="params">(shape)</span>:</span></span><br><span class="line">        ts = torch.tensor(np.random.normal(<span class="number">0</span>, <span class="number">0.01</span>, size=shape), device=device, dtype=torch.float32)</span><br><span class="line">        <span class="keyword">return</span> torch.nn.Parameter(ts, requires_grad=<span class="literal">True</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_three</span><span class="params">()</span>:</span></span><br><span class="line">        <span class="keyword">return</span> (_one((num_inputs, num_hiddens)),</span><br><span class="line">                _one((num_hiddens, num_hiddens)),</span><br><span class="line">                torch.nn.Parameter(torch.zeros(num_hiddens, device=device, dtype=torch.float32), requires_grad=<span class="literal">True</span>))</span><br><span class="line">    </span><br><span class="line">    W_xi, W_hi, b_i = _three()  <span class="comment"># 输入门参数</span></span><br><span class="line">    W_xf, W_hf, b_f = _three()  <span class="comment"># 遗忘门参数</span></span><br><span class="line">    W_xo, W_ho, b_o = _three()  <span class="comment"># 输出门参数</span></span><br><span class="line">    W_xc, W_hc, b_c = _three()  <span class="comment"># 候选记忆细胞参数</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出层参数</span></span><br><span class="line">    W_hq = _one((num_hiddens, num_outputs))</span><br><span class="line">    b_q = torch.nn.Parameter(torch.zeros(num_outputs, device=device, dtype=torch.float32), requires_grad=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> nn.ParameterList([W_xi, W_hi, b_i, W_xf, W_hf, b_f, W_xo, W_ho, b_o, W_xc, W_hc, b_c, W_hq, b_q])</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_lstm_state</span><span class="params">(batch_size, num_hiddens, device)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> (torch.zeros((batch_size, num_hiddens), device=device), </span><br><span class="line">            torch.zeros((batch_size, num_hiddens), device=device))</span><br></pre></td></tr></table></figure>
+
+<h4 id="LSTM-模型"><a href="#LSTM-模型" class="headerlink" title="LSTM 模型"></a>LSTM 模型</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">num_inputs, num_hiddens, num_outputs = vocab_size, <span class="number">256</span>, vocab_size</span><br><span class="line">print(<span class="string">'will use'</span>, device)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_params</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_one</span><span class="params">(shape)</span>:</span></span><br><span class="line">        ts = torch.tensor(np.random.normal(<span class="number">0</span>, <span class="number">0.01</span>, size=shape), device=device, dtype=torch.float32)</span><br><span class="line">        <span class="keyword">return</span> torch.nn.Parameter(ts, requires_grad=<span class="literal">True</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_three</span><span class="params">()</span>:</span></span><br><span class="line">        <span class="keyword">return</span> (_one((num_inputs, num_hiddens)),</span><br><span class="line">                _one((num_hiddens, num_hiddens)),</span><br><span class="line">                torch.nn.Parameter(torch.zeros(num_hiddens, device=device, dtype=torch.float32), requires_grad=<span class="literal">True</span>))</span><br><span class="line">    </span><br><span class="line">    W_xi, W_hi, b_i = _three()  <span class="comment"># 输入门参数</span></span><br><span class="line">    W_xf, W_hf, b_f = _three()  <span class="comment"># 遗忘门参数</span></span><br><span class="line">    W_xo, W_ho, b_o = _three()  <span class="comment"># 输出门参数</span></span><br><span class="line">    W_xc, W_hc, b_c = _three()  <span class="comment"># 候选记忆细胞参数</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出层参数</span></span><br><span class="line">    W_hq = _one((num_hiddens, num_outputs))</span><br><span class="line">    b_q = torch.nn.Parameter(torch.zeros(num_outputs, device=device, dtype=torch.float32), requires_grad=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> nn.ParameterList([W_xi, W_hi, b_i, W_xf, W_hf, b_f, W_xo, W_ho, b_o, W_xc, W_hc, b_c, W_hq, b_q])</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_lstm_state</span><span class="params">(batch_size, num_hiddens, device)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> (torch.zeros((batch_size, num_hiddens), device=device), </span><br><span class="line">            torch.zeros((batch_size, num_hiddens), device=device))</span><br></pre></td></tr></table></figure>
+
+<h2 id="深度循环神经网络"><a href="#深度循环神经网络" class="headerlink" title="深度循环神经网络"></a>深度循环神经网络</h2><blockquote>
+<p>深度代表高度，对于神经网络隐藏层来说，并非如此，层数的加深会导致收敛困难</p>
+</blockquote>
+<p>对比循环神经网络：<a href="https://blog.csdn.net/RokoBasilisk/article/details/104307813" target="_blank" rel="noopener">https://blog.csdn.net/RokoBasilisk/article/details/104307813</a></p>
+<div align=center><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWprbTB2NDRpLnBuZw?x-oss-process=image/format,png" /></div>
+深度循环神经网络就是多了隐藏层
+<center><img src="https://img-blog.csdnimg.cn/20200216141700404.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" /></center>
+
+<h4 id="实现方式相同，改变的是-num-layer"><a href="#实现方式相同，改变的是-num-layer" class="headerlink" title="实现方式相同，改变的是 num_layer"></a>实现方式相同，改变的是 num_layer</h4><h2 id="双向循环神经网络"><a href="#双向循环神经网络" class="headerlink" title="双向循环神经网络"></a>双向循环神经网络</h2><blockquote>
+<p>常用于 NLP</p>
+<blockquote>
+<p>特点：预测不再仅依赖于前面的元素，而是同时结合了前后元素，一个词：content <br/><br>两层隐藏层之间的连接采用了concat的方式</p>
+</blockquote>
+</blockquote>
+<center><img src="https://img-blog.csdnimg.cn/20200216143253637.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" /></center>
+
+<h4 id="改变的是-bidirectional-参数"><a href="#改变的是-bidirectional-参数" class="headerlink" title="改变的是 bidirectional 参数"></a>改变的是 bidirectional 参数</h4>
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/RNN/"># RNN</a>
+                    
+                        <a href="/tags/%E6%A2%AF%E5%BA%A6%E7%8E%B0%E8%B1%A1/"># 梯度现象</a>
+                    
+                        <a href="/tags/GRU/"># GRU</a>
+                    
+                        <a href="/tags/LSTM/"># LSTM</a>
+                    
+                        <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/"># 深度循环神经网络</a>
+                    
+                        <a href="/tags/%E5%8F%8C%E5%90%91%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/"># 双向循环神经网络</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/02/28/%E4%BB%8E%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E4%B8%AD%E8%AE%A4%E7%9F%A5%E6%8B%9F%E5%90%88%E7%8E%B0%E8%B1%A1/">从模型训练中认知拟合现象</a>
+            
+            
+            <a class="next" rel="next" href="/2020/02/28/Fundamentals%20of%20Recurrent%20Neural%20Network/">Fundamentals of Recurrent Neural Network</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+</footer>
+
+    </div>
+</body>
+</html>
