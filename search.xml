@@ -1851,20 +1851,21 @@ For Example： 我一直在使用的由 哈工大社会计算与信息检索研�
 </ul>
 <p>$$<br>\text{ReLU}(x) = \max(x, 0).<br>$$</p>
 <p>可以看出，ReLU函数只保留正数元素，并将负数元素清零。</p>
-<div align=center><img src=" https://cdn.kesci.com/rt_upload/070825B6A382411DA5BD7D14E67E8D54/q5hv7cdtna.png " /></div>
+<div align=center><img src=" https://img-blog.csdnimg.cn/20200228104905655.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70 " /></div>
+
 
 <ul>
 <li><h4 id="Sigmoid函数"><a href="#Sigmoid函数" class="headerlink" title="Sigmoid函数"></a>Sigmoid函数</h4>sigmoid函数可以将元素的值变换到0和1之间：</li>
 </ul>
 <p>$$<br>\text{sigmoid}(x) = \frac{1}{1 + \exp(-x)}.<br>$$</p>
-<div align=center><img src=" https://cdn.kesci.com/rt_upload/68FCB4E8142144458F13128B370D1C91/q5hv7dor11.png " /> </div>
+<div align=center><img src=" https://img-blog.csdnimg.cn/20200228104942978.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70 " /> </div>
 
 <ul>
 <li><h4 id="tanh函数"><a href="#tanh函数" class="headerlink" title="tanh函数"></a>tanh函数</h4>tanh（双曲正切）函数可以将元素的值变换到-1和1之间：</li>
 </ul>
 <p>$$<br>\text{tanh}(x) = \frac{1 - \exp(-2x)}{1 + \exp(-2x)}.<br>$$</p>
 <p>我们接着绘制tanh函数。当输入接近0时，tanh函数接近线性变换。虽然该函数的形状和sigmoid函数的形状很像，但tanh函数在坐标系的原点上对称。</p>
-<div align=center><img src=" https://cdn.kesci.com/rt_upload/92D16076309F42169482834C0B6ABB24/q5hv7dfeso.png " /></div>
+<div align=center><img src="https://img-blog.csdnimg.cn/20200228105017679.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" /></div>
 
 <h4 id="激活函数的选择"><a href="#激活函数的选择" class="headerlink" title="激活函数的选择"></a>激活函数的选择</h4><blockquote>
 <blockquote>
