@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-02-29T01:55:16.864Z</updated>
+  <updated>2020-02-29T03:59:32.181Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>自增主键的前世今生</title>
+    <link href="http://yoursite.com/2020/02/29/%E8%87%AA%E5%A2%9E%E4%B8%BB%E9%94%AE%E7%9A%84%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F/"/>
+    <id>http://yoursite.com/2020/02/29/%E8%87%AA%E5%A2%9E%E4%B8%BB%E9%94%AE%E7%9A%84%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F/</id>
+    <published>2020-02-29T03:52:16.317Z</published>
+    <updated>2020-02-29T03:59:32.181Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;以MySQL(Innodb存储)为例介绍自增主键，介入场景分析主键的目的，从面试题下手，深入理解主键机制&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Database Systems" scheme="http://yoursite.com/categories/Database-Systems/"/>
+    
+    
+      <category term="自增主键" scheme="http://yoursite.com/tags/%E8%87%AA%E5%A2%9E%E4%B8%BB%E9%94%AE/"/>
+    
+      <category term="MySQL" scheme="http://yoursite.com/tags/MySQL/"/>
+    
+  </entry>
   
   <entry>
     <title>Fundamentals of Recurrent Neural Network</title>

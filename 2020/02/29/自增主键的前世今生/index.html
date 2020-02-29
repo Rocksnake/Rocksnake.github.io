@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>自增主键的前世今生 | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">自增主键的前世今生</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">February 29, 2020&nbsp;&nbsp;11:52:16</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Database-Systems/">Database Systems</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>以MySQL(Innodb存储)为例介绍自增主键，介入场景分析主键的目的，从面试题下手，深入理解主键机制</p>
+<a id="more"></a>
+
+<p><font size=5><strong>引入：</strong></font></p>
+<hr>
+<p>使用MySQL建表时，我们通常会创建一个自增字段(AUTO_INCREMENT)，并以此字段作为主键</p>
+<hr>
+<p>本文将分三点阐述：</p>
+<ol>
+<li><a href="#title1">你可能不知道的自增主键</a></li>
+<li><a href="#title2">应对变化的自增主键</a></li>
+<li><a href="#title3"><font color=red>[坑]</font>如果自增主键用完怎么办</a></li>
+</ol>
+<h2 id="1-你可能不知道的自增主键"><a href="#1-你可能不知道的自增主键" class="headerlink" title="1.你可能不知道的自增主键"></a><div id="title1">1.你可能不知道的自增主键</div></h2><blockquote>
+<p>使用自增主键可以提高数据存储效率</p>
+</blockquote>
+<p>在MySQL中(Innodb 存储引擎)，数据记录本身被存于主索引（B+Tree）的叶子节点上<br><font color=blue>*补充：【要求同一个叶子节点内（大小为一个内存页或磁盘页）的各条数据记录按主键顺序存放】</font></p>
+<hr>
+<p>针对索引，</p>
+<ul>
+<li>如果我们<strong>定义了主键</strong>(PRIMARY KEY)，那么InnoDB会选择主键作为聚集索引</li>
+<li>如果<strong>没有显式定义</strong>主键，则InnoDB会选择第一个<strong>不包含有NULL值的唯一索引</strong>作为主键索引</li>
+<li>如果也<strong>没有这样的唯一索引</strong>，则InnoDB会选择内置6字节长的<strong>ROWID</strong>作为隐含的聚集索</li>
+</ul>
+<p><font color=blue>*补充：【ROWID随着行记录的写入而主键递增，这个ROWID不像ORACLE的ROWID那样可引用，是隐含的】</font></p>
+<hr>
+<p><strong>Q：</strong></p>
+<p>每当有一条新的记录插入时，MySQL会根据其主键将其插入适当的节点和位置，如果页面达到装载因子（InnoDB默认为15/16），则开辟一个新的页（节点）。</p>
+<p><strong>A：</strong></p>
+<ul>
+<li><p>如果表<strong>使用自增主键</strong>。每次插入新的记录，会顺序添加到当前索引节点的后续位置，一页写满，自动开辟一个新的页</p>
+</li>
+<li><p>如果<strong>使用非自增主键</strong>（For Example:身份证号或学号等）【每次插入主键的值近似于随机】，每次新纪录都要被插到现有索引页中间某个位置，MySQL不得不为了将新记录插到合适位置而移动数据，甚至目标页面可能已经被回写到磁盘上而从缓存中清掉，此时又要从磁盘上读回来<br/><br>这增加了很多开销，同时频繁的移动、分页操作造成了大量的碎片，得到了不够紧凑的索引结构，后续不得不通过OPTIMIZE TABLE来重建表并优化填充页面。</p>
+</li>
+</ul>
+<blockquote>
+<p>自增id是增长的，不一定连续</p>
+</blockquote>
+<p><strong>原因有以下几点：</strong></p>
+<ul>
+<li>唯一键冲突</li>
+<li>事务回滚</li>
+<li>insert … select语句批量申请</li>
+</ul>
+<p><strong>针对自增值的保存策略：</strong></p>
+<p>InnoDB 引擎中，自增值保存在了内存中，继 MySQL 8.0 之后，出现了<strong>自增值持久化</strong>，自增值的变更记录存储在 redo log 中，重启时可以依靠其恢复之前的值</p>
+<p><font color=blue>*补充：【自增值持久化：如果发生重启，表的自增值可以恢复为 MySQL 重启前的值】</font></p>
+<h2 id="2-应对变化的自增主键"><a href="#2-应对变化的自增主键" class="headerlink" title="2.应对变化的自增主键"></a><div id="title2">2.应对变化的自增主键</div></h2><p><strong>导入：</strong></p>
+<blockquote>
+<p>在设计数据库时不需要费尽心思去考虑设置哪个字段为主键</p>
+</blockquote>
+<p> 但是应用到实际场景，自增主键的主要目的还是应对变化。</p>
+<p>设计一个场景：</p>
+<p>&ensp;&ensp;&ensp;&ensp;<a href="https://mp.weixin.qq.com/s/rh0tg4L9Ffj1fy32rKCkHw" target="_blank" rel="noopener">维护商业账号的资质相关信息</a></p>
+<p><strong>最初设计：</strong> 账号是由全局唯一且自增的分布式ID生成器生成的，很显然这个时候我们把账号作为主键这就天然合理</p>
+<p><strong>业务迭代一定时间:</strong>  提出了新的需求，一个账号，在不同业务线，需要享有不同资质</p>
+<p><strong>比较：</strong> accountId 较之前不唯一，因为，同一个账号，不同业务线，资质是不一样的【无法像最初那样作为主键】</p>
+<p><strong>解决方式：</strong> <a href="https://mp.weixin.qq.com/s/rh0tg4L9Ffj1fy32rKCkHw" target="_blank" rel="noopener">见场景中</a></p>
+<h2 id="3-如果自增主键用完怎么办"><a href="#3-如果自增主键用完怎么办" class="headerlink" title="3.如果自增主键用完怎么办"></a><div id="title3">3.如果自增主键用完怎么办</div></h2><p><strong>老掉牙但经典：</strong>【面试题】</p>
+<blockquote>
+<p>面试官:”用过mysql吧，你们是用自增主键还是UUID？”<br>你:”用的是自增主键”<br>面试官:”为什么是自增主键？”<br>你:”因为采用自增主键，数据在物理结构上是顺序存储，性能最好，blabla…”<br>面试官:”那自增主键达到最大值了，用完了怎么办？”<br>你:”what，没复习啊！！”<br>( 然后，你就可以回去等通知了！)</p>
+</blockquote>
+<p><strong>说明：</strong> 自增 id 是整型字段，常用 int 类型来定义增长 id ，而 int 类型有上限 即增长 id 也是有上限的。</p>
+<p>既然 int 不够了，首先想到的是改为 BigInt 类型【做个对比】</p>
+<center><img src="https://img-blog.csdnimg.cn/20200229113709135.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" /></center>
+
+<center><img src="https://img-blog.csdnimg.cn/20200229113551427.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" /></center>
+
+<blockquote>
+<p>如果回答：把自增主键的类型改为BigInt类型就好了<br/><br>面试官:”你在线上怎么修改列的数据类型的？”</p>
+</blockquote>
+<p>修改方法：</p>
+<ul>
+<li>使用mysql5.6+提供的在线修改功能</li>
+<li>借助第三方工具</li>
+<li>改从库表结构，然后主从切换</li>
+</ul>
+<p><strong>差不多就算结束了这个问题了。但是回过头想一想，是不是一条路走到黑了，或许从头开始就错了呢！！！</strong></p>
+<hr>
+<p><strong>插入一条生存力测试，形象生动：</strong></p>
+<p>&ensp;&ensp;假如女朋友问：我刚才吃药时看窗外，你猜我看到了什么？</p>
+<p>&ensp;&ensp;&ensp;&ensp;<strong>歧途：</strong> 白云？你为什么不看我呢。</p>
+<p>&ensp;&ensp;&ensp;&ensp;<strong>正解：</strong> 你怎么要吃药呢</p>
+<hr>
+<p>那么<strong>正解</strong>应该是什么呢？</p>
+<blockquote>
+<p>这问题没遇到过，因为自增主键一般用int类型，一般达不到最大值，我们就分库分表了，所以不曾遇见过！</p>
+</blockquote>
+<p><a href="https://mp.weixin.qq.com/s/kVqj4VdZewuvR_OsXgY_RQ" target="_blank" rel="noopener">具体介绍…</a></p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/%E8%87%AA%E5%A2%9E%E4%B8%BB%E9%94%AE/"># 自增主键</a>
+                    
+                        <a href="/tags/MySQL/"># MySQL</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/02/29/Fundamentals%20of%20Recurrent%20Neural%20Network/">Fundamentals of Recurrent Neural Network</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">本站访客数<span id="busuanzi_value_site_uv"></span>人</span>
+</footer>
+
+    </div>
+</body>
+</html>
