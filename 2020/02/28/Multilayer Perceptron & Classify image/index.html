@@ -243,7 +243,7 @@
 <h3 id="表达公式"><a href="#表达公式" class="headerlink" title="表达公式"></a>表达公式</h3><p>具体来说，给定一个小批量样本$\boldsymbol{X} \in \mathbb{R}^{n \times d}$，其批量大小为$n$，输入个数为$d$。假设多层感知机只有一个隐藏层【其中隐藏单元个数为$h$】记隐藏层的输出（也称为隐藏层变量或隐藏变量）为$\boldsymbol{H}$，有$\boldsymbol{H} \in \mathbb{R}^{n \times h}$。</p>
 <p>因为隐藏层和输出层均是全连接层，可以设隐藏层的权重参数和偏差参数分别为$\boldsymbol{W}_h \in \mathbb{R}^{d \times h}$和 $\boldsymbol{b}_h \in \mathbb{R}^{1 \times h}$，输出层的权重和偏差参数分别为$\boldsymbol{W}_o \in \mathbb{R}^{h \times q}$和$\boldsymbol{b}_o \in \mathbb{R}^{1 \times q}$。</p>
 <p>含单隐藏层的多层感知机的设计。其输出$\boldsymbol{O} \in \mathbb{R}^{n \times q}$的计算为</p>
-<p>$$<br> \begin{aligned} \boldsymbol{H} &amp;= \boldsymbol{X} \boldsymbol{W}_h + \boldsymbol{b}_h,\ \boldsymbol{O} &amp;= \boldsymbol{H} \boldsymbol{W}_o + \boldsymbol{b}_o, \end{aligned}<br>$$</p>
+<p>$$<br> \begin{aligned} \boldsymbol{H} &amp;= \boldsymbol{X} \boldsymbol{W}_h + \boldsymbol{b}_h,\\ \boldsymbol{O} &amp;= \boldsymbol{H} \boldsymbol{W}_o + \boldsymbol{b}_o, \end{aligned}<br>$$</p>
 <p>也就是将隐藏层的输出直接作为输出层的输入。如果将以上两个式子联立起来，可以得到</p>
 <p>$$<br> \boldsymbol{O} = (\boldsymbol{X} \boldsymbol{W}_h + \boldsymbol{b}_h)\boldsymbol{W}_o + \boldsymbol{b}_o = \boldsymbol{X} \boldsymbol{W}_h\boldsymbol{W}_o + \boldsymbol{b}_h \boldsymbol{W}_o + \boldsymbol{b}_o.<br>$$</p>
 <blockquote>
@@ -306,7 +306,7 @@
 </blockquote>
 </blockquote>
 <p>那么之前表达式中输出$\boldsymbol{O} \in \mathbb{R}^{n \times q}$的计算变为：</p>
-<p>$$<br> \begin{aligned} \boldsymbol{H} &amp;= \phi(\boldsymbol{X} \boldsymbol{W}_h + \boldsymbol{b}_h),\ \boldsymbol{O} &amp;= \boldsymbol{H} \boldsymbol{W}_o + \boldsymbol{b}_o, \end{aligned}<br>$$</p>
+<p>$$<br> \begin{aligned} \boldsymbol{H} &amp;= \phi(\boldsymbol{X} \boldsymbol{W}_h + \boldsymbol{b}_h),\\ \boldsymbol{O} &amp;= \boldsymbol{H} \boldsymbol{W}_o + \boldsymbol{b}_o, \end{aligned}<br>$$</p>
 <p>其中$\phi$表示激活函数。</p>
 <h2 id="多层感知机实现"><a href="#多层感知机实现" class="headerlink" title="多层感知机实现"></a>多层感知机实现</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># import package and module</span></span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">"path to file storge d2lzh1981"</span>)</span><br><span class="line"><span class="keyword">import</span> d2lzh1981 <span class="keyword">as</span> d2l</span><br><span class="line">print(torch.__version__)</span><br></pre></td></tr></table></figure>
 <h3 id="获取数据集"><a href="#获取数据集" class="headerlink" title="获取数据集"></a>获取数据集</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">batch_size = <span class="number">256</span></span><br><span class="line">train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size,</span><br><span class="line">			root=<span class="string">'path to FashionMNIST.zip'</span>)</span><br></pre></td></tr></table></figure>

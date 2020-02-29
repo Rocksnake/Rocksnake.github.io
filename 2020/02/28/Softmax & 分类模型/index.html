@@ -278,7 +278,7 @@
 </ul>
 </li>
 </ul>
-<p>$$<br> \boldsymbol{W} = \begin{bmatrix} w_{11} &amp; w_{12} &amp; w_{13} \ w_{21} &amp; w_{22} &amp; w_{23} \ w_{31} &amp; w_{32} &amp; w_{33} \ w_{41} &amp; w_{42} &amp; w_{43} \end{bmatrix},\quad \boldsymbol{b} = \begin{bmatrix} b_1 &amp; b_2 &amp; b_3 \end{bmatrix},<br>$$</p>
+<p>$$<br> \boldsymbol{W} = \begin{bmatrix} w_{11} &amp; w_{12} &amp; w_{13} \\ w_{21} &amp; w_{22} &amp; w_{23} \\ w_{31} &amp; w_{32} &amp; w_{33} \\ w_{41} &amp; w_{42} &amp; w_{43} \end{bmatrix},\quad \boldsymbol{b} = \begin{bmatrix} b_1 &amp; b_2 &amp; b_3 \end{bmatrix},<br>$$</p>
 <p>设高和宽分别为2个像素的图像样本$i$的特征为</p>
 <p>$$<br>\boldsymbol{x}^{(i)} = \begin{bmatrix}x_1^{(i)} &amp; x_2^{(i)} &amp; x_3^{(i)} &amp; x_4^{(i)}\end{bmatrix},<br>$$</p>
 <p>输出层的输出为</p>
@@ -286,11 +286,11 @@
 <p>预测为狗、猫或鸡的概率分布为</p>
 <p>$$<br>\boldsymbol{\hat{y}}^{(i)} = \begin{bmatrix}\hat{y}_1^{(i)} &amp; \hat{y}_2^{(i)} &amp; \hat{y}_3^{(i)}\end{bmatrix}.<br>$$</p>
 <p>softmax回归对样本$i$分类的矢量计算表达式为</p>
-<p>$$<br> \begin{aligned} \boldsymbol{o}^{(i)} &amp;= \boldsymbol{x}^{(i)} \boldsymbol{W} + \boldsymbol{b},\ \boldsymbol{\hat{y}}^{(i)} &amp;= \text{softmax}(\boldsymbol{o}^{(i)}). \end{aligned}<br>$$</p>
+<p>$$<br> \begin{aligned} \boldsymbol{o}^{(i)} &amp;= \boldsymbol{x}^{(i)} \boldsymbol{W} + \boldsymbol{b},\\ \boldsymbol{\hat{y}}^{(i)} &amp;= \text{softmax}(\boldsymbol{o}^{(i)}). \end{aligned}<br>$$</p>
 <ul>
 <li>小批量矢量计算表达式<br>  为了进一步提升计算效率，我们通常对小批量数据做矢量计算。广义上讲，给定一个小批量样本，其批量大小为$n$，输入个数（特征数）为$d$，输出个数（类别数）为$q$。设批量特征为$\boldsymbol{X} \in \mathbb{R}^{n \times d}$。假设softmax回归的权重和偏差参数分别为$\boldsymbol{W} \in \mathbb{R}^{d \times q}$和$\boldsymbol{b} \in \mathbb{R}^{1 \times q}$。softmax回归的矢量计算表达式为</li>
 </ul>
-<p>$$<br> \begin{aligned} \boldsymbol{O} &amp;= \boldsymbol{X} \boldsymbol{W} + \boldsymbol{b},\ \boldsymbol{\hat{Y}} &amp;= \text{softmax}(\boldsymbol{O}), \end{aligned}<br>$$</p>
+<p>$$<br> \begin{aligned} \boldsymbol{O} &amp;= \boldsymbol{X} \boldsymbol{W} + \boldsymbol{b},\\ \boldsymbol{\hat{Y}} &amp;= \text{softmax}(\boldsymbol{O}), \end{aligned}<br>$$</p>
 <p>其中的加法运算使用了广播机制，$\boldsymbol{O}, \boldsymbol{\hat{Y}} \in \mathbb{R}^{n \times q}$且这两个矩阵的第$i$行分别为样本$i$的输出$\boldsymbol{o}^{(i)}$和概率分布$\boldsymbol{\hat{y}}^{(i)}$。</p>
 <hr>
 <p>两种操作对比</p>

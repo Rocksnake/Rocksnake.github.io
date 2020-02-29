@@ -220,7 +220,7 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">February 28, 2020&nbsp;&nbsp;10:08:12</a>
+                        Date: <a href="#">February 29, 2020&nbsp;&nbsp;9:46:10</a>
                         </span>
                     
                     
@@ -245,17 +245,15 @@
 <p>我们的目的是基于当前的输入与过去的输入序列，预测序列的下一个字符。循环神经网络引入一个隐藏变量$H$，用$H_{t}$表示$H$在时间步$t$的值。$H_{t}$的计算基于$X_{t}$和$H_{t-1}$，可以认为$H_{t}$记录了到当前字符为止的序列信息，利用$H_{t}$对序列的下一个字符进行预测。</p>
 <div align=center><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWprbTB2NDRpLnBuZw?x-oss-process=image/format,png" /></div>
 
-<h2 id="构造-Structure"><a href="#构造-Structure" class="headerlink" title="构造(Structure)"></a>构造(Structure)</h2><p>我们先看循环神经网络的具体构造。假设$\boldsymbol{X}_t \in \mathbb{R}^{n \times d}$是时间步$t$的小批量输入，$\boldsymbol{H}_t  \in \mathbb{R}^{n \times h}$是该时间步的隐藏变量，则：</p>
-<div align=center>  
-【广播机制】
+<h2 id="构造-Structure"><a href="#构造-Structure" class="headerlink" title="构造(Structure)"></a>构造(Structure)</h2><p>我们先看循环神经网络的具体构造。假设 $\boldsymbol{X}_t \in \mathbb{R}^{n \times d}$ 是时间步 $t$ 的小批量输入，$\boldsymbol{H}_t  \in \mathbb{R}^{n \times h}$ 是该时间步的隐藏变量，则：</p>
+<center>【广播机制】</center>
 
-<p>$$<br>\boldsymbol{H}<em>t = \phi(\boldsymbol{X}_t \boldsymbol{W}</em>{xh} + \boldsymbol{H}<em>{t-1} \boldsymbol{W}</em>{hh}  + \boldsymbol{b}_h).<br>$$</p>
-<p>其中，$\boldsymbol{W}<em>{xh} \in \mathbb{R}^{d \times h}$，$\boldsymbol{W}</em>{hh} \in \mathbb{R}^{h \times h}$，$\boldsymbol{b}_{h} \in \mathbb{R}^{1 \times h}$，$\phi$函数是非线性激活函数。</p>
-<p>由于引入了$\boldsymbol{H}<em>{t-1} \boldsymbol{W}</em>{hh}$，$H_{t}$能够捕捉截至当前时间步的序列的历史信息，就像是神经网络当前时间步的状态或记忆一样。</p>
+<p>$$<br>\boldsymbol{H}_t = \phi(\boldsymbol{X}_t \boldsymbol{W}_{xh} + \boldsymbol{H}_{t-1} \boldsymbol{W}_{hh}  + \boldsymbol{b}_h).<br>$$</p>
+<p>其中，$\boldsymbol{W}_{xh} \in \mathbb{R}^{d \times h}$，$\boldsymbol{W}_{hh} \in \mathbb{R}^{h \times h}$, $\boldsymbol{b}_{h} \in \mathbb{R}^{1 \times h}$, $\phi$ 函数是非线性激活函数。</p>
+<p>由于引入了 $\boldsymbol{H}_{t-1} \boldsymbol{W}_{hh}$，$H_{t}$ 能够捕捉截至当前时间步的序列的历史信息，就像是神经网络当前时间步的状态或记忆一样。</p>
 <p>由于$H_{t}$的计算基于$H_{t-1}$，上式的计算是循环的，使用循环计算的网络即循环神经网络（recurrent neural network）。</p>
 <p>在时间步$t$，输出层的输出为：</p>
-<p>$$<br>\boldsymbol{O}<em>t = \boldsymbol{H}_t \boldsymbol{W}</em>{hq} + \boldsymbol{b}_q.<br>$$</p>
-<p>其中$\boldsymbol{W}_{hq} \in \mathbb{R}^{h \times q}$，$\boldsymbol{b}_q \in \mathbb{R}^{1 \times q}$。</p>
+<p>$$<br>\boldsymbol{O}_t = \boldsymbol{H}_t \boldsymbol{W}_{hq} + \boldsymbol{b}_q.<br>$$<br>其中$\boldsymbol{W}_{hq} \in \mathbb{R}^{h \times q}$，$\boldsymbol{b}_q \in \mathbb{R}^{1 \times q}$。</p>
 <h2 id="手动实现"><a href="#手动实现" class="headerlink" title="手动实现"></a>手动实现</h2><blockquote>
 <p>实现一个基于字符级循环神经网络的语言模型，仍然使用周杰伦的歌词作为语料</p>
 <blockquote>
@@ -387,10 +385,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2020/02/28/ModernRNN/">ModernRNN</a>
             
-            
-            <a class="next" rel="next" href="/2020/02/28/Language%20Model%20&%20Data%20Sampling/">Language Model & Data Sampling</a>
+            <a class="next" rel="next" href="/2020/02/28/%E8%AF%8D%E5%B5%8C%E5%85%A5%E4%B9%8B%20Word2Vec/">词嵌入之 Word2Vec</a>
             
         </section>
 

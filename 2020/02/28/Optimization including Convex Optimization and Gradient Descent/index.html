@@ -273,7 +273,7 @@
 
 <hr>
 <p><strong>海森矩阵</strong></p>
-<p>$$<br>A=\left[\begin{array}{cccc}{\frac{\partial^{2} f}{\partial x_{1}^{2}}} &amp; {\frac{\partial^{2} f}{\partial x_{1} \partial x_{2}}} &amp; {\cdots} &amp; {\frac{\partial^{2} f}{\partial x_{1} \partial x_{n}}} \ {\frac{\partial^{2} f}{\partial x_{2} \partial x_{1}}} &amp; {\frac{\partial^{2} f}{\partial x_{2}^{2}}} &amp; {\cdots} &amp; {\frac{\partial^{2} f}{\partial x_{2} \partial x_{n}}} \ {\vdots} &amp; {\vdots} &amp; {\ddots} &amp; {\vdots} \ {\frac{\partial^{2} f}{\partial x_{n} \partial x_{1}}} &amp; {\frac{\partial^{2} f}{\partial x_{n} \partial x_{2}}} &amp; {\cdots} &amp; {\frac{\partial^{2} f}{\partial x_{n}^{2}}}\end{array}\right]<br>$$</p>
+<p>$$<br>A=\left[\begin{array}{cccc}{\frac{\partial^{2} f}{\partial x_{1}^{2}}} &amp; {\frac{\partial^{2} f}{\partial x_{1} \partial x_{2}}} &amp; {\cdots} &amp; {\frac{\partial^{2} f}{\partial x_{1} \partial x_{n}}} \\ {\frac{\partial^{2} f}{\partial x_{2} \partial x_{1}}} &amp; {\frac{\partial^{2} f}{\partial x_{2}^{2}}} &amp; {\cdots} &amp; {\frac{\partial^{2} f}{\partial x_{2} \partial x_{n}}} \\ {\vdots} &amp; {\vdots} &amp; {\ddots} &amp; {\vdots} \\ {\frac{\partial^{2} f}{\partial x_{n} \partial x_{1}}} &amp; {\frac{\partial^{2} f}{\partial x_{n} \partial x_{2}}} &amp; {\cdots} &amp; {\frac{\partial^{2} f}{\partial x_{n}^{2}}}\end{array}\right]<br>$$</p>
 <blockquote>
 <p>海森矩阵特征值和鞍点还有局部极小值的点的关系</p>
 <blockquote>
@@ -360,8 +360,8 @@
 <blockquote>
 <p>show_trace(newton(0.5))<br><img src="https://img-blog.csdnimg.cn/20200220214557927.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
 </blockquote>
-<h3 id="收敛性分析"><a href="#收敛性分析" class="headerlink" title="收敛性分析"></a>收敛性分析</h3><p>只考虑在函数为凸函数, 且最小值点上 $f’’(x^*) &gt; 0$ 时的收敛速度：</p>
-<p>令 $x_k$ 为第 $k$ 次迭代后 $x$ 的值， $e_{k}:=x_{k}-x^{<em>}$ 表示 $x_k$ 到最小值点 $x^{</em>}$ 的距离，由 $f’(x^{*}) = 0$:</p>
+<h3 id="收敛性分析"><a href="#收敛性分析" class="headerlink" title="收敛性分析"></a>收敛性分析</h3><p>只考虑在函数为凸函数, 且最小值点上 $f’’(x^*) &gt;0$ 时的收敛速度：</p>
+<p>令 $x_k$ 为第 $k$ 次迭代后 $x$ 的值， $e_{k}:=x_{k}-x^{*}$ 表示 $x_k$ 到最小值点 $x^{*}$ 的距离，由 $f’(x^{*}) = 0$:</p>
 <p>$$<br>0=f^{\prime}\left(x_{k}-e_{k}\right)=f^{\prime}\left(x_{k}\right)-e_{k} f^{\prime \prime}\left(x_{k}\right)+\frac{1}{2} e_{k}^{2} f^{\prime \prime \prime}\left(\xi_{k}\right) \text{for some } \xi_{k} \in\left[x_{k}-e_{k}, x_{k}\right]<br>$$</p>
 <p>两边除以 $f’’(x_k)$, 有：</p>
 <p>$$<br>e_{k}-f^{\prime}\left(x_{k}\right) / f^{\prime \prime}\left(x_{k}\right)=\frac{1}{2} e_{k}^{2} f^{\prime \prime \prime}\left(\xi_{k}\right) / f^{\prime \prime}\left(x_{k}\right)<br>$$</p>
@@ -390,7 +390,7 @@
 <li>学习率可以设计为指数衰减或多项式衰减</li>
 <li>在优化进行一段时间后可以适当减小学习率来避免振荡</li>
 </ul>
-<p>$$<br>\begin{array}{ll}{\eta(t)=\eta_{i} \text { if } t_{i} \leq t \leq t_{i+1}} &amp; {\text { piecewise constant }} \ {\eta(t)=\eta_{0} \cdot e^{-\lambda t}} &amp; {\text { exponential }} \ {\eta(t)=\eta_{0} \cdot(\beta t+1)^{-\alpha}} &amp; {\text { polynomial }}\end{array}<br>$$</p>
+<p>$$<br>\begin{array}{ll}{\eta(t)=\eta_{i} \text { if } t_{i} \leq t \leq t_{i+1}} &amp; {\text { piecewise constant }} \\ {\eta(t)=\eta_{0} \cdot e^{-\lambda t}} &amp; {\text { exponential }} \\ {\eta(t)=\eta_{0} \cdot(\beta t+1)^{-\alpha}} &amp; {\text { polynomial }}\end{array}<br>$$</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">exponential</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">global</span> ctr</span><br><span class="line">    ctr += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> math.exp(<span class="number">-0.1</span> * ctr)</span><br><span class="line"></span><br><span class="line">ctr = <span class="number">1</span></span><br><span class="line">lr = exponential  <span class="comment"># Set up learning rate</span></span><br><span class="line">show_trace_2d(f, train_2d(sgd, steps=<span class="number">1000</span>))</span><br></pre></td></tr></table></figure>
 <center><img src="https://img-blog.csdnimg.cn/20200220215551658.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" /></center>
 

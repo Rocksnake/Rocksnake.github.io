@@ -259,12 +259,12 @@
 </blockquote>
 </li>
 </ul>
-<p><strong>全连接：</strong><br>$$<br>\boldsymbol{x} = \boldsymbol{W\boldsymbol{u} + \boldsymbol{b}} \<br> output =\phi(\boldsymbol{x})<br> $$   </p>
+<p><strong>全连接：</strong><br>$$<br>\boldsymbol{x} = \boldsymbol{W\boldsymbol{u} + \boldsymbol{b}} \\<br> output =\phi(\boldsymbol{x})<br> $$   </p>
 <p>输入是u，经过仿射变化得到x，经过激活函数得到output，size=(batch_size，输出神经元的个数)</p>
 <p><strong>批量归一化：</strong><br>$$<br>output=\phi(\text{BN}(\boldsymbol{x}))$$</p>
 <p>$$<br>\boldsymbol{y}^{(i)} = \text{BN}(\boldsymbol{x}^{(i)})<br>$$</p>
 <p>$$<br>\boldsymbol{\mu}<em>\mathcal{B} \leftarrow \frac{1}{m}\sum</em>{i = 1}^{m} \boldsymbol{x}^{(i)},<br>$$ </p>
-<p>$$<br>\boldsymbol{\sigma}<em>\mathcal{B}^2 \leftarrow \frac{1}{m} \sum</em>{i=1}^{m}(\boldsymbol{x}^{(i)} - \boldsymbol{\mu}_\mathcal{B})^2,<br>$$</p>
+<p>$$<br>\boldsymbol{\sigma}_\mathcal{B}^2 \leftarrow \frac{1}{m} \sum_{i=1}^{m}(\boldsymbol{x}^{(i)} - \boldsymbol{\mu}_\mathcal{B})^2,<br>$$</p>
 <p>$$<br>\hat{\boldsymbol{x}}^{(i)} \leftarrow \frac{\boldsymbol{x}^{(i)} - \boldsymbol{\mu}_\mathcal{B}}{\sqrt{\boldsymbol{\sigma}_\mathcal{B}^2 + \epsilon}},<br>$$</p>
 <p>$$<br>标准化处理<br>$$</p>
 <p>这⾥ϵ &gt; 0是个很小的常数，保证分母大于0</p>
