@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-03-05T02:32:28.330Z</updated>
+  <updated>2020-03-12T05:41:44.229Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>GC in HotSpot JVM</title>
+    <link href="http://yoursite.com/2020/03/12/GC%20in%20HotSpot%20JVM/"/>
+    <id>http://yoursite.com/2020/03/12/GC%20in%20HotSpot%20JVM/</id>
+    <published>2020-03-12T05:39:42.565Z</published>
+    <updated>2020-03-12T05:41:44.229Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;今天我们来聊 GC ( Garbage Collection ),  Java 与 C++ 之间有一堵由&lt;strong&gt;内存动态分配&lt;/strong&gt;和&lt;strong&gt;垃圾收集技术&lt;/strong&gt;所围城的 &lt;font
+        
+      
+    
+    </summary>
+    
+    
+      <category term="JAVA" scheme="http://yoursite.com/categories/JAVA/"/>
+    
+    
+      <category term="JVM" scheme="http://yoursite.com/tags/JVM/"/>
+    
+      <category term="GC" scheme="http://yoursite.com/tags/GC/"/>
+    
+  </entry>
   
   <entry>
     <title>人=波,颠倒因果</title>
@@ -656,37 +685,6 @@
       <category term="Fashion-MNIST" scheme="http://yoursite.com/tags/Fashion-MNIST/"/>
     
       <category term="Computer Vision" scheme="http://yoursite.com/tags/Computer-Vision/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Design and Realization of Linear Regression</title>
-    <link href="http://yoursite.com/2020/02/28/Design%20and%20Realization%20of%20Linear%20Regression/"/>
-    <id>http://yoursite.com/2020/02/28/Design%20and%20Realization%20of%20Linear%20Regression/</id>
-    <published>2020-02-28T01:54:23.612Z</published>
-    <updated>2020-02-28T02:38:40.937Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;线性回归的基本要素&quot;&gt;&lt;a href=&quot;#线性回归的基本要素&quot; class=&quot;headerlink&quot; title=&quot;线性回归的基本要素&quot;&gt;&lt;/a&gt;线性回归的基本要素&lt;/h2&gt;&lt;h3 id=&quot;模型&quot;&gt;&lt;a href=&quot;#模型&quot; class=&quot;headerlink&quot;
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
-    
-    
-      <category term="Network" scheme="http://yoursite.com/tags/Network/"/>
-    
-      <category term="Linear Regression" scheme="http://yoursite.com/tags/Linear-Regression/"/>
-    
-      <category term="Pytorch" scheme="http://yoursite.com/tags/Pytorch/"/>
     
   </entry>
   

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>GC in HotSpot JVM | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">GC in HotSpot JVM</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">March 12, 2020&nbsp;&nbsp;13:39:42</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/JAVA/">JAVA</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>今天我们来聊 GC ( Garbage Collection ),  Java 与 C++ 之间有一堵由<strong>内存动态分配</strong>和<strong>垃圾收集技术</strong>所围城的 <font color=blue>“高墙”</font>。</p>
+<center>外面的人想进去，里面的人想出来</center>
+
+<h2 id="GC-是什么？"><a href="#GC-是什么？" class="headerlink" title="GC 是什么？"></a>GC 是什么？</h2><blockquote>
+<p>Java垃圾回收机制</p>
+</blockquote>
+<p>目前主流的 JVM（HotSpot）采用的是分代收集算法。与 C++ 不同的是，Java 采用的是类似于树形结构的可达性分析法来判断对象是否还存在引用。</p>
+<p>即：从 GC Root 开始，把所有可以搜索得到的对象标记为存活对象。</p>
+<h2 id="JVM-内存结构"><a href="#JVM-内存结构" class="headerlink" title="JVM 内存结构"></a>JVM 内存结构</h2><blockquote>
+<p>GC主要是针对运行的数据区的</p>
+</blockquote>
+<p>做应用程序开发，只需要大方向关注 5 块区域</p>
+<ol>
+<li><a href="#method_area">方法区(Method Area)；</a></li>
+<li><a href="#jvm_stack">Java栈(Java stack)；</a></li>
+<li><a href="#native_method_stacks">本地方法栈(Native Method Stack)；</a></li>
+<li><a href="#heap">堆(Heap)；</a></li>
+<li><a href="#program_counter_register">程序计数器(Program Counter Register)</a></li>
+</ol>
+<center><img src="https://img-blog.csdnimg.cn/20200312115043330.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" /></center>
+
+<div id="method_area"><b>方法区 (Method Area)</b></div><br/>
+
+<p>&ensp;&ensp;&ensp;&ensp;与Heap一样，也是各个线程共享的内存域，这块区域主要是用来存储类加载器加载的类信息，常量，静态变量，通俗的讲就是编译后的class文件信息。</p>
+<div id="jvm_stack"><b>Jvm栈</b></div><br/>
+
+<p>&ensp;&ensp;&ensp;&ensp;与程序计数器一样，它是每个线程私有的，它的生命周期与线程相同。虚拟机栈描述的是Java方法执行的内存模型：每个方法被执行的时候都会同时创建一个栈帧（Stack Frame）用于存储局部变量表、操作栈、动态链接、方法出口等信息。每一个方法被调用直至执行完成的过程，就对应着一个栈帧在虚拟机栈中从入栈到出栈的过程。</p>
+<div id="native_method_stacks"><b>本地方法栈（Native Method Stacks）</b></div><br/>
+
+<p>&ensp;&ensp;&ensp;&ensp;本地方法栈（Native Method Stacks）与虚拟机栈所发挥的作用是非常相似的，其区别不过是虚拟机栈为虚拟机执行Java方法（也就是字节码）服务，而本地方法栈则是为虚拟机使用到的Native方法服务。</p>
+<div id="heap"><b>堆 (Heap)</b></div><br/>
+
+<p>&ensp;&ensp;&ensp;&ensp;是Jvm管理的内存中最大的一块。程序的主要数据也都是存放在堆内存中的，这一块区域被所有的线程所共享，通常出现线程安全问题的一般都是这个区域的数据出现的问题。</p>
+<div id="program_counter_register"><b>程序计数器 (Program Counter Register)</b></div><br/>
+
+<p>&ensp;&ensp;&ensp;&ensp;个人感觉的他就是为多线程准备的，程序计数器是每个线程独有的，所以是线程安全的。它主要用于记录每个线程的执行情况。</p>
+<h2 id="GC实现机制-我们为什么要去了解GC和内存分配？"><a href="#GC实现机制-我们为什么要去了解GC和内存分配？" class="headerlink" title="GC实现机制-我们为什么要去了解GC和内存分配？"></a>GC实现机制-我们为什么要去了解GC和内存分配？</h2><p><strong>A:</strong></p>
+<ul>
+<li>内存溢出</li>
+<li>内存泄漏</li>
+<li>并发处理</li>
+<li>当垃圾收集成为系统达到更高并发量的瓶颈时，我们需要监控和调节</li>
+</ul>
+<blockquote>
+<p>GC 主要是针对 Java Heap 这块区域，其次是方法区</p>
+</blockquote>
+<p>JVM的内存空间，从大的层面上来分析包含：新生代空间( Young )和老年代空间（ Old ）。新生代空间（Young）又被分为2个部分（Eden区域、Survivous区域）和3个板块（1个Eden区域和2个Survivous区域）</p>
+<center><img src="https://img-blog.csdnimg.cn/2020031212013163.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" /></center>
+
+<p><b>Eden(伊甸园)区域</b>：用来存放使用new或者newInstance等方式创建的对象，默认这些对象都是存放在Eden区，除非这个对象太大，或者超出了设定的阈值-XX:PretenureSizeThresold，这样的对象会被直接分配到Old区域。</p>
+<p>2个<b>Survivous(幸存)区域</b>：一般称为S0，S1，理论上他们一样大。</p>
+<p><strong>Q:</strong><br><strong>S0和S1一般多大，靠什么参数来控制，有什么变化？</strong></p>
+<p><strong>A:</strong></p>
+<p>一般来说很小，我们大概知道它与Young差不多相差一倍的比例，设置的参数主要有两个：</p>
+<blockquote>
+<p>-XX:SurvivorRatio=8<br>-XX:InitialSurvivorRatio=8</p>
+</blockquote>
+<p><strong>第一个参数</strong> :是 Eden 和 Survivous 区域比重（注意 Survivous 一般包含两个区域 $S_{0}$ 和 $S_{1}$ ，这里是一个Survivous的大小）。如果将 -XX:SurvivorRatio=8 设置为8，则说明Eden区域是一个Survivous区的8倍，换句话说 $S_{0}$ 或 $S_{1}$ 空间是整个Young空间的1/10，剩余的8/10由Eden区域来使用。</p>
+<p><strong>第二个参数</strong> :是 $Young/S0$ 的比值，当其设置为 8 时，表示 $S_{0}$ 或 $S_{1}$ 占整个 Young 空间的1/8（或12.5%）</p>
+<h2 id="GC的实现"><a href="#GC的实现" class="headerlink" title="GC的实现"></a>GC的实现</h2><ol>
+<li>Minor GC</li>
+<li>Full GC</li>
+</ol>
+<p><font color=red>通过 Minor GC 后进入旧生代的平均大小大于旧生代的可用内存。如果发现统计数据说之前 Minor GC 的平均晋升大小比目前旧生代剩余的空间大，则不会触发 Minor GC 而是转为触发 Full GC。</font></p>
+<h3 id="Minor-GC"><a href="#Minor-GC" class="headerlink" title="Minor GC"></a>Minor GC</h3><h4 id="First-GC"><a href="#First-GC" class="headerlink" title="First GC"></a>First GC</h4><p>在不断创建对象的过程中，当Eden区域被占满，此时会开始做Young GC也叫Minor GC</p>
+<ol>
+<li><p>第一次GC时Survivous中S0区和S1区都为空，将其中一个作为To Survivous(用来存储Eden区域执行GC后不能被回收的对象)。比如：将S0作为To Survivous，则S1为From Survivous。</p>
+</li>
+<li><p>将Eden区域经过GC不能被回收的对象存储到To Survivous（S0）区域（此时Eden区域的内存会在垃圾回收的过程中全部释放），但如果To Survivous（S0）被占满了，Eden中剩下不能被回收对象只能存放到Old区域。</p>
+</li>
+<li><p>将Eden区域空间清空，此时From Survivous区域（S1）也是空的。</p>
+</li>
+<li><p>S0与S1互相切换标签，S0为From Survivous，S1为To Survivous。</p>
+</li>
+</ol>
+<center><img src="https://img-blog.csdnimg.cn/20200312121238749.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" /></center>
+
+<h4 id="Second-GC"><a href="#Second-GC" class="headerlink" title="Second GC"></a>Second GC</h4><p>当第二次Eden区域被占满时，此时开始做GC</p>
+<ol>
+<li><p>将Eden和From Survivous(S0)中经过GC未被回收的对象迁移到To Survivous(S1)，如果To Survious(S1)区放不下，将剩下的不能回收对象放入Old区域；</p>
+</li>
+<li><p>将Eden区域空间和From Survivous（S0）区域空间清空；</p>
+</li>
+<li><p>S0与S1互相切换标签，S0为To Survivous，S1为From Survivous。</p>
+</li>
+</ol>
+<center><img src="https://img-blog.csdnimg.cn/2020031213042674.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" /></center>
+
+<p>。。。以此类推</p>
+<h4 id="第三次、第四次…"><a href="#第三次、第四次…" class="headerlink" title="第三次、第四次…"></a>第三次、第四次…</h4><blockquote>
+<p>反反复复多次没有被淘汰的对象，将会被放入Old区域中</p>
+</blockquote>
+<h3 id="究竟会经过多少次？"><a href="#究竟会经过多少次？" class="headerlink" title="究竟会经过多少次？"></a>究竟会经过多少次？</h3><p>设置次数的参数：由计数器记录【计数器会在对象的头部记录它的交换次数】 </p>
+<blockquote>
+<p>–XX:MaxTenuringThreshold=15</p>
+</blockquote>
+<h3 id="Full-GC"><a href="#Full-GC" class="headerlink" title="Full GC"></a>Full GC</h3><p>我们来捋捋 Full GC 的触发条件：</p>
+<ol>
+<li>System.gc()方法的调用；<br>此方法的调用是建议JVM进行Full GC,虽然只是建议而非一定，但很多情况下它会触发 Full GC,从而增加Full GC的频率，也即增加了间歇性停顿的次数。强烈影响系建议能不使用此方法就别使用，让虚拟机自己去管理它的内存，可通过通过-XX:+ DisableExplicitGC来禁止RMI（Java远程方法调用）调用System.gc。</li>
+<li>旧生代空间不足;<br>旧生代空间只有在新生代对象转入及创建为大对象、大数组时才会出现不足的现象，当执行Full GC后空间仍然不足，则抛出错误：java.lang.OutOfMemoryError: Java heap space 。为避免以上两种状况引起的FullGC，调优时应尽量做到让对象在Minor GC阶段被回收、让对象在新生代多存活一段时间及不要创建过大的对象及数组。</li>
+<li>由Eden区、From Space区向To Space区复制时，对象大小大于To Space可用内存，则把该对象转存到老年代，且老年代的可用内存小于该对象大小</li>
+</ol>
+<h2 id="GC实现机制-Java虚拟机如何实现垃圾回收机制"><a href="#GC实现机制-Java虚拟机如何实现垃圾回收机制" class="headerlink" title="GC实现机制-Java虚拟机如何实现垃圾回收机制"></a>GC实现机制-Java虚拟机如何实现垃圾回收机制</h2><ol>
+<li><a href="#reference_counting">引用计数算法（Reference Counting）</a></li>
+<li><a href="#reachability_analysis">可达性分析算法（Reachability Analysis）</a></li>
+</ol>
+<h3 id="引用计数算法（Reference-Counting）"><a href="#引用计数算法（Reference-Counting）" class="headerlink" title="引用计数算法（Reference Counting）"></a><div id="reference_counting">引用计数算法（Reference Counting）</div></h3><p>给对象添加一个引用计数器，每当有一个地方引用它时，计数器值就加1；当引用失效时，计数器值就减1；任何时刻计数器为0的对象就是不可能再被使用的，这就是引用计数算法的核心。</p>
+<p>客观来讲，引用计数算法实现简单，判定效率也很高，在大部分情况下都是一个不错的算法。但是Java虚拟机并没有采用这个算法来判断何种对象为死亡对象，因为它很难解决对象之间相互循环引用的问题。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReferenceCountingGC</span> </span>&#123;</span><br><span class="line">   <span class="keyword">public</span> Object object = <span class="keyword">null</span>;</span><br><span class="line">  </span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> OenM = <span class="number">1024</span> * <span class="number">1024</span>;</span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">byte</span>[] bigSize = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">2</span> * OneM];</span><br><span class="line"> </span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testCG</span><span class="params">()</span></span>&#123;</span><br><span class="line">      ReferenceCountingGC objA = <span class="keyword">new</span> ReferenceCountingGC(); </span><br><span class="line">       ReferenceCountingGC objB = <span class="keyword">new</span> ReferenceCountingGC(); </span><br><span class="line">      </span><br><span class="line">       objA.object = <span class="keyword">null</span>;</span><br><span class="line">       objB.object = <span class="keyword">null</span>;</span><br><span class="line"> </span><br><span class="line">      System.gc();</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在上述代码段中，objA与objB互相循环引用，没有结束循环的判断条件，运行结果显示Full GC，就说明当Java虚拟机并不是使用引用计数算法来判断对象是否存活的。</p>
+<h3 id="可达性分析算法（Reachability-Analysis）"><a href="#可达性分析算法（Reachability-Analysis）" class="headerlink" title="可达性分析算法（Reachability Analysis）"></a><div id="reachability_analysis">可达性分析算法（Reachability Analysis）</div></h3><blockquote>
+<p>这是Java虚拟机采用的判定对象是否存活的算法。</p>
+</blockquote>
+<p>通过一系列的称为“GC Roots”的对象作为起始点，从这些结点开始向下搜索，搜索所走过的路径称为饮用链（Reference Chain），当一个对象到GC Roots没有任何引用链相连时，则证明此对象是不可用的。</p>
+<p>可作为GC Roots的对象包括：</p>
+<ol>
+<li>虚拟机栈中引用的对象;</li>
+<li>方法区中类静态属性引用的对象;</li>
+<li>方法区中常量引用的对象;</li>
+<li>本地方法栈JNI引用的对象</li>
+</ol>
+<h2 id="GC实现机制-何为死亡对象？"><a href="#GC实现机制-何为死亡对象？" class="headerlink" title="GC实现机制-何为死亡对象？"></a>GC实现机制-何为死亡对象？</h2><blockquote>
+<p>从根引用开始，对象的内部属性可能也是引用，只要能级联到的都被认为是活着的对象。</p>
+</blockquote>
+<blockquote>
+<p>Java虚拟机在进行死亡对象判定时，会经历两个过程。</p>
+</blockquote>
+<p>如果对象在进行可达性分析后没有与 GC Roots 相关联的引用链，则该对象会被 JVM 进行第一次标记并且进行一次筛选</p>
+<blockquote>
+<p>筛选的条件是此对象是否有必要执行 finalize() 方法，</p>
+</blockquote>
+<ul>
+<li><p>如果当前对象没有覆盖该方法，或者 finalize() 方法已经被 JVM 调用过都会被虚拟机判定为“没有必要执行”。</p>
+</li>
+<li><p>如果该对象被判定为没有必要执行，那么该对象将会被放置在一个叫做 F-Queue 的队列当中，并在稍后由一个虚拟机自动建立的、低优先级的 Finalizer 线程去执行它，在执行过程中JVM可能不会等待该线程执行完毕，因为如果一个对象在 finalize() 方法中执行缓慢，或者发生死循环，将很有可能导致 F-Queue 队列中其他对象永久处于等待状态，甚至导致整个内存回收系统崩溃。</p>
+</li>
+<li><p>如果在 finalize() 方法中该对象重新与引用链上的任何一个对象建立了关联，即该对象连上了任何一个对象的引用链，例如 this 关键字，那么该对象就会逃脱垃圾回收系统；</p>
+</li>
+<li><p>如果该对象在 finalize() 方法中没有与任何一个对象进行关联操作，那么该对象会被虚拟机进行第二次标记，该对象就会被垃圾回收系统回收。值得注意的是 finaliza() 方法JVM系统只会自动调用一次.</p>
+</li>
+<li><p>如果对象面临下一次回收，它的 finalize() 方法不会被再次执行。</p>
+</li>
+</ul>
+<h2 id="GC实现机制-垃圾收集算法"><a href="#GC实现机制-垃圾收集算法" class="headerlink" title="GC实现机制-垃圾收集算法"></a>GC实现机制-垃圾收集算法</h2><ol>
+<li>标记-清除算法（Mark-Sweep）</li>
+<li>复制算法（Copying）</li>
+<li>分代收集(Generational Collection)算法</li>
+<li>标记-整理(Mark-Compat)算法</li>
+</ol>
+<p>新生代中，每次垃圾收集时都有大批对象死去，只有少量存活，就选用复制算法，只需要付出少量存活对象的复制成本就可以完成收集；</p>
+<p>老年代中，其存活率较高、没有额外空间对它进行分配担保，就应该使用“标记-整理”或“标记-清理”算法进行回收。</p>
+<h2 id="常用的垃圾回收器"><a href="#常用的垃圾回收器" class="headerlink" title="常用的垃圾回收器"></a>常用的垃圾回收器</h2><ol>
+<li>Serial收集器</li>
+<li>ParNew收集器</li>
+<li>Parallel Scavenge收集器</li>
+<li>CMS(Concurrent Mark Sweep) 收集器</li>
+<li>G1(Garbage First) 收集器</li>
+</ol>
+<p><strong>Q:</strong><br><strong>对象进入Old区域有什么坏处？</strong></p>
+<p><strong>A:</strong><br>&ensp;&ensp;&ensp;&ensp;&ensp;Old区域一般称为老年代，老年代与新生代不一样。新生代，我们可以认为存活下来的对象很少，而老年代则相反，存活下来的对象很多，所以JVM的堆内存，才是我们通常关注的主战场，因为这里面活着的对象非常多，所以发生一次FULL GC，来找出来所有存活的对象是非常耗时的，因此，我们应该避免FULL GC的发生。</p>
+<p><strong>Q:</strong><br><strong>为什么发生FULL GC会带来很大的危害？</strong></p>
+<p><strong>A:</strong><br>&ensp;&ensp;&ensp;&ensp;在发生FULL GC的时候，意味着JVM会安全的暂停所有正在执行的线程（Stop The World），来回收内存空间，在这个时间内，所有除了回收垃圾的线程外，其他有关JAVA的程序，代码都会静止，反映到系统上，就会出现系统响应大幅度变慢，卡机等状态。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/JVM/"># JVM</a>
+                    
+                        <a href="/tags/GC/"># GC</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/03/05/%E4%BA%BA=%E6%B3%A2%EF%BC%8C%E9%A2%A0%E5%80%92%E5%9B%A0%E6%9E%9C/">人=波,颠倒因果</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    
+</footer>
+
+    </div>
+</body>
+</html>
