@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-03-16T05:27:44.986Z</updated>
+  <updated>2020-03-19T03:54:28.082Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,39 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>涉猎线程</title>
+    <link href="http://yoursite.com/2020/03/19/%E6%B6%89%E7%8C%8E%E7%BA%BF%E7%A8%8B/"/>
+    <id>http://yoursite.com/2020/03/19/%E6%B6%89%E7%8C%8E%E7%BA%BF%E7%A8%8B/</id>
+    <published>2020-03-19T03:52:38.794Z</published>
+    <updated>2020-03-19T03:54:28.082Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;blockquote&gt;
+&lt;p&gt;在Java程序设计语言中，并发程序主要集中于线程&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;而且随着计算机系统拥有多个处理器或带有多个执行内核，线程的系统能力得到了很大的增强&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;bloc
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Operating Systems" scheme="http://yoursite.com/categories/Operating-Systems/"/>
+    
+    
+      <category term="(多)线程与进程" scheme="http://yoursite.com/tags/%E5%A4%9A-%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%BF%9B%E7%A8%8B/"/>
+    
+  </entry>
   
   <entry>
     <title>10亿数据找目标，众里寻他之红黑树</title>
@@ -638,44 +671,6 @@
       <category term="元语法" scheme="http://yoursite.com/tags/%E5%85%83%E8%AF%AD%E6%B3%95/"/>
     
       <category term="数据采样" scheme="http://yoursite.com/tags/%E6%95%B0%E6%8D%AE%E9%87%87%E6%A0%B7/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Text Preprocessing</title>
-    <link href="http://yoursite.com/2020/02/28/Text%20Preprocessing/"/>
-    <id>http://yoursite.com/2020/02/28/Text%20Preprocessing/</id>
-    <published>2020-02-28T02:04:02.844Z</published>
-    <updated>2020-02-28T02:37:56.521Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;blockquote&gt;
-&lt;blockquote&gt;
-&lt;p&gt;打开 Google， 输入搜索关键词，显示上百条搜索结果&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;blockquote&gt;
-&lt;p&gt;打开 Google Translate，
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
-    
-    
-      <category term="NLP" scheme="http://yoursite.com/tags/NLP/"/>
-    
-      <category term="文本预处理" scheme="http://yoursite.com/tags/%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86/"/>
-    
-      <category term="spaCy" scheme="http://yoursite.com/tags/spaCy/"/>
-    
-      <category term="NLTK" scheme="http://yoursite.com/tags/NLTK/"/>
     
   </entry>
   
