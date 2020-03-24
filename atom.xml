@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-03-19T03:54:28.082Z</updated>
+  <updated>2020-03-24T02:11:55.342Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,36 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>EDA-数据探索性分析</title>
+    <link href="http://yoursite.com/2020/03/24/EDA-%E6%95%B0%E6%8D%AE%E6%8E%A2%E7%B4%A2%E6%80%A7%E5%88%86%E6%9E%90/"/>
+    <id>http://yoursite.com/2020/03/24/EDA-%E6%95%B0%E6%8D%AE%E6%8E%A2%E7%B4%A2%E6%80%A7%E5%88%86%E6%9E%90/</id>
+    <published>2020-03-24T02:00:53.150Z</published>
+    <updated>2020-03-24T02:11:55.342Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;EDA (Exploratory Data Analysis)，也就是对数据进行探索性的分析，从而为之后的数据预处理和特征工程提供必要的结论。&lt;/p&gt;
+&lt;p&gt;针对数据集导入和数据的读取不再赘述，是数据集格式而定。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;格式：.csv /
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Data Mining" scheme="http://yoursite.com/categories/Data-Mining/"/>
+    
+    
+      <category term="EDA" scheme="http://yoursite.com/tags/EDA/"/>
+    
+  </entry>
   
   <entry>
     <title>涉猎线程</title>
@@ -635,39 +665,6 @@
       <category term="深度循环神经网络" scheme="http://yoursite.com/tags/%E6%B7%B1%E5%BA%A6%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/"/>
     
       <category term="双向循环神经网络" scheme="http://yoursite.com/tags/%E5%8F%8C%E5%90%91%E5%BE%AA%E7%8E%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Language Model &amp; Data Sampling</title>
-    <link href="http://yoursite.com/2020/02/28/Language%20Model%20&amp;%20Data%20Sampling/"/>
-    <id>http://yoursite.com/2020/02/28/Language%20Model%20&amp;%20Data%20Sampling/</id>
-    <published>2020-02-28T02:06:04.369Z</published>
-    <updated>2020-02-29T01:45:22.987Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h1 id=&quot;语言模型&quot;&gt;&lt;a href=&quot;#语言模型&quot; class=&quot;headerlink&quot; title=&quot;语言模型&quot;&gt;&lt;/a&gt;语言模型&lt;/h1&gt;&lt;p&gt;一段自然语言文本可以看作是一个离散时间序列，给定一个长度为$T$的词的序列$w_1, w_2, \ldots,
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
-    
-    
-      <category term="语言模型" scheme="http://yoursite.com/tags/%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"/>
-    
-      <category term="概率论" scheme="http://yoursite.com/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/"/>
-    
-      <category term="元语法" scheme="http://yoursite.com/tags/%E5%85%83%E8%AF%AD%E6%B3%95/"/>
-    
-      <category term="数据采样" scheme="http://yoursite.com/tags/%E6%95%B0%E6%8D%AE%E9%87%87%E6%A0%B7/"/>
     
   </entry>
   

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>EDA-数据探索性分析 | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">EDA-数据探索性分析</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">March 24, 2020&nbsp;&nbsp;10:00:53</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Data-Mining/">Data Mining</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>EDA (Exploratory Data Analysis)，也就是对数据进行探索性的分析，从而为之后的数据预处理和特征工程提供必要的结论。</p>
+<p>针对数据集导入和数据的读取不再赘述，是数据集格式而定。</p>
+<blockquote>
+<p>格式：.csv / .json / .txt .e.t.c</p>
+</blockquote>
+<p>参见：<a href="https://blog.csdn.net/weixin_42297855/article/details/97501680" target="_blank" rel="noopener" title="关于 EDA 的 Blog">关于 EDA 的 Blog</a></p>
+<p>我想就以下几个问题谈谈我认识的和学到的 EDA。</p>
+<ol>
+<li><a href="#data_overview">数据总览；</a></li>
+<li><a href="#judge">判断数据缺失和异常；</a></li>
+<li><a href="#location">了解预测值的分布；</a></li>
+<li><a href="#num_analy">数字特征分析；</a></li>
+<li><a href="#category_analy">类型特征分析。</a></li>
+</ol>
+<h2 id="数据总览"><a href="#数据总览" class="headerlink" title="数据总览"></a><div id="data_overview">数据总览</div></h2><p>为了熟悉数据的相关统计量，此前我一直使用的是 describe( )。</p>
+<p><strong>优点：</strong> 其统计结果中有每列的统计量【个数 count、平均值 mean、方差 std、最小值 min、中位数25% 50% 75% 、以及最大值】</p>
+<blockquote>
+<p>方便瞬间掌握数据的大概的范围以及每个值的异常值的判断</p>
+</blockquote>
+<p><strong>e.g.</strong> 999 9999 -1 等值这些其实都是 nan 的另外一种表达方式</p>
+<p>我想说的是还有另外一种数据总览的方法 info( )。</p>
+<p><strong>优点：</strong> 了解数据每列的type，有助于了解是否存在除了 nan 以外的特殊符号异常。</p>
+<p>describe() 的结果就不展示了，比较直观，针对 info() 的结果展示一个范例。</p>
+<center><a  data-fancybox="gallery" href="https://img-blog.csdnimg.cn/2020032323381238.png" target="_blank" rel="noopener">
+    <img src="https://img-blog.csdnimg.cn/2020032323381238.png">
+</a></center>
+
+<h2 id="判断数据缺失和异常"><a href="#判断数据缺失和异常" class="headerlink" title="判断数据缺失和异常"></a><div id="judge">判断数据缺失和异常</div></h2><blockquote>
+<p>说白了还是针对 nan 类型的</p>
+</blockquote>
+<p>如果 nan 的数量很小一般选择填充，如果使用 lgb 等树模型可以直接空缺，让树自己去优化，但如果 nan 存在的过多、可以考虑删掉</p>
+<hr>
+<p>补充：</p>
+<p>&ensp;&ensp;nan，即非数值，不等于任何数，也不等于 nan 本身</p>
+<p>&ensp;&ensp;是否为 nan 类型的判断方式：isnan( )  <strong>or</strong>  isnull( )</p>
+<hr>
+<p>面对缺省值的三类处理方法：</p>
+<ol>
+<li>用平均值、中值、分位数、众数、随机值等替代。</li>
+</ol>
+<blockquote>
+<p>效果一般，因为等于人为增加了噪声。</p>
+</blockquote>
+<ol start="2">
+<li>用其他变量做预测模型来算出缺失变量。</li>
+</ol>
+<blockquote>
+<p>效果比方法1略好，<br>但有一个根本缺陷</p>
+<blockquote>
+<p>如果其他变量和缺失变量无关，则预测的结果无意义。</p>
+</blockquote>
+<blockquote>
+<p>如果预测结果相当准确，则又说明这个变量是没必要加入建模的。一般情况下，介于两者之间。</p>
+</blockquote>
+</blockquote>
+<ol start="3">
+<li>最精确的做法，把变量映射到高维空间。</li>
+</ol>
+<blockquote>
+<p>For Example: 性别，有男、女、缺失三种情况，则映射成3个变量：是否男、是否女、是否缺失。</p>
+</blockquote>
+<p>连续型变量也可以这样处理。比如Google、百度的CTR预估模型，预处理时会把所有变量都这样处理，达到几亿维。</p>
+<p>这样做的好处是完整保留了原始数据的全部信息、不用考虑缺失值、不用考虑线性不可分之类的问题。缺点是计算量大大提升。</p>
+<p>而且只有在样本量非常大的时候效果才好，否则会因为过于稀疏，效果很差。</p>
+<h2 id="了解预测值的分布"><a href="#了解预测值的分布" class="headerlink" title="了解预测值的分布"></a><div id="location">了解预测值的分布</div></h2><ol>
+<li>总体分布概况（无界约翰逊分布等）</li>
+</ol>
+<blockquote>
+<p>针对预测值的特征寻找最佳拟合曲线，对数 / 正态 / 无界 Johnson SU</p>
+</blockquote>
+<ol start="2">
+<li>查看 skewness and kurtosis</li>
+</ol>
+<blockquote>
+<p>分别对应数据的偏度 .skew( )  &amp;&amp; 峰度  .kurt( )</p>
+<blockquote>
+<p>参见：<a href="https://www.cnblogs.com/wyy1480/p/10474046.html" target="_blank" rel="noopener">偏度峰度简介及实现</a></p>
+</blockquote>
+</blockquote>
+<ol start="3">
+<li>查看预测值的具体频数</li>
+</ol>
+<blockquote>
+<p>通过直方图可视化预测数据，可以得到频数</p>
+</blockquote>
+<p><strong>处理方法：</strong> 把值较少的部分填充或者删掉</p>
+<p>处理过后的数据比较集中，可以在预测之前先进行变换，一般进行 log 变换，使得数据均匀化分布</p>
+<h2 id="特征分析"><a href="#特征分析" class="headerlink" title="特征分析"></a>特征分析</h2><ol>
+<li>特征 nunique 分布</li>
+<li>数据可视化</li>
+</ol>
+<h3 id="数字特征分析"><a href="#数字特征分析" class="headerlink" title="数字特征分析"></a><div id="data_analy">数字特征分析</div></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">numeric_features = Train_data.select_dtypes(include=[np.number])</span><br><span class="line">numeric_features.columns</span><br></pre></td></tr></table></figure>
+
+<h3 id="类型特征分析"><a href="#类型特征分析" class="headerlink" title="类型特征分析"></a><div id="category_analy">类型特征分析</div></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">categorical_features = Train_data.select_dtypes(include=[np.object])</span><br><span class="line">categorical_features.columns</span><br></pre></td></tr></table></figure>
+
+<h3 id="nunique-分布"><a href="#nunique-分布" class="headerlink" title="nunique 分布"></a>nunique 分布</h3><blockquote>
+<p>针对 object 类型字段特征</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> feature <span class="keyword">in</span> categorical_feas:</span><br><span class="line">    print(feature + <span class="string">"的特征分布如下："</span>)</span><br><span class="line">    print(data_train[feature].value_counts())</span><br><span class="line">    <span class="keyword">if</span> feature != <span class="string">'communityName'</span>:</span><br><span class="line">        plt.hist(data_all[feature], bins=<span class="number">3</span>)</span><br><span class="line">        plt.show()</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>根据结果找到分类结果的分布特征情况</p>
+</blockquote>
+<h3 id="数据可视化"><a href="#数据可视化" class="headerlink" title="数据可视化"></a>数据可视化</h3><blockquote>
+<p>作为一种工具，旨在展现数据或者特征之间的关系</p>
+</blockquote>
+<p>参见：<a href="https://www.jianshu.com/p/6e18d21a4cad" target="_blank" rel="noopener">数据可视化参数调整</a></p>
+<p>数据关系可以分为四种类型：</p>
+<ol>
+<li><p><strong>比较：</strong> 比较数据间各类别的关系，或者是它们随着时间的变化趋势，比如折线图；</p>
+</li>
+<li><p><strong>联系：</strong> 查看两个或两个以上变量之间的关系，比如散点图；</p>
+</li>
+<li><p><strong>构成：</strong> 每个部分占整体的百分比，或者是随着时间的百分比变化，比如饼图；</p>
+</li>
+<li><p><strong>分布：</strong> 关注单个变量，或者多个变量的分布情况，比如直方图。</p>
+</li>
+</ol>
+<p>参见：<a href="https://www.jianshu.com/p/1b4f351013d3" target="_blank" rel="noopener">数据可视化是一种技能</a></p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/EDA/"># EDA</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/03/19/%E6%B6%89%E7%8C%8E%E7%BA%BF%E7%A8%8B/">涉猎线程</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    
+</footer>
+
+    </div>
+</body>
+</html>
