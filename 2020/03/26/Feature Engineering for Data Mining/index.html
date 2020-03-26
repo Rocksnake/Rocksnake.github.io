@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>Feature Engineering for Data Mining | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Feature Engineering for Data Mining</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">March 26, 2020&nbsp;&nbsp;15:51:41</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Data-Mining/">Data Mining</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p><strong>重要性：</strong></p>
+<p>特征工程是比赛中重要的一部分，调参带来的效益往往是有限的，特征工程选取的好坏决定最终的结果。</p>
+<p><strong>必要性：</strong></p>
+<p>特征工程是和模型结合在一起的，其能更好地表示潜在问题的特征，从而提高机器学习的性能。</p>
+<p><strong>特征工程是很低的，容易入门，但是若想精通就需要花费较大的功夫了，正所谓师傅领进门，修行靠个人。</strong></p>
+<p><strong>目标：</strong></p>
+<p>学习特征工程我们的目的是：对于特征进行进一步分析，并对于数据进行处理。</p>
+<p><strong>内容：</strong></p>
+<blockquote>
+<p>本文我将从以下几点介绍我认识的特征工程</p>
+</blockquote>
+<ol>
+<li><a href="#1_title">异常处理；</a></li>
+<li><a href="#2_title">特征归一化/标准化；</a></li>
+<li><a href="#3_title">数据分桶；</a></li>
+<li><a href="#4_title">缺失值处理；</a></li>
+<li><a href="#5_title">特征构造；</a></li>
+<li><a href="#6_title">特征筛选；</a></li>
+<li><a href="#7_title">降维。</a></li>
+</ol>
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a><div id="1_title">异常处理</div></h2><blockquote>
+<p>通常有以下几种方法</p>
+</blockquote>
+<ul>
+<li><div id="return"><font color=sky-blue>通过箱线图（或 3-Sigma）分析删除异常值；</font></div></li>
+<li><a href="#box_cox">BOX-COX 转换（处理有偏分布）；</a></li>
+<li><a href="#tile_cut">长尾截断；</a></li>
+</ul>
+<p><strong>异常值处理：</strong></p>
+<blockquote>
+<p>通过箱线图，分析并删去异常值</p>
+</blockquote>
+<ul>
+<li>上四分位数Q3 是指数据从小到大排列，取其3/4处位置的分位数</li>
+<li>下四分位数Q1 是指数据从小到大排列，取其1/4处位置的分位数</li>
+<li>IQR = Q3-Q1指的是四分位距，即上四分位数和下四分位数的差值</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 给出一个数据异常值处理的函数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">outliers_proc</span><span class="params">(data, col_name, scale=<span class="number">3</span>)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    用于清洗异常值，默认用 box_plot（scale=3）进行清洗</span></span><br><span class="line"><span class="string">    :param data: 接收 pandas 数据格式</span></span><br><span class="line"><span class="string">    :param col_name: pandas 列名</span></span><br><span class="line"><span class="string">    :param scale: 尺度</span></span><br><span class="line"><span class="string">    :return:</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">box_plot_outliers</span><span class="params">(data_ser, box_scale)</span>:</span></span><br><span class="line">        <span class="string">"""</span></span><br><span class="line"><span class="string">        利用箱线图去除异常值</span></span><br><span class="line"><span class="string">        :param data_ser: 接收 pandas.Series 数据格式</span></span><br><span class="line"><span class="string">        :param box_scale: 箱线图尺度，</span></span><br><span class="line"><span class="string">        :return:</span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        iqr = box_scale * (data_ser.quantile(<span class="number">0.75</span>) - data_ser.quantile(<span class="number">0.25</span>))</span><br><span class="line">        val_low = data_ser.quantile(<span class="number">0.25</span>) - iqr</span><br><span class="line">        val_up = data_ser.quantile(<span class="number">0.75</span>) + iqr</span><br><span class="line">        rule_low = (data_ser &lt; val_low)</span><br><span class="line">        rule_up = (data_ser &gt; val_up)</span><br><span class="line">        <span class="keyword">return</span> (rule_low, rule_up), (val_low, val_up)</span><br><span class="line"></span><br><span class="line">    data_n = data.copy()</span><br><span class="line">    data_series = data_n[col_name]</span><br><span class="line">    rule, value = box_plot_outliers(data_series, box_scale=scale)</span><br><span class="line">    index = np.arange(data_series.shape[<span class="number">0</span>])[rule[<span class="number">0</span>] | rule[<span class="number">1</span>]]</span><br><span class="line">    print(<span class="string">"Delete number is: &#123;&#125;"</span>.format(len(index)))</span><br><span class="line">    data_n = data_n.drop(index)</span><br><span class="line">    data_n.reset_index(drop=<span class="literal">True</span>, inplace=<span class="literal">True</span>)</span><br><span class="line">    print(<span class="string">"Now column number is: &#123;&#125;"</span>.format(data_n.shape[<span class="number">0</span>]))</span><br><span class="line">    index_low = np.arange(data_series.shape[<span class="number">0</span>])[rule[<span class="number">0</span>]]</span><br><span class="line">    outliers = data_series.iloc[index_low]</span><br><span class="line">    print(<span class="string">"Description of data less than the lower bound is:"</span>)</span><br><span class="line">    print(pd.Series(outliers).describe())</span><br><span class="line">    index_up = np.arange(data_series.shape[<span class="number">0</span>])[rule[<span class="number">1</span>]]</span><br><span class="line">    outliers = data_series.iloc[index_up]</span><br><span class="line">    print(<span class="string">"Description of data larger than the upper bound is:"</span>)</span><br><span class="line">    print(pd.Series(outliers).describe())</span><br><span class="line">    </span><br><span class="line">    fig, ax = plt.subplots(<span class="number">1</span>, <span class="number">2</span>, figsize=(<span class="number">10</span>, <span class="number">7</span>))</span><br><span class="line">    sns.boxplot(y=data[col_name], data=data, palette=<span class="string">"Set1"</span>, ax=ax[<span class="number">0</span>])</span><br><span class="line">    sns.boxplot(y=data_n[col_name], data=data_n, palette=<span class="string">"Set1"</span>, ax=ax[<span class="number">1</span>])</span><br><span class="line">    <span class="keyword">return</span> data_n</span><br></pre></td></tr></table></figure>
+<p><a href="#return">返回..</a></p>
+<div id="box_cox"><b>BOX-COX 转换（处理有偏分布）</b></div><br/>
+
+<blockquote>
+<p>将数据转化为正态分布</p>
+</blockquote>
+<p>我们都知道 <a href="https://www.cnblogs.com/my-love-is-python/p/10322080.html" target="_blank" rel="noopener">log 变换</a> 可以使数据在一定程度上符合正态分布，特别是有尾数据分布。</p>
+<p>但是…采用这种方法，</p>
+<ul>
+<li><p>较小数据之间的差异将会变大(因为对数函数的斜率很小)，而较大数据之间的差异将减少(可能某分布中较大数据的斜率很小)。</p>
+</li>
+<li><p>如果你拓展了左尾的差异，减少了右尾的差异，结果将是方差恒定、形状对称的正态分布(无论均值大小如何)。</p>
+</li>
+</ul>
+<p>参见【Reference】：<a href="http://blog.sina.com.cn/s/blog_839b4f640102vqen.html" target="_blank" rel="noopener">使用Box-Cox转换的益处</a> 、<a href="https://wenku.baidu.com/view/96140c8376a20029bd642de3.html" target="_blank" rel="noopener">BoxCox 变换方法及其实现运用</a></p>
+<p><a href="#return">返回..</a></p>
+<div id="tile_cut"><b>长尾截断</b></div><br/>
+
+<p>对于连续型数值特征，有时精度太高可能只是噪声，并不具备太多的信息，也使得特征维度急剧上升。因此可以保留一定的精度，之后当作类别特征进行处理。对于长尾的数据，可以先进行对数缩放，再进行精度截断，之后可以当做类别变量做二值化处理。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200326112942490.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<h2 id="特征归一化-标准化"><a href="#特征归一化-标准化" class="headerlink" title="特征归一化 / 标准化"></a><div id="2_title">特征归一化 / 标准化</div></h2><p><strong>思想：</strong></p>
+<ul>
+<li>标准化（转换为标准正态分布）；</li>
+<li>归一化（映射到 [0,1] 区间）； - Sigmoid 函数</li>
+<li>针对幂律分布，可以采用公式：$log( \frac{1+x}{1+median})$</li>
+</ul>
+<p><strong>算法：</strong></p>
+<ol>
+<li>Z-score</li>
+<li>min-max</li>
+<li>行归一化</li>
+</ol>
+<p>特征尺度不一致需要标准化，以下算法会受尺度影响</p>
+<ol start="4">
+<li>KNN，依赖距离</li>
+<li>K-meas</li>
+<li>逻辑回归，支持向量机，神经网络等如果使用梯度下降来学习权重；</li>
+<li>主成分分析，特征向量偏向于较大的列</li>
+</ol>
+<p>在机器学习 Pipeline 中使用归一化</p>
+<h2 id="数据分桶"><a href="#数据分桶" class="headerlink" title="数据分桶"></a><div id="3_title">数据分桶</div></h2><p><strong>Q:</strong></p>
+<p>为什么要做数据分桶呢？</p>
+<p><strong>A:</strong></p>
+<ol>
+<li>离散后稀疏向量内积乘法运算速度更快，计算结果也方便存储，容易扩展；</li>
+<li>离散后的特征对异常值更具鲁棒性，如 age&gt;30 为 1 否则为 0，对于年龄为 200 的也不会对模型造成很大的干扰；</li>
+<li>LR 属于广义线性模型，表达能力有限，经过离散化后，每个变量有单独的权重，这相当于引入了非线性，能够提升模型的表达能力，加大拟合；</li>
+<li>离散后特征可以进行特征交叉，提升表达能力，由 M+N 个变量编程 M*N 个变量，进一步引入非线形，提升了表达能力；</li>
+<li>特征离散后模型更稳定，如用户年龄区间，不会因为用户年龄长了一岁就变化</li>
+<li>e.t.c 当然还有很多原因，LightGBM 在改进 XGBoost 时就增加了数据分桶，增强了模型的泛化性</li>
+</ol>
+<ul>
+<li>等频分桶；</li>
+<li>等距分桶；</li>
+<li>Best-KS 分桶（类似利用基尼指数进行二分类）；</li>
+<li>卡方分桶；</li>
+</ul>
+<p>参见【Reference】：<a href="https://flashgene.com/archives/81897.html" target="_blank" rel="noopener">浅谈微视推荐系统中的特征工程</a></p>
+<h2 id="缺失值处理"><a href="#缺失值处理" class="headerlink" title="缺失值处理"></a><div id="4_title">缺失值处理</div></h2><ul>
+<li>不处理（针对类似 XGBoost 等树模型）；</li>
+<li>删除（缺失数据太多）；</li>
+<li>插值补全，包括均值/中位数/众数/建模预测/多重插补/压缩感知补全/矩阵补全等；</li>
+<li>分箱，缺失值一个箱；</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20200326151308471.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>参见【Reference】：<a href="https://www.zhihu.com/question/26639110" target="_blank" rel="noopener">机器学习中如何处理缺失数据？</a>、<a href="http://cda.pinggu.org/view/20394.html" target="_blank" rel="noopener">数据缺失值的4种处理方法</a></p>
+<h2 id="特征构造"><a href="#特征构造" class="headerlink" title="特征构造"></a><div id="5_title">特征构造</div></h2><ul>
+<li>构造统计量特征，报告计数、求和、比例、标准差等；</li>
+<li>时间特征，包括相对时间和绝对时间，节假日，双休日等；</li>
+<li>地理信息，包括分箱，分布编码等方法；</li>
+<li>非线性变换，包括 log/ 平方/ 根号等；</li>
+<li>特征组合，特征交叉；</li>
+</ul>
+<blockquote>
+<p>训练集和测试集放在一起，方便构造特征 【contact】</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Train_data[<span class="string">'train'</span>]=<span class="number">1</span></span><br><span class="line">Test_data[<span class="string">'train'</span>]=<span class="number">0</span></span><br><span class="line">data = pd.concat([Train_data, Test_data], ignore_index=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>检查空数据</p>
+</blockquote>
+<p>可以选择删除也可以留下</p>
+<ul>
+<li>删除缺失数据占总样本量过大，不建议删去；</li>
+<li>当要交到xgboost模型中处理时，不必要。</li>
+</ul>
+<blockquote>
+<p>特征的构造视模型数量而定</p>
+</blockquote>
+<p>不同模型对数据集的要求不同，需要分开构造</p>
+<blockquote>
+<p>特征归一化 / 标准化和数据分桶通常体现在特征构造的过程中</p>
+</blockquote>
+<h2 id="特征筛选"><a href="#特征筛选" class="headerlink" title="特征筛选"></a><div id="6_title">特征筛选</div></h2><ul>
+<li>过滤式（filter）：先对数据进行特征选择，然后在训练学习器，常见的方法有 Relief / 方差选择法 / 相关系数法 / 卡方检验法 / 互信息法；</li>
+<li>包裹式（wrapper）：直接把最终将要使用的学习器的性能作为特征子集的评价准则，常见方法有 LVM（Las Vegas Wrapper） ；</li>
+<li>嵌入式（embedding）：结合过滤式和包裹式，学习器训练过程中自动进行了特征选择，常见的有 lasso 回归；</li>
+</ul>
+<p>参见【Reference】：<a href="https://baijiahao.baidu.com/s?id=1604074325918456186&wfr=spider&for=pc" target="_blank" rel="noopener">如何进行特征选择（理论篇）</a></p>
+<h2 id="降维"><a href="#降维" class="headerlink" title="降维"></a><div id="7_title">降维</div></h2><blockquote>
+<p>采用某种映射方法，将原高维空间中的数据点映射到低维度的空间中</p>
+</blockquote>
+<p>降维本质上即是学习一个映射函数 $f : x-&gt;y$【其中x是原始数据点的表达，目前最多使用向量表达形式。 y是数据点映射后的低维向量表达，通常y的维度小于x的维度（当然提高维度也是可以的）】</p>
+<p>$f$ 可能是显式的或隐式的、线性的或非线性的</p>
+<p><strong>目的：</strong></p>
+<ul>
+<li>减少冗余信息所造成的误差,提高识别（或其他应用）的精度；</li>
+<li>希望通过降维算法来寻找数据内部的本质结构特征</li>
+</ul>
+<p><strong>方法：</strong></p>
+<ul>
+<li>PCA / LDA / ICA；</li>
+<li>特征选择也是一种降维。</li>
+</ul>
+<p>参见【Reference】:<a href="https://blog.csdn.net/rosenor1/article/details/52278116" target="_blank" rel="noopener">机器学习四大降维方法</a></p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/"># 特征工程</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/03/24/EDA-%E6%95%B0%E6%8D%AE%E6%8E%A2%E7%B4%A2%E6%80%A7%E5%88%86%E6%9E%90/">EDA-数据探索性分析</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    
+</footer>
+
+    </div>
+</body>
+</html>
