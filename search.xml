@@ -1,6 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Boosting Tuning</title>
+    <url>/2020/03/27/Boost%20Tuning/</url>
+    <content><![CDATA[<div id="Boosting">Boosting Tuning</div>
+
+<ol>
+<li><a href="#xgb">XGBoost；</a></li>
+<li><a href="#lgb">LightGBM;</a></li>
+<li><a href="#cat">CatBoost</a></li>
+</ol>
+<h1 id="XGBoost"><a href="#XGBoost" class="headerlink" title="XGBoost"></a><div id="xgb">XGBoost</div></h1><blockquote>
+<p>efficient、flexible</p>
+</blockquote>
+<p>Reference：<a href="https://xgboost.readthedocs.io/en/latest/" target="_blank" rel="noopener">XGBoost Documentation</a></p>
+<p>Xgboost 是一种高度复杂的算法可以处理各种各样的数据，利用 Xgboost 构建模型简单，但是用 Xgboost 来调参提升模型却很难。</p>
+<h2 id="XGBoost-的优势"><a href="#XGBoost-的优势" class="headerlink" title="XGBoost 的优势"></a>XGBoost 的优势</h2><ol>
+<li><strong>Regularization（正则化）</strong>；【可以减少过拟合】</li>
+<li><strong>Parallel Processing（并行处理）</strong>；【Boosting 是串行算法】</li>
+<li><strong>High Flexibility（高度灵活）</strong>；【自定义优化目标与评估标准】</li>
+<li><strong>Handling Missing Values（处理缺失值）</strong> 【内置程序】</li>
+<li><strong>Tree Pruning（树剪枝）</strong>  【参数max_depth】</li>
+<li><strong>Built-in Cross-Validation（内置的交叉验证）</strong> </li>
+<li><strong>Continue on Existing Model（继续现有模型）</strong> 【基于上一次运行迭代】</li>
+</ol>
+<h2 id="参数介绍"><a href="#参数介绍" class="headerlink" title="参数介绍"></a>参数介绍</h2><ol>
+<li><strong>General Parameters（通用参数）：</strong> 设置整体功能</li>
+<li><strong>Booster Parameters（提升参数）：</strong> 选择你每一步的booster (树or回归）</li>
+<li><strong>Learning Task Parameters（学习任务参数）：</strong> 指导优化任务的执行</li>
+</ol>
+<p><strong>参数详细介绍参见：</strong> <a href="https://blog.csdn.net/u010665216/article/details/78532619" target="_blank" rel="noopener">Blog</a></p>
+<p>XGBoost 的参数较多，如果需要认知各个参数的参考上述 Blog， 我直接开始说参数调优…</p>
+<h2 id="Xgboost参数调优"><a href="#Xgboost参数调优" class="headerlink" title="Xgboost参数调优"></a>Xgboost参数调优</h2><blockquote>
+<p>通用方法</p>
+</blockquote>
+<ul>
+<li>选择一个相对<strong>较高的学习率</strong>。通常来说学习率设置为0.1。但是对于不同的问题可以讲学习率设置在0.05-0.3。通过交叉验证来寻找符合学习率的最佳树的个数。</li>
+<li>当确定好学习率与最佳树的个数时，调整树的<strong>某些特定参数。</strong>比如：max_depth, min_child_weight, gamma, subsample, colsample_bytree</li>
+<li>调整<strong>正则化参数</strong> ，比如： lambda, alpha。这个主要是为了减少模型复杂度和提高运行速度的。适当地减少过拟合。</li>
+<li><strong>降低学习速率</strong>，选择最优参数</li>
+</ul>
+<h3 id="修正学习速率及调参估计量"><a href="#修正学习速率及调参估计量" class="headerlink" title="修正学习速率及调参估计量"></a>修正学习速率及调参估计量</h3><blockquote>
+<p>给定一个初始值，方便确定其他参数，可随意给定</p>
+</blockquote>
+<h3 id="调整max-depth-和min-child-weight"><a href="#调整max-depth-和min-child-weight" class="headerlink" title="调整max_depth 和min_child_weight"></a>调整max_depth 和min_child_weight</h3><blockquote>
+<blockquote>
+<p>max_depth:树的最大深度，控制过拟合</p>
+</blockquote>
+<blockquote>
+<p>min_child_weight:一个子集的所有观察值的最小权重和</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>需要调整参数的选择依据：对结果的影响程度</p>
+</blockquote>
+<p><strong>方法：</strong></p>
+<p>先预设一个较大的值，通过一个范围和步进值进行迭代，不断缩小范围，找寻最优组合，类似于最小二乘法。</p>
+<h3 id="调整gamma"><a href="#调整gamma" class="headerlink" title="调整gamma"></a>调整gamma</h3><blockquote>
+<p>这个指定了一个结点被分割时，所需要的最小损失函数减小的大小。  </p>
+</blockquote>
+<p>这个值一般来说需要根据损失函数来调整。</p>
+<blockquote>
+<p>和上一步一致的方法，同样是设置范围和步进值进行迭代，找寻最优值。</p>
+</blockquote>
+<h3 id="调整subsample-和colsample-bytree"><a href="#调整subsample-和colsample-bytree" class="headerlink" title="调整subsample 和colsample_bytree"></a>调整subsample 和colsample_bytree</h3><blockquote>
+<p>分别是<strong>采样率</strong>和<strong>特征采样率</strong></p>
+</blockquote>
+<p>方法还和之前一致。</p>
+<h3 id="调整正则化参数"><a href="#调整正则化参数" class="headerlink" title="调整正则化参数"></a>调整正则化参数</h3><blockquote>
+<p>reg_alpha</p>
+</blockquote>
+<p>此参数使用相对较少，主要是用来调整过拟合，调优选择精度最高的值。</p>
+<h3 id="减小学习率"><a href="#减小学习率" class="headerlink" title="减小学习率"></a>减小学习率</h3><blockquote>
+<p>通过减小学习率并增加树的数量</p>
+</blockquote>
+<p>参数调优用例： <a href="https://gitee.com/orayang_admin/Xgboost-tuning" target="_blank" rel="noopener" title="Xgboost-tuning">Xgboost-tuning</a></p>
+<p><a href="#Boosting">返回…</a></p>
+<h1 id="LightGBM"><a href="#LightGBM" class="headerlink" title="LightGBM"></a><div id="lgb">LightGBM</div></h1><blockquote>
+<p>LightGBM 的优点就是快的一逼的同时精度还高</p>
+</blockquote>
+<p>LGB 不需要通过所有样本计算信息增益了，而是选择梯度大的样本来计算信息增益，所以更精；而且内置特征降维技术，所以更快。</p>
+<p>如果一个样本的梯度较小，证明这个样本训练的误差已经很小了，所以不需要计算了。GBDT的梯度算出来实际上就是残差，梯度小残差就小，所以该样本拟合较好，不需要去拟合他们了。但是我们这样相当于改变数据分布，无法避免信息损失，还是会导致精度下降。</p>
+<p><strong>LGB 核心：</strong></p>
+<ol>
+<li>在保留大梯度样本的同时，随机地保留一些小梯度样本，同时放大了小梯度样本带来的信息增益。</li>
+</ol>
+<p>e.g. 首先把样本按照梯度排序，选出梯度最大的$a%$个样本，然后在剩下小梯度数据中随机选取$b%$个样本，在计算信息增益的时候，将选出来$b%$个小梯度样本的信息增益扩大 $1 -  \frac{a}{b}$ 倍。</p>
+<ol start="2">
+<li>内置了特征降维技术，思想就是合并那些冲突小的稀疏特征。</li>
+</ol>
+<p>e.g. 对于一列特征[1,nan,1,nan,1]和一列特征[nan,1,nan,1,nan]，他们正好可以合并成一列特征[1,2,1,2,1]。LGB的目标就是在于找到这样的特征并且将他们合并在一起。</p>
+<p>Reference:  <a href="https://zhuanlan.zhihu.com/p/89360721" target="_blank" rel="noopener">无痛看懂LightGBM原文</a></p>
+<h2 id="参数调优"><a href="#参数调优" class="headerlink" title="参数调优"></a>参数调优</h2><p>一般步骤如下：</p>
+<ol>
+<li>选择较高的学习率，大概0.1附近；</li>
+<li>对决策树基本参数调参；</li>
+<li>正则化参数调参；</li>
+<li>最后降低学习率，这里是为了最后提高准确率。</li>
+</ol>
+<p>可见对于基于决策树的模型，调参的方法都是大同小异，LGB 的参数调优步骤和 XGB 的调优步骤基本相同。</p>
+<h3 id="学习率和估计器及数目"><a href="#学习率和估计器及数目" class="headerlink" title="学习率和估计器及数目"></a>学习率和估计器及数目</h3><blockquote>
+<p>给定一个初始值，方便设置其他参数</p>
+</blockquote>
+<p>通常先把学习率先定一个较高的值，取 learning_rate = 0.1，其次确定估计器boosting/boost/boosting_type的类型，不过默认都会选gbdt。</p>
+<p>为了确定估计器的数目，也就是boosting迭代的次数，也可以说是残差树的数目，参数名为n_estimators/num_iterations/num_round/num_boost_round。我们可以先将该参数设成一个较大的数，然后在cv结果中查看最优的迭代次数。</p>
+<p>注意：在硬件条件允许的情况下，学习率尽可能小</p>
+<h3 id="调整-max-depth-和-num-leaves"><a href="#调整-max-depth-和-num-leaves" class="headerlink" title="调整 max_depth 和 num_leaves"></a>调整 max_depth 和 num_leaves</h3><blockquote>
+<p><strong>max_depth</strong> ：设置树深度，深度越大可能过拟合</p>
+</blockquote>
+<blockquote>
+<p><strong>num_leaves</strong>：树的复杂程度</p>
+</blockquote>
+<p>因为 LightGBM 使用的是 leaf-wise 的算法，因此在调节树的复杂程度时，使用的是 num_leaves 而不是 max_depth。大致换算关系：$num_leaves = 2^(max_depth)$，但是它的值的设置应该小于 $2^(max_depth)$，否则可能会导致过拟合。</p>
+<p><strong>方法：</strong></p>
+<p>sklearn 里的 GridSearchCV() 函数进行搜索。</p>
+<h3 id="调整-min-data-in-leaf-和-min-sum-hessian-in-leaf"><a href="#调整-min-data-in-leaf-和-min-sum-hessian-in-leaf" class="headerlink" title="调整 min_data_in_leaf 和 min_sum_hessian_in_leaf"></a>调整 min_data_in_leaf 和 min_sum_hessian_in_leaf</h3><blockquote>
+<p>min_data_in_leaf:  取决于训练数据的样本个数和num_leaves.</p>
+</blockquote>
+<blockquote>
+<p>min_sum_hessian_in_leaf: 使一个结点分裂的最小海森值之和</p>
+</blockquote>
+<p>方法同上：还是利用 GridSearchCV 函数</p>
+<h3 id="调整-feature-fraction-和-bagging-fraction"><a href="#调整-feature-fraction-和-bagging-fraction" class="headerlink" title="调整 feature_fraction 和 bagging_fraction"></a>调整 feature_fraction 和 bagging_fraction</h3><blockquote>
+<p>feature_fraction: 进行特征的子抽样</p>
+</blockquote>
+<blockquote>
+<p>bagging_fraction+bagging_freq参数必须同时设置，bagging_fraction相当于subsample样本采样</p>
+</blockquote>
+<h3 id="调整正则化参数-1"><a href="#调整正则化参数-1" class="headerlink" title="调整正则化参数"></a>调整正则化参数</h3><blockquote>
+<p>lambda_l1(reg_alpha), lambda_l2(reg_lambda)</p>
+</blockquote>
+<p>两者分别对应l1正则化和l2正则化。分别对应 l1 正则化和 l2 正则化</p>
+<p>方法仍然同上。</p>
+<h3 id="降低learning-rate"><a href="#降低learning-rate" class="headerlink" title="降低learning_rate"></a>降低learning_rate</h3><p>之前我们设置了较高的学习率，是为了让收敛更快，但是现在我们需要提高精度，使用较低的学习速率，以及使用更多的决策树n_estimators来训练数据。</p>
+<p><strong>方法：</strong></p>
+<p>LightGBM 的 cv( ) 函数</p>
+<p>参数调优实例：<a href="https://blog.csdn.net/dzysunshine/article/details/92124011" target="_blank" rel="noopener">Blog</a></p>
+<p><a href="#Boosting">返回…</a></p>
+<h1 id="CatBoost"><a href="#CatBoost" class="headerlink" title="CatBoost"></a><div id="cat">CatBoost</div></h1><blockquote>
+<p>Gradient Boosting(梯度提升) + Categorical Features(类别型特征)</p>
+</blockquote>
+<h2 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h2><ol>
+<li><strong>类别型特征的处理</strong>； 【降低拟合的同时将数据集随机排列进而将全部数据集用来学习】</li>
+<li><strong>特征组合</strong>；【贪婪策略，二值处理】</li>
+<li><strong>克服梯度偏差</strong> 【梯度步长的无偏估计、GBDT 技术构建新树】</li>
+<li><strong>快速评分</strong> 【oblivious 树作为基本预测器转换索引为二进制向量，进一步使用二进制特征来计算模型预测值】</li>
+<li><strong>基于GPU实现快速学习</strong> 【密集的数值特征、完美哈希_类别型特征、多 GPU 支持】</li>
+</ol>
+<p>Reference：<a href="https://cloud.tencent.com/developer/news/372336" target="_blank" rel="noopener">CatBoost “超强战斗力”的算法</a></p>
+<p>Result：e.g.<br><img src="https://ask.qcloudimg.com/http-save/developer-news/gd0hpq4ceo.jpeg?imageView2/2/w/1620" alt="null"></p>
+<h2 id="参数调优-1"><a href="#参数调优-1" class="headerlink" title="参数调优"></a>参数调优</h2><p>具有鲁棒性的 CatBoost 简直就是机器学习框架界的一匹黑马，不仅训练准确性超强，就连参数调优都特别舒适。</p>
+<p>在 CatBoost Document 原文中，针对 CatBoost Tuning 是如此描述的</p>
+<blockquote>
+<p>CatBoost provides a flexible interface for parameter tuning and can be configured to suit different tasks.</p>
+</blockquote>
+<h3 id="One-hot-encoding"><a href="#One-hot-encoding" class="headerlink" title="One-hot encoding"></a>One-hot encoding</h3><p><strong>注意：</strong></p>
+<p>由于 One-hot encoding 对训练速度和训练结果的影响较大，所以千万不要在预处理的时候使用</p>
+<p><strong>适用性:</strong></p>
+<p>当分类特征值较少时，选择 One-hot encoding 会取得很好的效果</p>
+<p>使用过程中 One-hot encoding 不会显著提高模型质量，但是如果模型质量需要提高，可以选择修改内置参数，而不需要预处理数据。</p>
+<p><strong>参数详细：</strong>  <a href="https://catboost.ai/docs/concepts/parameter-tuning.html#one-hot-enc" target="_blank" rel="noopener">Reference</a></p>
+<h3 id="Number-of-trees"><a href="#Number-of-trees" class="headerlink" title="Number of trees"></a>Number of trees</h3><ul>
+<li><p>CatBoost 在参数调优时，如果要调整任何其他参数，首先应该确定模型没有非正常拟合现象。所以我们有必要分析数据集的度量值和迭代次数。</p>
+</li>
+<li><p>可以通过将迭代次数设置为一个较大值，使用  overfitting detector 参数并且将 use best model options 参数调大，这样一来，模型训练结果只包含前 k 个最佳迭代。【k-最佳损失值的索引】</p>
+</li>
+<li><p>用于选择最佳模型的度量可能与用于优化目标值的度量不同。</p>
+</li>
+</ul>
+<p><strong>参数详细：</strong> <a href="https://catboost.ai/docs/concepts/parameter-tuning.html#trees-number" target="_blank" rel="noopener">Reference</a></p>
+<h3 id="Tree-depth"><a href="#Tree-depth" class="headerlink" title="Tree depth"></a>Tree depth</h3><blockquote>
+<p>在大多数情况下，最佳深度范围是 4 ~ 10，建议深度6 ~ 10</p>
+</blockquote>
+<p>The maximum depth of the trees is limited to 8 for pairwise modes (YetiRank, PairLogitPairwise and QueryCrossEntropy) when the training is performed on GPU.</p>
+<p>GPU 上训练时，树的最大深度被限制在了 8。</p>
+<p><strong>参数详细：</strong> <a href="https://catboost.ai/docs/concepts/parameter-tuning.html#tree-depth" target="_blank" rel="noopener">Reference</a></p>
+<h3 id="Border-count"><a href="#Border-count" class="headerlink" title="Border count"></a>Border count</h3><blockquote>
+<p>数字特征的分割数</p>
+</blockquote>
+<p>此参数的值会影响 GPU 上的训练速度，值越小，训练速度越快。【Detail：<a href="https://catboost.ai/docs/concepts/speed-up-training.html#splis-numerical-features" target="_blank" rel="noopener">Number of splits for numerical features</a>】</p>
+<p>分割数 128 一般情况下来说足够了，但是如果想要更好的训练质量，可以将此参数设置为 254.</p>
+<p><strong>参数详细：</strong>  <a href="https://catboost.ai/docs/concepts/parameter-tuning.html#border-count" target="_blank" rel="noopener">Reference</a></p>
+<h3 id="其他参数："><a href="#其他参数：" class="headerlink" title="其他参数："></a>其他参数：</h3><blockquote>
+<p>参见：<a href="https://catboost.ai/docs/concepts/parameter-tuning.html" target="_blank" rel="noopener">Reference</a></p>
+</blockquote>
+<p>说了这么多，其实参数调优只能从表面上解决问题，如果想要实质性或更大的优化，还需要在<strong>特征工程</strong>和<strong>模型集成</strong>上大做文章。</p>
+]]></content>
+      <categories>
+        <category>Data Mining</category>
+      </categories>
+      <tags>
+        <tag>XGBoost</tag>
+        <tag>LightGBM</tag>
+        <tag>CatBoost</tag>
+        <tag>参数调优</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Feature Engineering for Data Mining</title>
     <url>/2020/03/26/Feature%20Engineering%20for%20Data%20Mining/</url>
     <content><![CDATA[<p><strong>重要性：</strong></p>

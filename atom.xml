@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-03-26T07:55:11.925Z</updated>
+  <updated>2020-03-27T09:47:58.502Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,44 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Boosting Tuning</title>
+    <link href="http://yoursite.com/2020/03/27/Boost%20Tuning/"/>
+    <id>http://yoursite.com/2020/03/27/Boost%20Tuning/</id>
+    <published>2020-03-27T09:43:42.220Z</published>
+    <updated>2020-03-27T09:47:58.502Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;div id=&quot;Boosting&quot;&gt;Boosting Tuning&lt;/div&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&quot;#xgb&quot;&gt;XGBoost；&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#lgb&quot;&gt;LightGBM;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Data Mining" scheme="http://yoursite.com/categories/Data-Mining/"/>
+    
+    
+      <category term="XGBoost" scheme="http://yoursite.com/tags/XGBoost/"/>
+    
+      <category term="LightGBM" scheme="http://yoursite.com/tags/LightGBM/"/>
+    
+      <category term="CatBoost" scheme="http://yoursite.com/tags/CatBoost/"/>
+    
+      <category term="参数调优" scheme="http://yoursite.com/tags/%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98/"/>
+    
+  </entry>
   
   <entry>
     <title>Feature Engineering for Data Mining</title>
@@ -619,45 +657,6 @@
       <category term="拟合现象" scheme="http://yoursite.com/tags/%E6%8B%9F%E5%90%88%E7%8E%B0%E8%B1%A1/"/>
     
       <category term="环境因素" scheme="http://yoursite.com/tags/%E7%8E%AF%E5%A2%83%E5%9B%A0%E7%B4%A0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>从模型训练中认知拟合现象</title>
-    <link href="http://yoursite.com/2020/02/28/%E4%BB%8E%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E4%B8%AD%E8%AE%A4%E7%9F%A5%E6%8B%9F%E5%90%88%E7%8E%B0%E8%B1%A1/"/>
-    <id>http://yoursite.com/2020/02/28/%E4%BB%8E%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83%E4%B8%AD%E8%AE%A4%E7%9F%A5%E6%8B%9F%E5%90%88%E7%8E%B0%E8%B1%A1/</id>
-    <published>2020-02-28T02:12:37.750Z</published>
-    <updated>2020-02-29T02:16:20.752Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;机器学习中模型训练是必需的，在模型训练中存在两类典型的问题：&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;欠拟合 (underfitting) &lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;模型无法得到较低的训练误差&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;过拟合
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
-    
-    
-      <category term="拟合现象" scheme="http://yoursite.com/tags/%E6%8B%9F%E5%90%88%E7%8E%B0%E8%B1%A1/"/>
-    
-      <category term="训练误差" scheme="http://yoursite.com/tags/%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE/"/>
-    
-      <category term="泛化误差" scheme="http://yoursite.com/tags/%E6%B3%9B%E5%8C%96%E8%AF%AF%E5%B7%AE/"/>
-    
-      <category term="L2范数正则化" scheme="http://yoursite.com/tags/L2%E8%8C%83%E6%95%B0%E6%AD%A3%E5%88%99%E5%8C%96/"/>
     
   </entry>
   
