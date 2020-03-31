@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-03-27T09:47:58.502Z</updated>
+  <updated>2020-03-31T08:30:19.119Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Modeling and tuning</title>
+    <link href="http://yoursite.com/2020/03/31/Modeling%20and%20tuning/"/>
+    <id>http://yoursite.com/2020/03/31/Modeling%20and%20tuning/</id>
+    <published>2020-03-31T08:28:20.153Z</published>
+    <updated>2020-03-31T08:30:19.119Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;在XGBoost、LightGBM、CatBoost三个模型介绍与参数调优的基础上，进一步拓展模型类型和参数调优方法。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Data Mining" scheme="http://yoursite.com/categories/Data-Mining/"/>
+    
+    
+      <category term="Model&amp;tuning" scheme="http://yoursite.com/tags/Model-tuning/"/>
+    
+  </entry>
   
   <entry>
     <title>Boosting Tuning</title>
@@ -624,39 +653,6 @@
       <category term="Seq2seq模型" scheme="http://yoursite.com/tags/Seq2seq%E6%A8%A1%E5%9E%8B/"/>
     
       <category term="集束搜索" scheme="http://yoursite.com/tags/%E9%9B%86%E6%9D%9F%E6%90%9C%E7%B4%A2/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>学而后思,方能发展;思而立行,终将卓越</title>
-    <link href="http://yoursite.com/2020/02/28/%E5%AD%A6%E8%80%8C%E5%90%8E%E6%80%9D,%E6%96%B9%E8%83%BD%E5%8F%91%E5%B1%95;%E6%80%9D%E8%80%8C%E7%AB%8B%E8%A1%8C,%E7%BB%88%E5%B0%86%E5%8D%93%E8%B6%8A/"/>
-    <id>http://yoursite.com/2020/02/28/%E5%AD%A6%E8%80%8C%E5%90%8E%E6%80%9D,%E6%96%B9%E8%83%BD%E5%8F%91%E5%B1%95;%E6%80%9D%E8%80%8C%E7%AB%8B%E8%A1%8C,%E7%BB%88%E5%B0%86%E5%8D%93%E8%B6%8A/</id>
-    <published>2020-02-28T02:15:37.295Z</published>
-    <updated>2020-02-29T02:18:52.443Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;center&gt;&lt;b&gt;&lt;font
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
-    
-    
-      <category term="kaggle" scheme="http://yoursite.com/tags/kaggle/"/>
-    
-      <category term="梯度问题" scheme="http://yoursite.com/tags/%E6%A2%AF%E5%BA%A6%E9%97%AE%E9%A2%98/"/>
-    
-      <category term="拟合现象" scheme="http://yoursite.com/tags/%E6%8B%9F%E5%90%88%E7%8E%B0%E8%B1%A1/"/>
-    
-      <category term="环境因素" scheme="http://yoursite.com/tags/%E7%8E%AF%E5%A2%83%E5%9B%A0%E7%B4%A0/"/>
     
   </entry>
   

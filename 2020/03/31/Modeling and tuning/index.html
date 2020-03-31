@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>Modeling and tuning | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Modeling and tuning</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">March 31, 2020&nbsp;&nbsp;16:28:20</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Data-Mining/">Data Mining</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>在XGBoost、LightGBM、CatBoost三个模型介绍与参数调优的基础上，进一步拓展模型类型和参数调优方法。</p>
+<blockquote>
+<p><a href="https://rocksnake.github.io/2020/03/27/Boost%20Tuning/" target="_blank" rel="noopener">Boosting Tuning</a></p>
+</blockquote>
+<ol>
+<li><div id="return">线性回归模型；</div></li>
+<li><a href="#Model_performance_verification">模型性能验证；</a></li>
+<li><a href="#Embedded_Feature_Selection">嵌入式特征选择；</a></li>
+<li><a href="#compare">模型对比；</a></li>
+<li><a href="#tuning">模型调参。</a></li>
+</ol>
+<h1 id="线性回归模型"><a href="#线性回归模型" class="headerlink" title="线性回归模型"></a>线性回归模型</h1><ul>
+<li>线性回归对于特征的要求；</li>
+<li>处理长尾分布；</li>
+<li>理解线性回归模型；</li>
+</ul>
+<blockquote>
+<p>针对线性回归模型的参数类型、损失函数、优化方法</p>
+<ul>
+<li>参见<a href="https://zhuanlan.zhihu.com/p/49480391" target="_blank" rel="noopener">知乎介绍</a></li>
+</ul>
+</blockquote>
+<p>简而言之：</p>
+<p>$$<br>y = w * x + b<br>$$</p>
+<p>在多元线性回归中，并不是所用特征越多越好；选择少量、合适的特征既可以避免过拟合，也可以增加模型解释度。可以通过 3 种方法来选择特征：最优子集选择、向前或向后逐步选择、交叉验证法。</p>
+<p><strong>结合一个例子进行分析：</strong></p>
+<p>e.g. <a href="https://www.yuque.com/docs/share/d61bec98-faf9-4eb5-8ab4-7e5cbee77014?#" target="_blank" rel="noopener">线性回归模型 + 五折交叉验证 + 模拟真实业务</a></p>
+<hr>
+<p><strong>补充：</strong></p>
+<center><b>五折交叉验证</b></center>
+
+<p>在使用训练集对参数进行训练的时候，经常会发现人们通常会将一整个训练集分为三个部分（比如mnist手写训练集）。一般分为：训练集（train_set），评估集（valid_set），测试集（test_set）这三个部分。这其实是为了保证训练效果而特意设置的。其中测试集很好理解，其实就是完全不参与训练的数据，仅仅用来观测测试效果的数据。而训练集和评估集则牵涉到下面的知识了。</p>
+<p>因为在实际的训练中，训练的结果对于训练集的拟合程度通常还是挺好的（初始条件敏感），但是对于训练集之外的数据的拟合程度通常就不那么令人满意了。因此我们通常并不会把所有的数据集都拿来训练，而是分出一部分来（这一部分不参加训练）对训练集生成的参数进行测试，相对客观的判断这些参数对训练集之外的数据的符合程度。这种思想就称为交叉验证（Cross Validation）</p>
+<center><b>模拟真实业务情况</b></center>
+
+<p>我们不具有预知未来的能力，五折交叉验证在某些与时间相关的数据集上反而反映了不真实的情况。</p>
+<p>因此我们可以采用时间顺序对数据集进行分割，保证最终的结果与五折交叉验证差距不大。</p>
+<hr>
+<p><a href="#return">返回…</a></p>
+<h1 id="模型性能验证"><a href="#模型性能验证" class="headerlink" title="模型性能验证"></a><div id="Model_performance_verification">模型性能验证</div></h1><ul>
+<li>评价函数与目标函数；</li>
+<li>交叉验证方法；</li>
+<li>留一验证方法；</li>
+<li>针对时间序列问题的验证；</li>
+<li>绘制学习率曲线和验证曲线；</li>
+</ul>
+<p>在此前<a href="https://www.yuque.com/docs/share/d61bec98-faf9-4eb5-8ab4-7e5cbee77014?#" target="_blank" rel="noopener">线性回归模型 + 五折交叉验证 + 模拟真实业务</a>例子的基础上我们通过绘制学习率曲线和验证曲线进行模型性能的验证。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> learning_curve, validation_curve</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">? learning_curve</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_learning_curve</span><span class="params">(estimator, title, X, y, ylim=None, cv=None,n_jobs=<span class="number">1</span>, train_size=np.linspace<span class="params">(<span class="number">.1</span>, <span class="number">1.0</span>, <span class="number">5</span> )</span>)</span>:</span>  </span><br><span class="line">    plt.figure()  </span><br><span class="line">    plt.title(title)  </span><br><span class="line">    <span class="keyword">if</span> ylim <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:  </span><br><span class="line">        plt.ylim(*ylim)  </span><br><span class="line">    plt.xlabel(<span class="string">'Training example'</span>)  </span><br><span class="line">    plt.ylabel(<span class="string">'score'</span>)  </span><br><span class="line">    train_sizes, train_scores, test_scores = learning_curve(estimator, X, y, cv=cv, n_jobs=n_jobs, train_sizes=train_size, scoring = make_scorer(mean_absolute_error))  </span><br><span class="line">    train_scores_mean = np.mean(train_scores, axis=<span class="number">1</span>)  </span><br><span class="line">    train_scores_std = np.std(train_scores, axis=<span class="number">1</span>)  </span><br><span class="line">    test_scores_mean = np.mean(test_scores, axis=<span class="number">1</span>)  </span><br><span class="line">    test_scores_std = np.std(test_scores, axis=<span class="number">1</span>)  </span><br><span class="line">    plt.grid()<span class="comment">#区域  </span></span><br><span class="line">    plt.fill_between(train_sizes, train_scores_mean - train_scores_std,  </span><br><span class="line">                     train_scores_mean + train_scores_std, alpha=<span class="number">0.1</span>,  </span><br><span class="line">                     color=<span class="string">"r"</span>)  </span><br><span class="line">    plt.fill_between(train_sizes, test_scores_mean - test_scores_std,  </span><br><span class="line">                     test_scores_mean + test_scores_std, alpha=<span class="number">0.1</span>,  </span><br><span class="line">                     color=<span class="string">"g"</span>)  </span><br><span class="line">    plt.plot(train_sizes, train_scores_mean, <span class="string">'o-'</span>, color=<span class="string">'r'</span>,  </span><br><span class="line">             label=<span class="string">"Training score"</span>)  </span><br><span class="line">    plt.plot(train_sizes, test_scores_mean,<span class="string">'o-'</span>,color=<span class="string">"g"</span>,  </span><br><span class="line">             label=<span class="string">"Cross-validation score"</span>)  </span><br><span class="line">    plt.legend(loc=<span class="string">"best"</span>)  </span><br><span class="line">    <span class="keyword">return</span> plt</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">plot_learning_curve(LinearRegression(), <span class="string">'Liner_model'</span>, train_X[:<span class="number">1000</span>], train_y_ln[:<span class="number">1000</span>], ylim=(<span class="number">0.0</span>, <span class="number">0.5</span>), cv=<span class="number">5</span>, n_jobs=<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">train = sample_feature[continuous_feature_names + [<span class="string">'price'</span>]].dropna()</span><br><span class="line"></span><br><span class="line">train_X = train[continuous_feature_names]</span><br><span class="line">train_y = train[<span class="string">'price'</span>]</span><br><span class="line">train_y_ln = np.log(train_y + <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+
+<p><a href="#return">返回…</a></p>
+<h1 id="嵌入式特征选择"><a href="#嵌入式特征选择" class="headerlink" title="嵌入式特征选择"></a><div id="Embedded_Feature_Selection">嵌入式特征选择</div></h1><ul>
+<li>Lasso回归；</li>
+<li>Ridge回归；</li>
+<li>决策树；</li>
+</ul>
+<hr>
+<p>学前知识：</p>
+<ul>
+<li>用简单易懂的语言描述「过拟合 overfitting」<a href="https://www.zhihu.com/question/32246256/answer/55320482" target="_blank" rel="noopener">学习资源</a></li>
+<li>模型复杂度与模型的泛化能力 <a href="http://yangyingming.com/article/434/" target="_blank" rel="noopener">学习资源</a></li>
+<li>正则化的直观理解 <a href="https://blog.csdn.net/jinping_shi/article/details/52433975" target="_blank" rel="noopener">学习资源</a></li>
+</ul>
+<hr>
+<p>在<strong>过滤式</strong>和<strong>包裹式</strong>特征选择方法中，特征选择过程与学习器训练过程有明显的分别。</p>
+<p>而嵌入式特征选择在学习器训练过程中自动地进行特征选择。嵌入式选择最常用的是<strong>L1正则化</strong>与<strong>L2正则化</strong>。在对线性回归模型加入两种正则化方法后，他们分别变成了<strong>岭回归</strong>与<strong>Lasso回归</strong>。</p>
+<h2 id="L2正则化"><a href="#L2正则化" class="headerlink" title="L2正则化"></a>L2正则化</h2><blockquote>
+<p>在拟合过程中通常都倾向于让权值尽可能小，最后构造一个所有参数都比较小的模型。</p>
+</blockquote>
+<p>因为一般认为参数值小的模型比较简单，能适应不同的数据集，也在一定程度上避免了过拟合现象。可以设想一下对于一个线性回归方程，若参数很大，那么只要数据偏移一点点，就会对结果造成很大的影响；但如果参数足够小，数据偏移得多一点也不会对结果造成什么影响，专业一点的说法是『抗扰动能力强』</p>
+<center><img src="https://img-blog.csdnimg.cn/20200331161150829.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70"></center>
+
+<h2 id="L1正则化"><a href="#L1正则化" class="headerlink" title="L1正则化"></a>L1正则化</h2><blockquote>
+<p>有助于生成一个稀疏权值矩阵，进而可以用于特征选择。</p>
+</blockquote>
+<center><img src="https://img-blog.csdnimg.cn/20200331161249549.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70"></center>
+
+<h2 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h2><p>除此之外，决策树通过信息熵或GINI指数选择分裂节点时，优先选择的分裂特征也更加重要，这同样是一种特征选择的方法。XGBoost与LightGBM模型中的model_importance指标正是基于此计算的。</p>
+<p><a href="#return">返回…</a></p>
+<h1 id="模型对比"><a href="#模型对比" class="headerlink" title="模型对比"></a><div id="compare">模型对比</div></h1><p>除了线性模型以外，还有许多我们常用的非线性模型如下，在此篇幅有限不再一一讲解原理。我们选择了部分常用模型与线性模型进行效果比对。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression</span><br><span class="line"><span class="keyword">from</span> sklearn.svm <span class="keyword">import</span> SVC</span><br><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeRegressor</span><br><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestRegressor</span><br><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> GradientBoostingRegressor</span><br><span class="line"><span class="keyword">from</span> sklearn.neural_network <span class="keyword">import</span> MLPRegressor</span><br><span class="line"><span class="keyword">from</span> xgboost.sklearn <span class="keyword">import</span> XGBRegressor</span><br><span class="line"><span class="keyword">from</span> lightgbm.sklearn <span class="keyword">import</span> LGBMRegressor</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">models = [LinearRegression(),</span><br><span class="line">          DecisionTreeRegressor(),</span><br><span class="line">          RandomForestRegressor(),</span><br><span class="line">          GradientBoostingRegressor(),</span><br><span class="line">          MLPRegressor(solver=<span class="string">'lbfgs'</span>, max_iter=<span class="number">100</span>), </span><br><span class="line">          XGBRegressor(n_estimators = <span class="number">100</span>, objective=<span class="string">'reg:squarederror'</span>), </span><br><span class="line">          LGBMRegressor(n_estimators = <span class="number">100</span>)]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">result = dict()</span><br><span class="line"><span class="keyword">for</span> model <span class="keyword">in</span> models:</span><br><span class="line">    model_name = str(model).split(<span class="string">'('</span>)[<span class="number">0</span>]</span><br><span class="line">    scores = cross_val_score(model, X=train_X, y=train_y_ln, verbose=<span class="number">0</span>, cv = <span class="number">5</span>, scoring=make_scorer(mean_absolute_error))</span><br><span class="line">    result[model_name] = scores</span><br><span class="line">    print(model_name + <span class="string">' is finished'</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">result = pd.DataFrame(result)</span><br><span class="line">result.index = [<span class="string">'cv'</span> + str(x) <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">6</span>)]</span><br><span class="line">result</span><br></pre></td></tr></table></figure>
+<p><a href="#return">返回…</a></p>
+<h1 id="模型调参"><a href="#模型调参" class="headerlink" title="模型调参"></a><div id="tuning">模型调参</div></h1><p>介绍三种常用的调参方法：</p>
+<ul>
+<li>贪心算法 <a href="https://www.jianshu.com/p/ab89df9759c8" target="_blank" rel="noopener">学习资源</a></li>
+<li>网格调参 <a href="https://blog.csdn.net/weixin_43172660/article/details/83032029" target="_blank" rel="noopener">学习资源</a></li>
+<li>贝叶斯调参 <a href="https://blog.csdn.net/linxid/article/details/81189154" target="_blank" rel="noopener">学习资源</a></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## LGB的参数集合：</span></span><br><span class="line"></span><br><span class="line">objective = [<span class="string">'regression'</span>, <span class="string">'regression_l1'</span>, <span class="string">'mape'</span>, <span class="string">'huber'</span>, <span class="string">'fair'</span>]</span><br><span class="line"></span><br><span class="line">num_leaves = [<span class="number">3</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">20</span>,<span class="number">40</span>, <span class="number">55</span>]</span><br><span class="line">max_depth = [<span class="number">3</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">20</span>,<span class="number">40</span>, <span class="number">55</span>]</span><br><span class="line">bagging_fraction = []</span><br><span class="line">feature_fraction = []</span><br><span class="line">drop_rate = []</span><br></pre></td></tr></table></figure>
+<h2 id="贪心算法"><a href="#贪心算法" class="headerlink" title="贪心算法"></a>贪心算法</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">best_obj = dict()</span><br><span class="line"><span class="keyword">for</span> obj <span class="keyword">in</span> objective:</span><br><span class="line">    model = LGBMRegressor(objective=obj)</span><br><span class="line">    score = np.mean(cross_val_score(model, X=train_X, y=train_y_ln, verbose=<span class="number">0</span>, cv = <span class="number">5</span>, scoring=make_scorer(mean_absolute_error)))</span><br><span class="line">    best_obj[obj] = score</span><br><span class="line">    </span><br><span class="line">best_leaves = dict()</span><br><span class="line"><span class="keyword">for</span> leaves <span class="keyword">in</span> num_leaves:</span><br><span class="line">    model = LGBMRegressor(objective=min(best_obj.items(), key=<span class="keyword">lambda</span> x:x[<span class="number">1</span>])[<span class="number">0</span>], num_leaves=leaves)</span><br><span class="line">    score = np.mean(cross_val_score(model, X=train_X, y=train_y_ln, verbose=<span class="number">0</span>, cv = <span class="number">5</span>, scoring=make_scorer(mean_absolute_error)))</span><br><span class="line">    best_leaves[leaves] = score</span><br><span class="line">    </span><br><span class="line">best_depth = dict()</span><br><span class="line"><span class="keyword">for</span> depth <span class="keyword">in</span> max_depth:</span><br><span class="line">    model = LGBMRegressor(objective=min(best_obj.items(), key=<span class="keyword">lambda</span> x:x[<span class="number">1</span>])[<span class="number">0</span>],</span><br><span class="line">                          num_leaves=min(best_leaves.items(), key=<span class="keyword">lambda</span> x:x[<span class="number">1</span>])[<span class="number">0</span>],</span><br><span class="line">                          max_depth=depth)</span><br><span class="line">    score = np.mean(cross_val_score(model, X=train_X, y=train_y_ln, verbose=<span class="number">0</span>, cv = <span class="number">5</span>, scoring=make_scorer(mean_absolute_error)))</span><br><span class="line">    best_depth[depth] = score</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sns.lineplot(x=[<span class="string">'0_initial'</span>,<span class="string">'1_turning_obj'</span>,<span class="string">'2_turning_leaves'</span>,<span class="string">'3_turning_depth'</span>], y=[<span class="number">0.143</span> ,min(best_obj.values()), min(best_leaves.values()), min(best_depth.values())])</span><br></pre></td></tr></table></figure>
+<center><img src="https://img-blog.csdnimg.cn/20200331162154268.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70"></center>
+
+<h2 id="Grid-Search-调参"><a href="#Grid-Search-调参" class="headerlink" title="Grid Search 调参"></a>Grid Search 调参</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> GridSearchCV</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">parameters = &#123;<span class="string">'objective'</span>: objective , <span class="string">'num_leaves'</span>: num_leaves, <span class="string">'max_depth'</span>: max_depth&#125;</span><br><span class="line">model = LGBMRegressor()</span><br><span class="line">clf = GridSearchCV(model, parameters, cv=<span class="number">5</span>)</span><br><span class="line">clf = clf.fit(train_X, train_y)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">clf.best_params_</span><br><span class="line">model = LGBMRegressor(objective=<span class="string">'regression'</span>,</span><br><span class="line">                          num_leaves=<span class="number">55</span>,</span><br><span class="line">                          max_depth=<span class="number">15</span>)</span><br><span class="line">                    </span><br><span class="line">np.mean(cross_val_score(model, X=train_X, y=train_y_ln, verbose=<span class="number">0</span>, cv = <span class="number">5</span>, scoring=make_scorer(mean_absolute_error)))</span><br></pre></td></tr></table></figure>
+<h2 id="贝叶斯调参"><a href="#贝叶斯调参" class="headerlink" title="贝叶斯调参"></a>贝叶斯调参</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> bayes_opt <span class="keyword">import</span> BayesianOptimization</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rf_cv</span><span class="params">(num_leaves, max_depth, subsample, min_child_samples)</span>:</span></span><br><span class="line">    val = cross_val_score(</span><br><span class="line">        LGBMRegressor(objective = <span class="string">'regression_l1'</span>,</span><br><span class="line">            num_leaves=int(num_leaves),</span><br><span class="line">            max_depth=int(max_depth),</span><br><span class="line">            subsample = subsample,</span><br><span class="line">            min_child_samples = int(min_child_samples)</span><br><span class="line">        ),</span><br><span class="line">        X=train_X, y=train_y_ln, verbose=<span class="number">0</span>, cv = <span class="number">5</span>, scoring=make_scorer(mean_absolute_error)</span><br><span class="line">    ).mean()</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> - val</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">rf_bo = BayesianOptimization(</span><br><span class="line">    rf_cv,</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="string">'num_leaves'</span>: (<span class="number">2</span>, <span class="number">100</span>),</span><br><span class="line">    <span class="string">'max_depth'</span>: (<span class="number">2</span>, <span class="number">100</span>),</span><br><span class="line">    <span class="string">'subsample'</span>: (<span class="number">0.1</span>, <span class="number">1</span>),</span><br><span class="line">    <span class="string">'min_child_samples'</span> : (<span class="number">2</span>, <span class="number">100</span>)</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rf_bo.maximize()</span><br><span class="line"><span class="number">1</span> - rf_bo.max[<span class="string">'target'</span>]</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><strong>学习资源补充：</strong></p>
+<ul>
+<li>决策树模型 <a href="https://zhuanlan.zhihu.com/p/65304798" target="_blank" rel="noopener">Source</a></li>
+<li>GBDT模型 <a href="https://zhuanlan.zhihu.com/p/45145899" target="_blank" rel="noopener">Source</a></li>
+<li>XGBoost模型 <a href="https://zhuanlan.zhihu.com/p/86816771" target="_blank" rel="noopener">Source</a></li>
+<li>LightGBM模型 <a href="https://zhuanlan.zhihu.com/p/89360721" target="_blank" rel="noopener">Source</a></li>
+</ul>
+<p>推荐教材：</p>
+<ul>
+<li>《机器学习》 <a href="https://book.douban.com/subject/26708119/" target="_blank" rel="noopener">Source</a></li>
+<li>《统计学习方法》 <a href="https://book.douban.com/subject/10590856/" target="_blank" rel="noopener">Source</a></li>
+<li>《Python大战机器学习》 <a href="https://book.douban.com/subject/26987890/" target="_blank" rel="noopener">Source</a></li>
+<li>《面向机器学习的特征工程》 <a href="https://book.douban.com/subject/26826639/" target="_blank" rel="noopener">Source</a></li>
+<li>《数据科学家访谈录》 <a href="https://book.douban.com/subject/30129410/" target="_blank" rel="noopener">Source</a></li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Model-tuning/"># Model&tuning</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/03/27/Boost%20Tuning/">Boosting Tuning</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    
+</footer>
+
+    </div>
+</body>
+</html>
