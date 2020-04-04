@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-03-31T08:30:19.119Z</updated>
+  <updated>2020-04-04T07:40:28.650Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Model Fusion</title>
+    <link href="http://yoursite.com/2020/04/04/Model%20Fusion/"/>
+    <id>http://yoursite.com/2020/04/04/Model%20Fusion/</id>
+    <published>2020-04-04T07:38:19.238Z</published>
+    <updated>2020-04-04T07:40:28.650Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;strong&gt;Quote：&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&amp;ensp;&lt;a href=&quot;https://rocksnake.github.io/2020/03/31/Modeling%20and%20tuning/&quot; target=&quot;_blank&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Data Mining" scheme="http://yoursite.com/categories/Data-Mining/"/>
+    
+    
+      <category term="模型融合" scheme="http://yoursite.com/tags/%E6%A8%A1%E5%9E%8B%E8%9E%8D%E5%90%88/"/>
+    
+  </entry>
   
   <entry>
     <title>Modeling and tuning</title>
@@ -209,7 +237,7 @@
     <link href="http://yoursite.com/2020/03/12/%E6%88%91%E4%BA%A6%E6%9C%AA%E6%9B%BE%E9%A5%B6%E8%BF%87%E5%B2%81%E6%9C%88/"/>
     <id>http://yoursite.com/2020/03/12/%E6%88%91%E4%BA%A6%E6%9C%AA%E6%9B%BE%E9%A5%B6%E8%BF%87%E5%B2%81%E6%9C%88/</id>
     <published>2020-03-12T05:50:37.773Z</published>
-    <updated>2020-03-14T14:57:15.418Z</updated>
+    <updated>2020-04-04T07:43:49.295Z</updated>
     
     <summary type="html">
     
@@ -620,39 +648,6 @@
       <category term="Seq2seq模型" scheme="http://yoursite.com/tags/Seq2seq%E6%A8%A1%E5%9E%8B/"/>
     
       <category term="注意力机制" scheme="http://yoursite.com/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>机器翻译及其相关技术介绍</title>
-    <link href="http://yoursite.com/2020/02/28/%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E4%BB%8B%E7%BB%8D/"/>
-    <id>http://yoursite.com/2020/02/28/%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E4%BB%8B%E7%BB%8D/</id>
-    <published>2020-02-28T02:20:01.572Z</published>
-    <updated>2020-02-29T02:21:15.788Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h1 id=&quot;机器翻译-MT-实践&quot;&gt;&lt;a href=&quot;#机器翻译-MT-实践&quot; class=&quot;headerlink&quot;
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
-    
-    
-      <category term="MT" scheme="http://yoursite.com/tags/MT/"/>
-    
-      <category term="encoder-decoder" scheme="http://yoursite.com/tags/encoder-decoder/"/>
-    
-      <category term="Seq2seq模型" scheme="http://yoursite.com/tags/Seq2seq%E6%A8%A1%E5%9E%8B/"/>
-    
-      <category term="集束搜索" scheme="http://yoursite.com/tags/%E9%9B%86%E6%9D%9F%E6%90%9C%E7%B4%A2/"/>
     
   </entry>
   
