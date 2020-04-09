@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-04-04T07:40:28.650Z</updated>
+  <updated>2020-04-09T12:37:21.341Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,62 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Properties and Applications of adjoints</title>
+    <link href="http://yoursite.com/2020/04/09/Properties%20and%20Applications%20of%20adjoints/"/>
+    <id>http://yoursite.com/2020/04/09/Properties%20and%20Applications%20of%20adjoints/</id>
+    <published>2020-04-09T12:36:18.282Z</published>
+    <updated>2020-04-09T12:37:21.341Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;First, we need to clarify the definition of the adjoint equation:&lt;/p&gt;
+&lt;p&gt;$$&lt;br&gt;\int u^*Audx = \int uA^*u^*dx&lt;br&gt;$$&lt;/p&gt;
+&lt;p&gt;In general,
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="adjoint equation" scheme="http://yoursite.com/tags/adjoint-equation/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Derivation of the adjoint equation</title>
+    <link href="http://yoursite.com/2020/04/09/Derivation%20of%20the%20adjoint%20equation/"/>
+    <id>http://yoursite.com/2020/04/09/Derivation%20of%20the%20adjoint%20equation/</id>
+    <published>2020-04-09T12:34:11.991Z</published>
+    <updated>2020-04-09T12:37:43.177Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;If in the deterministic case, the adjoint equations are backward ordinary differential equations and represent, in some sense, the same
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
+    
+    
+      <category term="adjoint equation" scheme="http://yoursite.com/tags/adjoint-equation/"/>
+    
+  </entry>
   
   <entry>
     <title>Model Fusion</title>
@@ -583,71 +639,6 @@
       <category term="NiN" scheme="http://yoursite.com/tags/NiN/"/>
     
       <category term="GoogLeNet" scheme="http://yoursite.com/tags/GoogLeNet/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Fundamentals of Convolutional Neural Networks</title>
-    <link href="http://yoursite.com/2020/02/28/Fundamentals%20of%20Convolutional%20Neural%20Networks/"/>
-    <id>http://yoursite.com/2020/02/28/Fundamentals%20of%20Convolutional%20Neural%20Networks/</id>
-    <published>2020-02-28T02:24:01.802Z</published>
-    <updated>2020-02-28T02:38:55.314Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;二维卷积层&quot;&gt;&lt;a href=&quot;#二维卷积层&quot; class=&quot;headerlink&quot; title=&quot;二维卷积层&quot;&gt;&lt;/a&gt;二维卷积层&lt;/h2&gt;&lt;blockquote&gt;
-&lt;p&gt;常用于处理图像数据。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h3
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
-    
-    
-      <category term="CNN" scheme="http://yoursite.com/tags/CNN/"/>
-    
-      <category term="卷积-池化" scheme="http://yoursite.com/tags/%E5%8D%B7%E7%A7%AF-%E6%B1%A0%E5%8C%96/"/>
-    
-      <category term="特征与感受野" scheme="http://yoursite.com/tags/%E7%89%B9%E5%BE%81%E4%B8%8E%E6%84%9F%E5%8F%97%E9%87%8E/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>注意力机制和Seq2seq模型</title>
-    <link href="http://yoursite.com/2020/02/28/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%E5%92%8CSeq2seq%E6%A8%A1%E5%9E%8B/"/>
-    <id>http://yoursite.com/2020/02/28/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6%E5%92%8CSeq2seq%E6%A8%A1%E5%9E%8B/</id>
-    <published>2020-02-28T02:22:14.915Z</published>
-    <updated>2020-02-29T02:22:09.530Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;center&gt;&lt;b&gt;&lt;font size=6&gt;Attention
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
-    
-    
-      <category term="MLP" scheme="http://yoursite.com/tags/MLP/"/>
-    
-      <category term="Seq2seq模型" scheme="http://yoursite.com/tags/Seq2seq%E6%A8%A1%E5%9E%8B/"/>
-    
-      <category term="注意力机制" scheme="http://yoursite.com/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/"/>
     
   </entry>
   

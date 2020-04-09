@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>Properties and Applications of adjoints | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Properties and Applications of adjoints</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">April 9, 2020&nbsp;&nbsp;20:36:18</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Machine-Learning/">Machine Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>First, we need to clarify the definition of the adjoint equation:</p>
+<p>$$<br>\int u^*Audx = \int uA^*u^*dx<br>$$</p>
+<p>In general, with non-vanishing boundary conditions, and the inner product given as $&lt;·,·&gt;$：</p>
+<p>$$<br>&lt;u^<em>,Au&gt; = &lt;u,A^*u^</em>&gt; + B.T.<br>$$</p>
+<p>Note:</p>
+<ul>
+<li>$A^∗$ is alinearoperator.</li>
+<li>It is not straight forward to define the adjoint of anonlinearoperator.  It can however be introduced based on the theory of linear operators.  This means that one mustfirst linearise the nonlinear operator andthen define its adjoint.</li>
+</ul>
+<h1 id="Properties"><a href="#Properties" class="headerlink" title="Properties"></a>Properties</h1><p>The adjoint equations is counterintuitive, because it run backwards in time and reverse the propagation of information. The essence of these properties is transposition in matrix.</p>
+<h2 id="reverses-the-propagation-of-information"><a href="#reverses-the-propagation-of-information" class="headerlink" title="reverses the propagation of information"></a>reverses the propagation of information</h2><blockquote>
+<p>A simple advection example</p>
+</blockquote>
+<p>Suppose we are are solving a one-dimensional advection-type equation on a mesh with three nodes, at $x_{0}=0, x_{1}=0.5$, and  $x_{2}=1$. </p>
+<p>The velocity goes from left to right, and so we impose an inflow boundary condition at the left-most node $x_{0}$. </p>
+<p>A simple sketch of the linear system that might describe this configuration could look as follows:</p>
+<p>$$<br> \left[<br> \begin{matrix}<br>   1 &amp; 0 &amp; 0 \<br>   a &amp; b &amp; 0 \<br>   c &amp; d &amp; e<br>  \end{matrix}<br>  \right]<br>\left[<br> \begin{matrix}<br>   u_{0} \<br>   u_{1}\<br>   u_{2}<br>  \end{matrix}<br>  \right]<br>  =\left[<br> \begin{matrix}<br>   1\<br>   0\<br>   0<br>  \end{matrix}<br>  \right],<br>$$</p>
+<p>where $a,b,c,d$ and $e$ are some coefficients of the matrix arising from a discretisation of the equation. </p>
+<p>The equation for $u_{1}$ does not depend on $u_{2}$, as information is flowing from left to right. The structure of the matrix dictates the propagation of information of the system: first $u_{0}$ is set to the boundary condition value, then $u_{1}$ may be computed, and then finally $u_{2}$. </p>
+<p>The lower-triangular nature of the matrix reflects the rightward propagation of information.</p>
+<p>Notice that $u_{0}$ is prescribed: that is, the value of $u_{0}$ does not depend on the values at any other nodes; all off-diagonal entries on the row for $u_{0}$ are zero. Notice further that the value $u_{2}$ is diagnostic: no other nodes depend on its value; all off-diagonal entries on its column are zero.</p>
+<p>Now suppose that we take the adjoint of this system with respect to some functional $J(u)$. The operator is linear (no entry in the matrix depends on $u$), and so the adjoint of this system is just its transpose:</p>
+<p>$$<br> \left[<br> \begin{matrix}<br>   1 &amp; a &amp; c \<br>   0 &amp; b &amp; d \<br>   0 &amp; 0 &amp; e<br>  \end{matrix}<br>  \right]<br>\left[<br> \begin{matrix}<br>   \lambda_{0} \<br>   \lambda_{1}\<br>   \lambda_{2}<br>  \end{matrix}<br>  \right]<br>  =\left[<br> \begin{matrix}<br>   \partial J / \partial u_{0}\<br>   \partial J / \partial u_{1}\<br>   \partial J / \partial u_{2}<br>  \end{matrix}<br>  \right],<br>$$</p>
+<p>where $λ$ is the adjoint variable corresponding to $u$. Observe that transposing the forward system yields an upper-triangular adjoint system: the adjoint propagates information from right to left, in the opposite sense to the propagation of the forward system. To solve this system, one would first solve for $λ<em>{2}$, then compute $λ</em>{1}$, and finally $λ_{0}$.</p>
+<p>Further notice that $λ<em>{2}$ is now prescribed: it can be computed directly from the data, with no dependencies on the values of other adjoint variables; all of the off-diagonal entries in its row are zero. $λ</em>{0}$ is now diagnostic: no other variables depend on its value; all off-diagonal entries in its column are zero.</p>
+<p><font color=red>Note:</font></p>
+<p>&ensp;&ensp;If the forward equation is $u⋅∇T$, where $u$ is the advecting velocity and $T$ is the advected tracer, then its corresponding adjoint term is $−u⋅∇λ$. The adjoint advection equation is itself an advection equation, with the reverse of the forward velocity.</p>
+<p>&ensp;&ensp;Variables that are prescribed in the forward model are diagnostic in the adjoint; variables that are diagnostic in the forward model are prescribed in the adjoint.</p>
+<h2 id="linear"><a href="#linear" class="headerlink" title="linear"></a>linear</h2><p>The operator of the tangent linear system is the linearisation of the operator about the solution $u$, so the adjoint system is always linear in $λ$.</p>
+<p>This has two major effects:</p>
+<ul>
+<li><strong>Beneficial effect:</strong> the computation time of the adjoint run</li>
+<li><a href="#nbe"><strong>Not beneficial effect：</strong></a> the storage requirements of the adjoint run</li>
+</ul>
+<h3 id="Beneficial-effect"><a href="#Beneficial-effect" class="headerlink" title="Beneficial effect"></a>Beneficial effect</h3><blockquote>
+<p>the computation time of the adjoint run</p>
+</blockquote>
+<p>The forward model may be nonlinear, but the adjoint is always linear, and so it can be much cheaper to solve than the forward model.</p>
+<p>e.g.:</p>
+<p>&ensp;&ensp;If the forward model employs a Newton solver for the nonlinear problem that uses on average $5$ linear solves to converge to machine precision, then a rough estimate for the adjoint computation is that it will take ${\frac{1}{5}}$ the runtime of the forward model.</p>
+<h3 id="Not-beneficial-effect"><a href="#Not-beneficial-effect" class="headerlink" title="Not beneficial effect"></a><div id="nbe">Not beneficial effect</div></h3><blockquote>
+<p>the storage requirements of the adjoint run</p>
+</blockquote>
+<p>We all know that the adjoint operator is a linearisation of the nonlinear operator about the solution $u$:, therefore, </p>
+<ul>
+<li>if the forward model is nonlinear, the forward solution must be available to assemble the adjoint system.;</li>
+<li>If the forward model is steady, this is not a significant difficulty;</li>
+<li>if the forward model is time-dependent, the entire solution trajectory through time must be available.</li>
+</ul>
+<h1 id="Applications"><a href="#Applications" class="headerlink" title="Applications"></a>Applications</h1><ul>
+<li>PDE-constrained optimisation</li>
+<li>Sensitivity analysis</li>
+<li>Data assimilation</li>
+<li>Inverse problems</li>
+<li>Generalised stability theory</li>
+<li>Error estimation</li>
+</ul>
+<blockquote>
+<p>Only the basic idea across</p>
+</blockquote>
+<h2 id="PDE-constrained-optimisation"><a href="#PDE-constrained-optimisation" class="headerlink" title="PDE-constrained optimisation"></a>PDE-constrained optimisation</h2><p>Firstly, adjoints form the core technique for efficiently computing the gradient ${\frac{dJ(u,m)}{dm}}$ of a functional $J$ to be minimised. This is usually <strong>essential</strong> for solving such <strong>optimisation problems</strong> in practice:</p>
+<p>Gradient-free optimisation algorithms typically take orders of magnitude more iterations to converge; since each iteration involves a PDE solve, <strong>minimising</strong> the <strong>number of iterations</strong> taken is <strong>crucial</strong>.</p>
+<h2 id="Sensitivity-analysis"><a href="#Sensitivity-analysis" class="headerlink" title="Sensitivity analysis"></a>Sensitivity analysis</h2><p>Occasionally, the gradient of a functional $J$ with respect to some parameter $m$ is not merely required as an input to an optimisation algorithm, but rather is of scientific interest in its own right.</p>
+<ul>
+<li>Adjoint computations can tease apart hidden influences and teleconnections; </li>
+<li>Such computations can also inform scientists regarding which variables matter the least, which is often important for deriving approximate models; </li>
+<li>Parameters with little impact on the simulation can be ignored. </li>
+</ul>
+<p>This process is also often undertaken in advance of solving an optimisation problem: </p>
+<p>By discarding parameters which do not significantly influence the functional, the dimension of the parameter space may be systematically reduced.</p>
+<h2 id="Data-assimilation"><a href="#Data-assimilation" class="headerlink" title="Data assimilation"></a><div id="data_assimilatiion">Data assimilation</div></h2><blockquote>
+<p>A forward model requires data on which to operate. </p>
+</blockquote>
+<p>We will analy from a simple example that weather forecast.</p>
+<p>e.g.:</p>
+<p>&ensp;&ensp;To start a weather forecast, knowledge of the entire state of the atmosphere at some point in time is required as an initial condition from which to begin the simulation: start from the wrong initial condition, and you will get the wrong weather.</p>
+<p><strong>Analysis:</strong></p>
+<p>&ensp;&ensp;The problem is that, in practice, the initial condition is unknown. </p>
+<p>&ensp;&ensp;Instead, observations of the state of the atmosphere are available, some available at the initial time, and some taken at later times. The goal of data assimilation is to systematically combine observations and computations, usually with the intention of acquiring the best possible estimate of the unknown initial condition, so that a forecast may be run. </p>
+<p>There are two major approaches to data assimilation.</p>
+<ol>
+<li>Kalman filter algorithm</li>
+<li>Variational data assimilation</li>
+</ol>
+<h3 id="Kalman-filter-algorithm"><a href="#Kalman-filter-algorithm" class="headerlink" title="Kalman filter algorithm"></a>Kalman filter algorithm</h3><blockquote>
+<p>The most popular approach to computing the amplitude of the update</p>
+</blockquote>
+<p>In a sequential algorithm, the forward system is timestepped until an observation is available, at which point the model is instantaneously “updated” to incorporate the information contained in the observation. The model is then continued from this updated state until all of the observations are used.</p>
+<p><strong>Drawback：</strong></p>
+<p>&ensp;&ensp;The observation only influences the state at times later than the observation time. In other words, its temporal influence only propagates forward, not backwards in time.</p>
+<h3 id="variational-data-assimilation"><a href="#variational-data-assimilation" class="headerlink" title="variational data assimilation"></a>variational data assimilation</h3><blockquote>
+<p>a special case of PDE-constrained optimisation</p>
+</blockquote>
+<p> In this approach, a functional $J$ is chosen to represent the misfit between the observations and the computations, weighted by the uncertainties in each.</p>
+<p>The initial condition is treated as a control parameter $m$, and chosen to minimise the misfit $J$.</p>
+<p>The data assimilation community tends to place significant emphasis on modelling the uncertainties in both the computations and observations, as this is key to extracting the maximal amount of information out of both.</p>
+<h2 id="Inverse-problems"><a href="#Inverse-problems" class="headerlink" title="Inverse problems"></a>Inverse problems</h2><blockquote>
+<p><a href="#data_assimilatiion">Data assimilation</a> can be seen as a particular kind of inverse problem.</p>
+</blockquote>
+<p>Because it focus on obtaining the best estimate for the system state at some point in the past.</p>
+<p>In fact, the essence of inverse problems is that we gain information about unobservable system parameters from observable system outputs.</p>
+<p>This just confirmed that the properties of adjoints equations which reversing the propagation of information.</p>
+<h2 id="Generalised-stability-theory"><a href="#Generalised-stability-theory" class="headerlink" title="Generalised stability theory"></a>Generalised stability theory</h2><p>In the nonnormal case, the usual stability theory fails. </p>
+<p><font color=red>Note:</font></p>
+<p>&ensp;&ensp;<strong>usual stability theory</strong>: If the real component of every eigenvalue is negative, the state is stable, and the associated eigenmode will vanish in the limit as $t→∞$; while if any eigenvalue has a positive real part, the state is unstable, and the associated eigenmode will grow in amplitude.</p>
+<p><strong>Process:</strong></p>
+<p>&ensp;&ensp;Instead of focusing on the eigenvalues of the operator linearised about some steady state, generalised stability theory analyses the generalised eigenvalues associated with the propagator of the system, which maps perturbations in initial conditions to perturbations in the final state.Essentially, the propagator is the inverse of the tangent linear operator.By examining these values, such an analysis can describe and predict the perturbations that will grow maximally over finite time windows. In order to compute these generalised eigenvalues of the system propagator, both the tangent linear and adjoint operators must be repeatedly solved.</p>
+<h2 id="Error-estimation"><a href="#Error-estimation" class="headerlink" title="Error estimation"></a>Error estimation</h2><blockquote>
+<p>goal-based error estimation、the related computational technique of goal-based adaptivity. </p>
+</blockquote>
+<p>The fundamental theorem of error estimation, due to Rannacher and co-workers，states that:</p>
+<p>$$<br>J(u)−J(u_{h})={\frac{1}{2}}⟨λ−λ<em>{h},ρ</em>{u}⟩+{\frac{1}{2}}⟨u−u_{h},ρ<em>{λ}⟩+R</em>{h}^{(3)},<br>$$</p>
+<p>Based on the examples provided by Rannacher and co-workers, we find that :</p>
+<ul>
+<li><p>a computation that employs goal-based adaptivity is dramatically faster at computing the functional to within a certain tolerance than the corresponding fixed-mesh or heuristically-driven adaptivity.</p>
+</li>
+<li><p>it raises the possibility of reliable automated computation: not only can the discretisation of the differential equation be automated with the FEniCS system, it can be automated to reliably and efficiently compute desired quantities to within a specified accuracy. </p>
+</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/adjoint-equation/"># adjoint equation</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/04/09/Derivation%20of%20the%20adjoint%20equation/">Derivation of the adjoint equation</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    
+</footer>
+
+    </div>
+</body>
+</html>

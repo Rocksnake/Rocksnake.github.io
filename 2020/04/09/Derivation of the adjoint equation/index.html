@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>Derivation of the adjoint equation | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Derivation of the adjoint equation</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">April 9, 2020&nbsp;&nbsp;20:34:11</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Machine-Learning/">Machine Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>If in the deterministic case, the adjoint equations are backward ordinary differential equations and represent, in some sense, the same forward equation.</p>
+<h1 id="Continuous-vs-Discrete-Adjoint-Equations"><a href="#Continuous-vs-Discrete-Adjoint-Equations" class="headerlink" title="Continuous vs.  Discrete Adjoint Equations"></a>Continuous vs.  Discrete Adjoint Equations</h1><blockquote>
+<p>The adjoint equations can be derived using two different approaches.</p>
+</blockquote>
+<p>By definition we have</p>
+<p>$$<br>〈u^∗,Au〉=〈u,A^∗u^∗〉+ B.T.<br>$$</p>
+<p>Both with advantages and disadvantages:</p>
+<p><strong>Continuous approach</strong>:  The adjoint equations are derived by definition using the continuous direct equations.</p>
+<ul>
+<li><font color=gree>+</font> Straightforward derivation, reuse old code when programming;</li>
+<li><font color=red>–</font> Accuracy depends on discretization, difficulties with boundary conditions.</li>
+</ul>
+<p><strong>Discrete approach</strong>:  The adjoint equations are derived from the discretized direct equations.</p>
+<ul>
+<li><font color=gree>+</font> Accuracy can be achieved close to machine precision,and can be independent of discretization;</li>
+<li><font color=red>–</font>Tricky derivation, usually requires making a new code,or larger changes of an existing code.</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/2020040810263062.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70#pic_center" alt=""></p>
+<center>Here " def " means definition of the adjoint operator.</center><br/>
+
+<p>Consider the following optimization problem (ODE) whereφis the state andgthe control</p>
+<p>$$<br>{\frac{d\phi(t)}{dt}}=−A\phi(t) +Bg(t), for \ 0≤t≤T,<br>$$</p>
+<p>with initial condition</p>
+<p>$$<br>\phi(0) =\phi_{0}<br>$$</p>
+<p>We can now define an optimization problem in which the goal is to find an optimalg(t) by minimizing the following objective function</p>
+<p>$$<br>J={\frac{γ<em>{1}}{2}}[\phi(T)−Ψ]^2+{\frac{γ</em>{2}}{2}}\int_0^T g(t)^2dt,<br>$$</p>
+<h2 id="Continuous-approach"><a href="#Continuous-approach" class="headerlink" title="Continuous approach"></a>Continuous approach</h2><p>We can solve this problem using an adjoint identity approach or by introducing Lagrange multipliers.</p>
+<p>$$<br>\int_0^T a[{\frac{d\phi}{dt}}+A\phi−Bg]dt=\int_0^T[-{\frac{da}{dt}}+A^∗a]\phi dt−\int_0^T aBg dt+a(T)\phi(T)−a(0)\phi(0).<br>$$ </p>
+<p>If we now define the adjoint equation as $−{\frac{da}{dt}}=−A∗a$ with an arbitrary initial condition $a(T)$ then the identity reduces to: </p>
+<p>$$<br>LHS =−\int_0^TaBg dt+a(T)\phi(T)−a(0)\phi(0)<br>$$</p>
+<p>By definition the Left Hand Side is identically zero but this is exactly what must be checked numerically , i.e.  error=|LHS|.</p>
+<p>The gradient of Jw.r.t. g can be derived considering the J is nonlinear in $\phi$ and $g$.  We linearise by $\phi→\phi+δ\phi$ , $g→g+δg$ and then write the linearised objective function as:</p>
+<p>$$<br>γ<em>{1}[\phi(T)−Ψ]δ\phi(T) =δJ−γ</em>{2}\int_0^Tgδg dt,<br>$$</p>
+<p>If we choose $a(T) =γ_{1}[\phi(T)−Ψ]$ then the equation for $δJ$ can be substituted into the expression for the adjoint identity.  If you further define the adjoint equations, remember that $δ\phi(0) = 0$, then the final identity is written：</p>
+<p>$$<br>δJ=\int_0^T[γ_{2}g+B^∗a]δg dt<br>$$</p>
+<p>The adjoint equations and gradient of Jw.r.t. g are written:</p>
+<p>$$<br>−{\frac{da}{dt}}+A^∗a, \quad a(T) =γ<em>{1}[\phi(T)−Ψ], \quad and \quad ∇Jg=γ</em>{2}g+B^∗a.<br>$$</p>
+<p>The so called optimality condition is given by $∇Jg= 0$.</p>
+<h2 id="Discrete-approach"><a href="#Discrete-approach" class="headerlink" title="Discrete approach"></a>Discrete approach</h2><p>A discrete version of the direct equation is written：</p>
+<p>$$<br>{\frac{\phi^{i+1}−\phi^i}{∆t}}=−A\phi^i+Bg^i,\quad fori= 1,…,N−1,<br>$$</p>
+<p>where $N$ denotes the number of discrete points on the interval  $[0,T]$ , $∆t$ is the constant time step, and</p>
+<p>$$<br>\phi^1=\phi_{0},<br>$$</p>
+<p>is the initial condition.  This can be written as a discrete evolution equation.</p>
+<p>$$<br>\phi^{i+1}=L\phi^i+ ∆t Bg^i,\quad for i= 1,…,N−1.<br>$$</p>
+<p>with $L=I−∆tA$ , and $I$ the identity matrix.  A discrete version of the objective function can be written:</p>
+<p>$$<br>J={\frac{γ<em>{1}}{2}}(\phi N−Φ)^2+{\frac{γ</em>{2}}{2}}\sum\limits_{i=1}^{N-1} ∆t(g^i)^2.<br>$$</p>
+<p>An adjoint variable $a^i$ is introduced defined on $i= 1,…,N$ and we write the adjoint identity as</p>
+<p>$$<br>a^{i+1}·L\phi^i= (L^*a^{i+1})·\phi^i, \quad for \quad i= 1,…,N−1.<br>$$</p>
+<p>We then introduce the definition of the state equation on the left hand side of and impose that</p>
+<p>$$<br>a^i=L^*a^{i+1} \quad for\quad i=N−1,…,1<br>$$</p>
+<p>This is thediscrete adjoint equation.  Using the discrete direct and adjoint yields:</p>
+<p>$$<br>a^{i+1}·(\phi^{i+1}−∆tBg^i) =a^i·φ^i,\quad for\quad i= 1,…,N−1<br>$$</p>
+<p>which must be valid for any $\phi$ and $a$.  An error can therefore be written as</p>
+<p>$$<br>error =|a^N·\phi^N−a^1·\phi^1−\sum\limits_{i=1}^{N-1}∆t a^{i+1}·Bg^i|.<br>$$</p>
+<p>This can be compared with the error for the continuous formulation from the previous derivation</p>
+<p>$$<br>error =|a(T)\phi(T)−a(0)\phi(0)−\int_0^T aBg dt|<br>$$</p>
+<h2 id="Comparison"><a href="#Comparison" class="headerlink" title="Comparison"></a>Comparison</h2><p>Error from the discrete approach</p>
+<p>$$<br>error =|a^N·\phi^N−a^1·\phi^1−\sum\limits_{i=1}^{N-1}∆t a^{i+1}·Bg^i|.<br>$$</p>
+<p>Error from the continuous approach</p>
+<p>$$<br>error =|a(T)\phi(T)−a(0)\phi(0)−\int_0^T aBg dt|<br>$$</p>
+<p>The convergence of the physical problem and the accuracy of the gradient can be considered two different issues.</p>
+<ul>
+<li><p>In the continuous approach the adjoint solution depends on the discretization scheme used and the error will decrease as the spatial and temporal resolution increase.  In this case it is difficult to distinguish between different errors in the case an optimization problem fail to converge.</p>
+</li>
+<li><p>The advantage of the discrete approach is that the adjoint solution will be numerically  “exact”, independently of the spatial and temporal resolution.</p>
+</li>
+</ul>
+<p>The discrete optimality condition is then derived.  Since $J$ is nonlinear with respect to $\phi$ and $g$ we must first linearize.  This can be written</p>
+<p>$$<br>δJ=γ<em>{1}(φ^N−Φ)·δ\phi^N+γ</em>{2}\sum\limits_{i=1}^{N-1}∆tg^i·δg^i.<br>$$</p>
+<p>We now choose the terminal condition of the adjoint as $a^N=γ_{1}(\phi^N−Φ)$ and substitute this expression into the discrete adjoint identity.  This is written</p>
+<p>$$<br>γ<em>{1}(\phi^N−Φ)·δ\phi^N=a^1·δ\phi^1+\sum\limits</em>{i=1}^{N-1}∆t a^{i+1}·Bδg^i<br>$$</p>
+<p>By inspection one can see that the left hand side is identical to the first term in the expression for $δJ$, and $δ\phi^1= 0$ .  Rearranging the terms, we get</p>
+<p>$$<br>δJ=\sum\limits_{i=1}^{N-1}∆t(γ_{2}g^i+B^*a^{i+1})·δg^i,<br>$$</p>
+<p>from which we get the discrete optimality condition</p>
+<p>$$<br>g^i=−{\frac{1}{γ_{2}}}B^*a^{i+1} \quad for \quad i= 1,..,N−1.<br>$$</p>
+<p>Note that if $B$ is a matrix then $B^*=B^T$</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/adjoint-equation/"># adjoint equation</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/04/09/Properties%20and%20Applications%20of%20adjoints/">Properties and Applications of adjoints</a>
+            
+            
+            <a class="next" rel="next" href="/2020/04/04/Model%20Fusion/">Model Fusion</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    
+</footer>
+
+    </div>
+</body>
+</html>
