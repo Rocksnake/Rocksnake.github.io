@@ -1,8 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Combine RNN with Neural ODEs</title>
+    <url>/2020/05/13/Combine-RNN-with-NeuralODES/</url>
+    <content><![CDATA[<center><font size=5><b>Intro to Neural ODEs</b></font></center>
+<div align=right><a href="https://medium.com/@abaietto5297" target="_blank" rel="noopener" >——Reference</a></div>
+
+
+<h1 id="ResNets"><a href="#ResNets" class="headerlink" title="ResNets"></a>ResNets</h1><blockquote>
+<p>Neural ODEs comes from ResNets</p>
+</blockquote>
+<p><strong>As these models grew to hundreds of layers deep, ResNets’  performance decreased. Deep learning had reached its limit. We need state-of-the-art performance to train deeper networks.</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/20200507170347952.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br><strong>It also directly adds the input to the output, this shortcut connection improves the model since, at the worst, the residual block does not do anything.</strong></p>
+<p><strong>One final thought. A ResNet can be described by the following equation:</strong></p>
+<p>$$<br>h_{t+1} = h_{t}+f(h_{t},\theta_{t})<br>$$</p>
+<blockquote>
+<p>h - value of the hidden layer;<br>t - tell us which layer we are look at</p>
+</blockquote>
+<p><strong>the next hidden layer is the sum of the input and a function of the input as we have seen.</strong> </p>
+<blockquote>
+<p>Find introduction to ResNets in <a href="https://arxiv.org/abs/1512.03385" target="_blank" rel="noopener">Reference</a></p>
+</blockquote>
+<h1 id="Euler’s-Method"><a href="#Euler’s-Method" class="headerlink" title="Euler’s Method"></a>Euler’s Method</h1><blockquote>
+<p>How Neural ODEs work</p>
+</blockquote>
+<p><strong>Above equation seems like calculus, and if you don’t remember from calculus class, the Euler’s method is the simplest way to approximate the solution of a differential equation with initial value.</strong></p>
+<p>$$<br>Initial value problem:y’(t)=f(t,y(t)), y(t_{0})=y_{0}<br>$$</p>
+<p>$$<br>Euler’s Method: y_{n+1}=y_{n}+hf(t_{n},y_{n})<br>$$</p>
+<blockquote>
+<p>through this we can find numerical approximation</p>
+</blockquote>
+<p><strong>Euler’s method and ResNets equation are identical, the only difference being the step size $h$, that is multiplied by the function. Because of this similarity, we can think ResNets is underlying differential equation.</strong> </p>
+<p><strong>Instead of going from diffeq to Euler’s method, we can reverse engineer the problem. Starting from the ResNet, the resulting differential equation is</strong></p>
+<p>$$<br>Neural ODE: {\frac{dh(t)}{dt}} = f(h(t),t,\theta)<br>$$</p>
+<p><strong>which describes the dynamics of our model.</strong></p>
+<h1 id="The-Basics"><a href="#The-Basics" class="headerlink" title="The Basics"></a>The Basics</h1><blockquote>
+<p>how a Neural ODE works</p>
+</blockquote>
+<p><strong>The Neural ODEs combines two concepts: deep learning and differential equations, we use the most simple methods - Euler’s method to make predictions.</strong></p>
+<p><strong>Q:</strong><br>&ensp;&ensp;How do we train it?<br><strong>A:</strong><br>&ensp;&ensp;Adjoint method</p>
+<p><strong>Include using another numerical solver to run backwards through time (backpropagating) and updating the model’s parameters.</strong></p>
+<ul>
+<li><strong>Defining the architecture:</strong></li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20200507195623982.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<ul>
+<li><strong>Defining a neural ODE:</strong></li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20200507195830197.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ul>
+<li><strong>Put it all together into one:</strong></li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20200507201039301.png" alt="在这里插入图片描述"></p>
+<h1 id="Adjoint-Method"><a href="#Adjoint-Method" class="headerlink" title="Adjoint Method"></a>Adjoint Method</h1><blockquote>
+<p>part 3 - how a Neural ODE backpropagates with the adjoint method<br>this part - Adjoint Method</p>
+</blockquote>
+<h1 id="Model-Comparison"><a href="#Model-Comparison" class="headerlink" title="Model Comparison"></a>Model Comparison</h1><blockquote>
+<p>Start with a simple machine learning model to showcase its strengths and weaknesses</p>
+</blockquote>
+<ul>
+<li><p><strong>ResNets model with lower time per epoch, and Neural ODEs model with more time.</strong></p>
+</li>
+<li><p><strong>ResNets model with more memory, and ODE model with O(1) space usage.</strong></p>
+</li>
+</ul>
+<p><strong>Overall, one of the main benefits is the constant memory usage while training the model. However, this comes at the cost of training time.</strong></p>
+<h1 id="VAE-Variational-Autoencoders"><a href="#VAE-Variational-Autoencoders" class="headerlink" title="VAE[Variational Autoencoders]"></a>VAE[Variational Autoencoders]</h1><blockquote>
+<p>Premise:</p>
+<blockquote>
+<p>Generative model: Able to generate samples like those in training data</p>
+</blockquote>
+</blockquote>
+<p><strong>VAE is a directed generative model with observed and latent variables, which give us a atent space to sample from.</strong></p>
+<p><strong>In view of the application that interpolate between sentences, Ｉ will use VAE to connect RNN and ODE．</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/20200513211119741.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" alt=""></p>
+<center>VAE Architecture</center>
+
+<p><img src="https://img-blog.csdnimg.cn/20200513211818629.png#pic_center" alt="在这里插入图片描述"></p>
+<center>VAE Design</center>
+
+<p><strong>When as Inference model, the input $x$ is passed to the encoder network, producing an approximate posterior $q(z|x)$ over latent variables.</strong></p>
+<blockquote>
+<p>Sentence prediction by conventional autoencoder</p>
+<blockquote>
+<p>Sentences produced by greedily decoding from points between two sentence encodings with a conventional autoencoder. The intermediate sentences are not plausible English.</p>
+</blockquote>
+<p>VAE Language Model</p>
+<blockquote>
+<p>Words are represented using a learned dictionary of embedding words</p>
+</blockquote>
+<p>VAE sentence interpolation </p>
+<blockquote>
+<ul>
+<li>Paths between random points in VAE space</li>
+<li>Intermediate sentences are grammatical</li>
+<li>Topic and syntactic structure are consistent</li>
+</ul>
+</blockquote>
+</blockquote>
+<h1 id="Breakdown-of-another-deep-learning-breakthrough"><a href="#Breakdown-of-another-deep-learning-breakthrough" class="headerlink" title="Breakdown of another deep learning breakthrough"></a>Breakdown of another deep learning breakthrough</h1><p><img src="https://img-blog.csdnimg.cn/20200508200122409.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ul>
+<li><strong>First, we encode the input sequence with some “standard” time series algorithms, let’s say RNN to obtain the primary embedding of the process</strong></li>
+<li><strong>Run the embedding through the Neural ODE to get the “continuous” embedding</strong></li>
+<li><strong>Recover initial sequence from the “continuous” embedding in VAE fashion</strong></li>
+</ul>
+<h2 id="VAE-as-a-generative-model"><a href="#VAE-as-a-generative-model" class="headerlink" title="VAE as a generative model"></a>VAE as a generative model</h2><blockquote>
+<p>variational autoencoder approach</p>
+</blockquote>
+<p><strong>A generative model through sampling procedure:</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/20200508214509100.png#pic_center" alt="在这里插入图片描述"><br><strong>Training :</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/20200508215054992.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="Define-Model"><a href="#Define-Model" class="headerlink" title="Define Model"></a>Define Model</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RNNEncoder</span><span class="params">(nn.moudle)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,input_dim,hidden_dim,latent_dim)</span>:</span></span><br><span class="line">		super(RNNEncoder,self).__init__()</span><br><span class="line">		self.input_dim = input_dim</span><br><span class="line">		self.hidden_dim = hidden_dim</span><br><span class="line">		self.latent_dim = latent_dim</span><br><span class="line"></span><br><span class="line">		self.rnn = nn.GRU(input_dim+<span class="number">1</span>,hidden_dim)</span><br><span class="line">		self.hid2lat = nn.Linear(hidden_dim,<span class="number">2</span>*latent_dim)</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self,x,t)</span>:</span></span><br><span class="line">		<span class="comment"># Concatenate time to input</span></span><br><span class="line">		t = t.clone()</span><br><span class="line">		t[<span class="number">1</span>:] = t[:<span class="number">-1</span>] = t[<span class="number">1</span>:]</span><br><span class="line">		t[<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">		xt = torch.cat((x,t),dim=<span class="number">-1</span>)</span><br><span class="line">		_,h0 = self.rnn(xt.flip((<span class="number">0</span>,))) <span class="comment">#Reversed</span></span><br><span class="line">		<span class="comment"># Compute latent dimension</span></span><br><span class="line">		z0 = self.hid2lat(h0[<span class="number">0</span>])</span><br><span class="line">		z0_mean = z0[:,:self.latent_dim]</span><br><span class="line">		z0_log_var = z0[:,self.latent_dim:]</span><br><span class="line">		<span class="keyword">return</span> z0_mean,z0_log_var</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NeuralODEDecoder</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,output_dim,hidden_dim,latent_dim)</span>:</span></span><br><span class="line">		super(NeuralODEDcoder,self).__init__()</span><br><span class="line">		self.output_dim = output_dim</span><br><span class="line">		self.hidden_dim = hidden_dim</span><br><span class="line">		self.latent_dim = latent_dim</span><br><span class="line">	</span><br><span class="line">		func = NNODEF(latent_dim,hidden_dim,time_invariant=<span class="literal">True</span>)</span><br><span class="line">		self.ode = NeuralODE(func)</span><br><span class="line">		self.l2h = nn.Linear(latent_dim,hidden_dim)</span><br><span class="line">		self.h2o = nn.Linear(hidden_dim,output_dim)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self,z0,t)</span>:</span></span><br><span class="line">	zs = self.ode(z0,t,return_whole_sequence=<span class="literal">True</span>)</span><br><span class="line">	hs = self.l2h(zs)</span><br><span class="line">	xs = self.h2o(hs)</span><br><span class="line">	<span class="keyword">return</span> xs</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ODEVAE</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,output_dim,hidden_dim,latent_dim)</span>:</span></span><br><span class="line">		super(ODEVAE,self).__init__()</span><br><span class="line">		self.output_dim = output_dim</span><br><span class="line">		self.hidden_dim = hidden_dim</span><br><span class="line">		self.latent_dim = latent_dim</span><br><span class="line">		</span><br><span class="line">		self.encoder = RNNEncoder(output_dim,hidden_dim,latent_dim)</span><br><span class="line">		self.decoder = NeuralODEDecoder(output_dim,hidden_dim,latent_dim)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self,x,t,MAP=False)</span>:</span></span><br><span class="line">	z_mean,z_log_var = self.encoder(x,t)</span><br><span class="line">	<span class="keyword">if</span> MAP:</span><br><span class="line">		z = z_mean</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		z = z_mean + torch.randn_like(z_mean)*torch.exp(<span class="number">0.5</span>=z_log_var)</span><br><span class="line">	x_p = self.decoder(z,t)</span><br><span class="line">	<span class="keyword">return</span> x_p,z,z_mean,z_log_var</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_with_seed</span><span class="params">(self,seed_x,t)</span>:</span></span><br><span class="line">	seed_t_len = seed_x.shape[<span class="number">0</span>]</span><br><span class="line">	z_mean,z_log_var = self.encoder(seed_x,t[:seed_t_len])</span><br><span class="line">	x_p = self.decoder(z_mean,t)</span><br><span class="line">	<span class="keyword">return</span> x_p</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Machine Learning</category>
+      </categories>
+      <tags>
+        <tag>ODEs</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Model Fusion</title>
-    <url>/2020/04/04/Model%20Fusion/</url>
+    <url>/2020/04/04/Model-Fusion/</url>
     <content><![CDATA[<p><strong>Quote：</strong></p>
 <p>&ensp;<a href="https://rocksnake.github.io/2020/03/31/Modeling%20and%20tuning/" target="_blank" rel="noopener">Modeling and tuning</a></p>
 <p>&ensp;&ensp;&ensp;&ensp;在此文中介绍到的多种机器学习类型中，我们通常会用到其中的 2 个甚至 2 个以上。如果我们要同时利用这些个模型，就需要将分别的训练结果结合起来作为总的训练结果。</p>
@@ -190,7 +313,7 @@
   </entry>
   <entry>
     <title>Modeling and tuning</title>
-    <url>/2020/03/31/Modeling%20and%20tuning/</url>
+    <url>/2020/03/31/Modeling-and-tuning/</url>
     <content><![CDATA[<p>在XGBoost、LightGBM、CatBoost三个模型介绍与参数调优的基础上，进一步拓展模型类型和参数调优方法。</p>
 <blockquote>
 <p><a href="https://rocksnake.github.io/2020/03/27/Boost%20Tuning/" target="_blank" rel="noopener">Boosting Tuning</a></p>
@@ -335,7 +458,7 @@
   </entry>
   <entry>
     <title>Boosting Tuning</title>
-    <url>/2020/03/27/Boost%20Tuning/</url>
+    <url>/2020/03/27/Boost-Tuning/</url>
     <content><![CDATA[<div id="Boosting">Boosting Tuning</div>
 
 <ol>
@@ -531,7 +654,7 @@
   </entry>
   <entry>
     <title>Feature Engineering for Data Mining</title>
-    <url>/2020/03/26/Feature%20Engineering%20for%20Data%20Mining/</url>
+    <url>/2020/03/26/Feature-Engineering-for-Data-Mining/</url>
     <content><![CDATA[<p><strong>重要性：</strong></p>
 <p>特征工程是比赛中重要的一部分，调参带来的效益往往是有限的，特征工程选取的好坏决定最终的结果。</p>
 <p><strong>必要性：</strong></p>
@@ -1323,7 +1446,7 @@
   </entry>
   <entry>
     <title>GC in HotSpot JVM</title>
-    <url>/2020/03/12/GC%20in%20HotSpot%20JVM/</url>
+    <url>/2020/03/12/GC-in-HotSpot-JVM/</url>
     <content><![CDATA[<p>今天我们来聊 GC ( Garbage Collection ),  Java 与 C++ 之间有一堵由<strong>内存动态分配</strong>和<strong>垃圾收集技术</strong>所围城的 <font color=blue>“高墙”</font>。</p>
 <center>外面的人想进去，里面的人想出来</center>
 
@@ -1557,7 +1680,7 @@
   </entry>
   <entry>
     <title>CPU Sched</title>
-    <url>/2020/03/05/CPU%20Sched/</url>
+    <url>/2020/03/05/CPU-Sched/</url>
     <content><![CDATA[<h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>本文将介绍 CPU 高级策略之 CPU 调度，针对一系列调度策略展开。</p>
 <center><b>THE CRUX</b></center>
 
@@ -1912,7 +2035,7 @@
   </entry>
   <entry>
     <title>Fundamentals of Recurrent Neural Network</title>
-    <url>/2020/02/29/Fundamentals%20of%20Recurrent%20Neural%20Network/</url>
+    <url>/2020/02/29/Fundamentals-of-Recurrent-Neural-Network/</url>
     <content><![CDATA[<h2 id="基于循环神经网络实现语言模型。"><a href="#基于循环神经网络实现语言模型。" class="headerlink" title="基于循环神经网络实现语言模型。"></a>基于循环神经网络实现语言模型。</h2><blockquote>
 <p>对于语言模型的介绍</p>
 <blockquote>
@@ -2115,7 +2238,7 @@
   </entry>
   <entry>
     <title>Advanced Optimization</title>
-    <url>/2020/02/28/Advanced%20Optimization/</url>
+    <url>/2020/02/28/Advanced-Optimization/</url>
     <content><![CDATA[<p>基于<a href="https://blog.csdn.net/RokoBasilisk/article/details/104413638" target="_blank" rel="noopener">凸优化和梯度下降优化算法</a>，进一步展开阐述 :</p>
 <ol>
 <li><a href="#momentum">Momentum;</a></li>
@@ -2348,7 +2471,7 @@
   </entry>
   <entry>
     <title>Optimization including Convex Optimization and Gradient Descent</title>
-    <url>/2020/02/28/Optimization%20including%20Convex%20Optimization%20and%20Gradient%20Descent/</url>
+    <url>/2020/02/28/Optimization-including-Convex-Optimization-and-Gradient-Descent/</url>
     <content><![CDATA[<p><font color=red>温馨提示：</font></p>
 <p>&ensp;&ensp;&ensp;&ensp;<font color=red>本文将介绍统计学中的优化知识，凸优化和梯度下降，多为公式推导和图形化展示，较为硬核</font></p>
 <h1 id="优化与深度学习"><a href="#优化与深度学习" class="headerlink" title="优化与深度学习"></a>优化与深度学习</h1><h2 id="优化与估计"><a href="#优化与估计" class="headerlink" title="优化与估计"></a>优化与估计</h2><p>尽管优化方法可以最小化深度学习中的损失函数值，但本质上优化方法达到的目标与深度学习的目标并不相同。</p>
@@ -2670,7 +2793,7 @@
   </entry>
   <entry>
     <title>LeNet &amp;&amp; ModernCNN</title>
-    <url>/2020/02/28/LeNet%20&amp;&amp;%20ModernCNN/</url>
+    <url>/2020/02/28/LeNet-&amp;&amp;-ModernCNN/</url>
     <content><![CDATA[<h1 id="Convolutional-Neural-Networks"><a href="#Convolutional-Neural-Networks" class="headerlink" title="Convolutional Neural Networks"></a>Convolutional Neural Networks</h1><blockquote>
 <p>学而习之：<a href="https://blog.csdn.net/RokoBasilisk/article/details/104380762" target="_blank" rel="noopener">Fundamentals of Convolutional Neural Networks</a></p>
 </blockquote>
@@ -2845,7 +2968,7 @@
   </entry>
   <entry>
     <title>Fundamentals of Convolutional Neural Networks</title>
-    <url>/2020/02/28/Fundamentals%20of%20Convolutional%20Neural%20Networks/</url>
+    <url>/2020/02/28/Fundamentals-of-Convolutional-Neural-Networks/</url>
     <content><![CDATA[<h2 id="二维卷积层"><a href="#二维卷积层" class="headerlink" title="二维卷积层"></a>二维卷积层</h2><blockquote>
 <p>常用于处理图像数据。</p>
 </blockquote>
@@ -3532,7 +3655,7 @@
   </entry>
   <entry>
     <title>Language Model &amp; Data Sampling</title>
-    <url>/2020/02/28/Language%20Model%20&amp;%20Data%20Sampling/</url>
+    <url>/2020/02/28/Language-Model-&amp;-Data-Sampling/</url>
     <content><![CDATA[<h1 id="语言模型"><a href="#语言模型" class="headerlink" title="语言模型"></a>语言模型</h1><p>一段自然语言文本可以看作是一个离散时间序列，给定一个长度为$T$的词的序列$w_1, w_2, \ldots, w_T$。</p>
 <p>语言模型的目标就是评估该序列是否合理，即计算该序列的概率：</p>
 <p>$$<br>P(w_1, w_2, \ldots, w_T).<br>$$<br>假设序列$w_1, w_2, \ldots, w_T$中的每个词是依次生成的，则有</p>
@@ -3635,7 +3758,7 @@
   </entry>
   <entry>
     <title>Text Preprocessing</title>
-    <url>/2020/02/28/Text%20Preprocessing/</url>
+    <url>/2020/02/28/Text-Preprocessing/</url>
     <content><![CDATA[<blockquote>
 <blockquote>
 <p>打开 Google， 输入搜索关键词，显示上百条搜索结果</p>
@@ -3720,7 +3843,7 @@ For Example： 我一直在使用的由 哈工大社会计算与信息检索研�
   </entry>
   <entry>
     <title>Multilayer Perceptron &amp; Classify image</title>
-    <url>/2020/02/28/Multilayer%20Perceptron%20&amp;%20Classify%20image/</url>
+    <url>/2020/02/28/Multilayer-Perceptron-&amp;-Classify-image/</url>
     <content><![CDATA[<h2 id="MLP"><a href="#MLP" class="headerlink" title="MLP"></a>MLP</h2><p>以多层感知机为例，概述多层神经网络</p>
 <h3 id="隐藏层"><a href="#隐藏层" class="headerlink" title="隐藏层"></a>隐藏层</h3><p>此图为多层感知机的神经网络图，它含有一个隐藏层，该层中有5个隐藏单元。</p>
 <div align=center><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWhvNjg0am1oLnBuZw?x-oss-process=image/format,png"/> </div>
@@ -3945,7 +4068,7 @@ For Example： 我一直在使用的由 哈工大社会计算与信息检索研�
   </entry>
   <entry>
     <title>Design and Realization of Linear Regression</title>
-    <url>/2020/02/28/Design%20and%20Realization%20of%20Linear%20Regression/</url>
+    <url>/2020/02/28/Design-and-Realization-of%20Linear-Regression/</url>
     <content><![CDATA[<h2 id="线性回归的基本要素"><a href="#线性回归的基本要素" class="headerlink" title="线性回归的基本要素"></a>线性回归的基本要素</h2><h3 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h3><p>$$<br>\mathrm{y} = w \cdot \mathrm{x} + b<br>$$</p>
 <h3 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h3><p>我们在收集到的数据中寻找合适的模型参数来使模型的预测价格与真实价格的误差最小。被训练的数据的集合称为训练数据集（training data set）或训练集（training set），每一条数据的主体作为一个样本（sample），被预测值称作标签（label），用来预测标签的因素叫作特征（feature）。特征用来表征样本的特点。</p>
 <h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>在模型训练中，我们需要衡量价格预测值与真实值之间的误差。通常我们会选取一个非负数作为误差，且数值越小表示误差越小。一个常用的选择是平方函数。 它在评估索引为 $i$ 的样本误差的表达式为</p>

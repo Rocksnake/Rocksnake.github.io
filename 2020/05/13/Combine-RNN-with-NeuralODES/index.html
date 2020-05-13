@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>Combine RNN with Neural ODEs | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Combine RNN with Neural ODEs</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">May 13, 2020&nbsp;&nbsp;22:59:04</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Machine-Learning/">Machine Learning</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <center><font size=5><b>Intro to Neural ODEs</b></font></center>
+<div align=right><a href="https://medium.com/@abaietto5297" target="_blank" rel="noopener" >——Reference</a></div>
+
+
+<h1 id="ResNets"><a href="#ResNets" class="headerlink" title="ResNets"></a>ResNets</h1><blockquote>
+<p>Neural ODEs comes from ResNets</p>
+</blockquote>
+<p><strong>As these models grew to hundreds of layers deep, ResNets’  performance decreased. Deep learning had reached its limit. We need state-of-the-art performance to train deeper networks.</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/20200507170347952.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"><br><strong>It also directly adds the input to the output, this shortcut connection improves the model since, at the worst, the residual block does not do anything.</strong></p>
+<p><strong>One final thought. A ResNet can be described by the following equation:</strong></p>
+<p>$$<br>h_{t+1} = h_{t}+f(h_{t},\theta_{t})<br>$$</p>
+<blockquote>
+<p>h - value of the hidden layer;<br>t - tell us which layer we are look at</p>
+</blockquote>
+<p><strong>the next hidden layer is the sum of the input and a function of the input as we have seen.</strong> </p>
+<blockquote>
+<p>Find introduction to ResNets in <a href="https://arxiv.org/abs/1512.03385" target="_blank" rel="noopener">Reference</a></p>
+</blockquote>
+<h1 id="Euler’s-Method"><a href="#Euler’s-Method" class="headerlink" title="Euler’s Method"></a>Euler’s Method</h1><blockquote>
+<p>How Neural ODEs work</p>
+</blockquote>
+<p><strong>Above equation seems like calculus, and if you don’t remember from calculus class, the Euler’s method is the simplest way to approximate the solution of a differential equation with initial value.</strong></p>
+<p>$$<br>Initial value problem:y’(t)=f(t,y(t)), y(t_{0})=y_{0}<br>$$</p>
+<p>$$<br>Euler’s Method: y_{n+1}=y_{n}+hf(t_{n},y_{n})<br>$$</p>
+<blockquote>
+<p>through this we can find numerical approximation</p>
+</blockquote>
+<p><strong>Euler’s method and ResNets equation are identical, the only difference being the step size $h$, that is multiplied by the function. Because of this similarity, we can think ResNets is underlying differential equation.</strong> </p>
+<p><strong>Instead of going from diffeq to Euler’s method, we can reverse engineer the problem. Starting from the ResNet, the resulting differential equation is</strong></p>
+<p>$$<br>Neural ODE: {\frac{dh(t)}{dt}} = f(h(t),t,\theta)<br>$$</p>
+<p><strong>which describes the dynamics of our model.</strong></p>
+<h1 id="The-Basics"><a href="#The-Basics" class="headerlink" title="The Basics"></a>The Basics</h1><blockquote>
+<p>how a Neural ODE works</p>
+</blockquote>
+<p><strong>The Neural ODEs combines two concepts: deep learning and differential equations, we use the most simple methods - Euler’s method to make predictions.</strong></p>
+<p><strong>Q:</strong><br>&ensp;&ensp;How do we train it?<br><strong>A:</strong><br>&ensp;&ensp;Adjoint method</p>
+<p><strong>Include using another numerical solver to run backwards through time (backpropagating) and updating the model’s parameters.</strong></p>
+<ul>
+<li><strong>Defining the architecture:</strong></li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20200507195623982.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<ul>
+<li><strong>Defining a neural ODE:</strong></li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20200507195830197.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ul>
+<li><strong>Put it all together into one:</strong></li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20200507201039301.png" alt="在这里插入图片描述"></p>
+<h1 id="Adjoint-Method"><a href="#Adjoint-Method" class="headerlink" title="Adjoint Method"></a>Adjoint Method</h1><blockquote>
+<p>part 3 - how a Neural ODE backpropagates with the adjoint method<br>this part - Adjoint Method</p>
+</blockquote>
+<h1 id="Model-Comparison"><a href="#Model-Comparison" class="headerlink" title="Model Comparison"></a>Model Comparison</h1><blockquote>
+<p>Start with a simple machine learning model to showcase its strengths and weaknesses</p>
+</blockquote>
+<ul>
+<li><p><strong>ResNets model with lower time per epoch, and Neural ODEs model with more time.</strong></p>
+</li>
+<li><p><strong>ResNets model with more memory, and ODE model with O(1) space usage.</strong></p>
+</li>
+</ul>
+<p><strong>Overall, one of the main benefits is the constant memory usage while training the model. However, this comes at the cost of training time.</strong></p>
+<h1 id="VAE-Variational-Autoencoders"><a href="#VAE-Variational-Autoencoders" class="headerlink" title="VAE[Variational Autoencoders]"></a>VAE[Variational Autoencoders]</h1><blockquote>
+<p>Premise:</p>
+<blockquote>
+<p>Generative model: Able to generate samples like those in training data</p>
+</blockquote>
+</blockquote>
+<p><strong>VAE is a directed generative model with observed and latent variables, which give us a atent space to sample from.</strong></p>
+<p><strong>In view of the application that interpolate between sentences, Ｉ will use VAE to connect RNN and ODE．</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/20200513211119741.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" alt=""></p>
+<center>VAE Architecture</center>
+
+<p><img src="https://img-blog.csdnimg.cn/20200513211818629.png#pic_center" alt="在这里插入图片描述"></p>
+<center>VAE Design</center>
+
+<p><strong>When as Inference model, the input $x$ is passed to the encoder network, producing an approximate posterior $q(z|x)$ over latent variables.</strong></p>
+<blockquote>
+<p>Sentence prediction by conventional autoencoder</p>
+<blockquote>
+<p>Sentences produced by greedily decoding from points between two sentence encodings with a conventional autoencoder. The intermediate sentences are not plausible English.</p>
+</blockquote>
+<p>VAE Language Model</p>
+<blockquote>
+<p>Words are represented using a learned dictionary of embedding words</p>
+</blockquote>
+<p>VAE sentence interpolation </p>
+<blockquote>
+<ul>
+<li>Paths between random points in VAE space</li>
+<li>Intermediate sentences are grammatical</li>
+<li>Topic and syntactic structure are consistent</li>
+</ul>
+</blockquote>
+</blockquote>
+<h1 id="Breakdown-of-another-deep-learning-breakthrough"><a href="#Breakdown-of-another-deep-learning-breakthrough" class="headerlink" title="Breakdown of another deep learning breakthrough"></a>Breakdown of another deep learning breakthrough</h1><p><img src="https://img-blog.csdnimg.cn/20200508200122409.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<ul>
+<li><strong>First, we encode the input sequence with some “standard” time series algorithms, let’s say RNN to obtain the primary embedding of the process</strong></li>
+<li><strong>Run the embedding through the Neural ODE to get the “continuous” embedding</strong></li>
+<li><strong>Recover initial sequence from the “continuous” embedding in VAE fashion</strong></li>
+</ul>
+<h2 id="VAE-as-a-generative-model"><a href="#VAE-as-a-generative-model" class="headerlink" title="VAE as a generative model"></a>VAE as a generative model</h2><blockquote>
+<p>variational autoencoder approach</p>
+</blockquote>
+<p><strong>A generative model through sampling procedure:</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/20200508214509100.png#pic_center" alt="在这里插入图片描述"><br><strong>Training :</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/20200508215054992.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="Define-Model"><a href="#Define-Model" class="headerlink" title="Define Model"></a>Define Model</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RNNEncoder</span><span class="params">(nn.moudle)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,input_dim,hidden_dim,latent_dim)</span>:</span></span><br><span class="line">		super(RNNEncoder,self).__init__()</span><br><span class="line">		self.input_dim = input_dim</span><br><span class="line">		self.hidden_dim = hidden_dim</span><br><span class="line">		self.latent_dim = latent_dim</span><br><span class="line"></span><br><span class="line">		self.rnn = nn.GRU(input_dim+<span class="number">1</span>,hidden_dim)</span><br><span class="line">		self.hid2lat = nn.Linear(hidden_dim,<span class="number">2</span>*latent_dim)</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self,x,t)</span>:</span></span><br><span class="line">		<span class="comment"># Concatenate time to input</span></span><br><span class="line">		t = t.clone()</span><br><span class="line">		t[<span class="number">1</span>:] = t[:<span class="number">-1</span>] = t[<span class="number">1</span>:]</span><br><span class="line">		t[<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">		xt = torch.cat((x,t),dim=<span class="number">-1</span>)</span><br><span class="line">		_,h0 = self.rnn(xt.flip((<span class="number">0</span>,))) <span class="comment">#Reversed</span></span><br><span class="line">		<span class="comment"># Compute latent dimension</span></span><br><span class="line">		z0 = self.hid2lat(h0[<span class="number">0</span>])</span><br><span class="line">		z0_mean = z0[:,:self.latent_dim]</span><br><span class="line">		z0_log_var = z0[:,self.latent_dim:]</span><br><span class="line">		<span class="keyword">return</span> z0_mean,z0_log_var</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NeuralODEDecoder</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,output_dim,hidden_dim,latent_dim)</span>:</span></span><br><span class="line">		super(NeuralODEDcoder,self).__init__()</span><br><span class="line">		self.output_dim = output_dim</span><br><span class="line">		self.hidden_dim = hidden_dim</span><br><span class="line">		self.latent_dim = latent_dim</span><br><span class="line">	</span><br><span class="line">		func = NNODEF(latent_dim,hidden_dim,time_invariant=<span class="literal">True</span>)</span><br><span class="line">		self.ode = NeuralODE(func)</span><br><span class="line">		self.l2h = nn.Linear(latent_dim,hidden_dim)</span><br><span class="line">		self.h2o = nn.Linear(hidden_dim,output_dim)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self,z0,t)</span>:</span></span><br><span class="line">	zs = self.ode(z0,t,return_whole_sequence=<span class="literal">True</span>)</span><br><span class="line">	hs = self.l2h(zs)</span><br><span class="line">	xs = self.h2o(hs)</span><br><span class="line">	<span class="keyword">return</span> xs</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ODEVAE</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,output_dim,hidden_dim,latent_dim)</span>:</span></span><br><span class="line">		super(ODEVAE,self).__init__()</span><br><span class="line">		self.output_dim = output_dim</span><br><span class="line">		self.hidden_dim = hidden_dim</span><br><span class="line">		self.latent_dim = latent_dim</span><br><span class="line">		</span><br><span class="line">		self.encoder = RNNEncoder(output_dim,hidden_dim,latent_dim)</span><br><span class="line">		self.decoder = NeuralODEDecoder(output_dim,hidden_dim,latent_dim)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self,x,t,MAP=False)</span>:</span></span><br><span class="line">	z_mean,z_log_var = self.encoder(x,t)</span><br><span class="line">	<span class="keyword">if</span> MAP:</span><br><span class="line">		z = z_mean</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		z = z_mean + torch.randn_like(z_mean)*torch.exp(<span class="number">0.5</span>=z_log_var)</span><br><span class="line">	x_p = self.decoder(z,t)</span><br><span class="line">	<span class="keyword">return</span> x_p,z,z_mean,z_log_var</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_with_seed</span><span class="params">(self,seed_x,t)</span>:</span></span><br><span class="line">	seed_t_len = seed_x.shape[<span class="number">0</span>]</span><br><span class="line">	z_mean,z_log_var = self.encoder(seed_x,t[:seed_t_len])</span><br><span class="line">	x_p = self.decoder(z_mean,t)</span><br><span class="line">	<span class="keyword">return</span> x_p</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/ODEs/"># ODEs</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/04/04/Model-Fusion/">Model Fusion</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    
+</footer>
+
+    </div>
+</body>
+</html>
