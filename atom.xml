@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-05-13T15:04:58.772Z</updated>
+  <updated>2020-07-15T02:02:56.674Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,63 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Playground-of-sort-algorithm</title>
+    <link href="http://yoursite.com/2020/07/15/Playground%20of%20sort%20algorithm/"/>
+    <id>http://yoursite.com/2020/07/15/Playground%20of%20sort%20algorithm/</id>
+    <published>2020-07-15T01:23:55.250Z</published>
+    <updated>2020-07-15T02:02:56.674Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;排序算法&quot;&gt;&lt;a href=&quot;#排序算法&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Feedback" scheme="http://yoursite.com/categories/Feedback/"/>
+    
+    
+      <category term="面试总结" scheme="http://yoursite.com/tags/%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Advance-Data-Structure</title>
+    <link href="http://yoursite.com/2020/07/13/Advance%20Data%20Structure/"/>
+    <id>http://yoursite.com/2020/07/13/Advance%20Data%20Structure/</id>
+    <published>2020-07-13T01:55:59.629Z</published>
+    <updated>2020-07-14T03:04:16.945Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;blockquote&gt;
+&lt;p&gt;总结一部分数据结构&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;优先队列&quot;&gt;&lt;a href=&quot;#优先队列&quot; class=&quot;headerlink&quot; title=&quot;优先队列&quot;&gt;&lt;/a&gt;优先队列&lt;/h2&gt;&lt;h3 id=&quot;特点&quot;&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Feedback" scheme="http://yoursite.com/categories/Feedback/"/>
+    
+    
+      <category term="面试总结" scheme="http://yoursite.com/tags/%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/"/>
+    
+  </entry>
   
   <entry>
     <title>Combine RNN with Neural ODEs</title>
@@ -106,7 +163,7 @@
     <link href="http://yoursite.com/2020/03/27/Boost-Tuning/"/>
     <id>http://yoursite.com/2020/03/27/Boost-Tuning/</id>
     <published>2020-03-27T09:43:42.220Z</published>
-    <updated>2020-03-27T09:47:58.502Z</updated>
+    <updated>2020-07-14T03:14:43.082Z</updated>
     
     <summary type="html">
     
@@ -129,13 +186,7 @@
       <category term="Data Mining" scheme="http://yoursite.com/categories/Data-Mining/"/>
     
     
-      <category term="XGBoost" scheme="http://yoursite.com/tags/XGBoost/"/>
-    
-      <category term="LightGBM" scheme="http://yoursite.com/tags/LightGBM/"/>
-    
-      <category term="CatBoost" scheme="http://yoursite.com/tags/CatBoost/"/>
-    
-      <category term="参数调优" scheme="http://yoursite.com/tags/%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98/"/>
+      <category term="Boost" scheme="http://yoursite.com/tags/Boost/"/>
     
   </entry>
   
@@ -204,7 +255,7 @@
     <link href="http://yoursite.com/2020/03/19/%E6%B6%89%E7%8C%8E%E7%BA%BF%E7%A8%8B/"/>
     <id>http://yoursite.com/2020/03/19/%E6%B6%89%E7%8C%8E%E7%BA%BF%E7%A8%8B/</id>
     <published>2020-03-19T03:52:38.794Z</published>
-    <updated>2020-03-19T03:54:28.082Z</updated>
+    <updated>2020-07-14T03:12:50.964Z</updated>
     
     <summary type="html">
     
@@ -228,7 +279,7 @@
       <category term="Operating Systems" scheme="http://yoursite.com/categories/Operating-Systems/"/>
     
     
-      <category term="(多)线程与进程" scheme="http://yoursite.com/tags/%E5%A4%9A-%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%BF%9B%E7%A8%8B/"/>
+      <category term="线程与进程" scheme="http://yoursite.com/tags/%E7%BA%BF%E7%A8%8B%E4%B8%8E%E8%BF%9B%E7%A8%8B/"/>
     
   </entry>
   
@@ -293,7 +344,7 @@
     <link href="http://yoursite.com/2020/03/12/GC-in-HotSpot-JVM/"/>
     <id>http://yoursite.com/2020/03/12/GC-in-HotSpot-JVM/</id>
     <published>2020-03-12T05:39:42.565Z</published>
-    <updated>2020-03-14T14:57:21.103Z</updated>
+    <updated>2020-07-14T03:16:05.328Z</updated>
     
     <summary type="html">
     
@@ -313,8 +364,6 @@
     
       <category term="JVM" scheme="http://yoursite.com/tags/JVM/"/>
     
-      <category term="GC" scheme="http://yoursite.com/tags/GC/"/>
-    
   </entry>
   
   <entry>
@@ -322,7 +371,7 @@
     <link href="http://yoursite.com/2020/03/05/%E4%BA%BA=%E6%B3%A2%EF%BC%8C%E9%A2%A0%E5%80%92%E5%9B%A0%E6%9E%9C/"/>
     <id>http://yoursite.com/2020/03/05/%E4%BA%BA=%E6%B3%A2%EF%BC%8C%E9%A2%A0%E5%80%92%E5%9B%A0%E6%9E%9C/</id>
     <published>2020-03-05T02:12:01.439Z</published>
-    <updated>2020-03-05T02:32:28.330Z</updated>
+    <updated>2020-07-14T03:12:42.150Z</updated>
     
     <summary type="html">
     
@@ -344,11 +393,7 @@
       <category term="Physics" scheme="http://yoursite.com/categories/Physics/"/>
     
     
-      <category term="双缝干涉" scheme="http://yoursite.com/tags/%E5%8F%8C%E7%BC%9D%E5%B9%B2%E6%B6%89/"/>
-    
       <category term="不确定性" scheme="http://yoursite.com/tags/%E4%B8%8D%E7%A1%AE%E5%AE%9A%E6%80%A7/"/>
-    
-      <category term="波粒二象性" scheme="http://yoursite.com/tags/%E6%B3%A2%E7%B2%92%E4%BA%8C%E8%B1%A1%E6%80%A7/"/>
     
   </entry>
   
@@ -357,7 +402,7 @@
     <link href="http://yoursite.com/2020/03/05/CPU-Sched/"/>
     <id>http://yoursite.com/2020/03/05/CPU-Sched/</id>
     <published>2020-03-05T02:09:03.550Z</published>
-    <updated>2020-03-22T02:53:47.189Z</updated>
+    <updated>2020-07-14T03:14:57.875Z</updated>
     
     <summary type="html">
     
@@ -375,11 +420,7 @@
       <category term="Operating Systems" scheme="http://yoursite.com/categories/Operating-Systems/"/>
     
     
-      <category term="Incorporating I/O" scheme="http://yoursite.com/tags/Incorporating-I-O/"/>
-    
       <category term="调度策略" scheme="http://yoursite.com/tags/%E8%B0%83%E5%BA%A6%E7%AD%96%E7%95%A5/"/>
-    
-      <category term="周转/响应时间" scheme="http://yoursite.com/tags/%E5%91%A8%E8%BD%AC-%E5%93%8D%E5%BA%94%E6%97%B6%E9%97%B4/"/>
     
   </entry>
   
@@ -388,7 +429,7 @@
     <link href="http://yoursite.com/2020/02/29/%E8%87%AA%E5%A2%9E%E4%B8%BB%E9%94%AE%E7%9A%84%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F/"/>
     <id>http://yoursite.com/2020/02/29/%E8%87%AA%E5%A2%9E%E4%B8%BB%E9%94%AE%E7%9A%84%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F/</id>
     <published>2020-02-29T03:52:16.317Z</published>
-    <updated>2020-02-29T03:59:32.181Z</updated>
+    <updated>2020-07-14T03:13:42.617Z</updated>
     
     <summary type="html">
     
@@ -400,8 +441,6 @@
       <category term="Database Systems" scheme="http://yoursite.com/categories/Database-Systems/"/>
     
     
-      <category term="自增主键" scheme="http://yoursite.com/tags/%E8%87%AA%E5%A2%9E%E4%B8%BB%E9%94%AE/"/>
-    
       <category term="MySQL" scheme="http://yoursite.com/tags/MySQL/"/>
     
   </entry>
@@ -411,7 +450,7 @@
     <link href="http://yoursite.com/2020/02/29/Fundamentals-of-Recurrent-Neural-Network/"/>
     <id>http://yoursite.com/2020/02/29/Fundamentals-of-Recurrent-Neural-Network/</id>
     <published>2020-02-29T01:46:10.532Z</published>
-    <updated>2020-02-29T01:55:16.864Z</updated>
+    <updated>2020-07-14T03:15:53.357Z</updated>
     
     <summary type="html">
     
@@ -429,15 +468,9 @@
       <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
     
     
-      <category term="语言模型" scheme="http://yoursite.com/tags/%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/"/>
-    
       <category term="RNN" scheme="http://yoursite.com/tags/RNN/"/>
     
-      <category term="梯度现象" scheme="http://yoursite.com/tags/%E6%A2%AF%E5%BA%A6%E7%8E%B0%E8%B1%A1/"/>
-    
-      <category term="广播" scheme="http://yoursite.com/tags/%E5%B9%BF%E6%92%AD/"/>
-    
-      <category term="one-hot" scheme="http://yoursite.com/tags/one-hot/"/>
+      <category term="梯度问题" scheme="http://yoursite.com/tags/%E6%A2%AF%E5%BA%A6%E9%97%AE%E9%A2%98/"/>
     
   </entry>
   
@@ -446,7 +479,7 @@
     <link href="http://yoursite.com/2020/02/28/%E8%AF%8D%E5%B5%8C%E5%85%A5%E4%B9%8B%20Word2Vec/"/>
     <id>http://yoursite.com/2020/02/28/%E8%AF%8D%E5%B5%8C%E5%85%A5%E4%B9%8B%20Word2Vec/</id>
     <published>2020-02-28T02:33:15.863Z</published>
-    <updated>2020-02-29T02:11:07.280Z</updated>
+    <updated>2020-07-14T03:11:01.148Z</updated>
     
     <summary type="html">
     
@@ -464,15 +497,7 @@
       <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
     
     
-      <category term="PTB" scheme="http://yoursite.com/tags/PTB/"/>
-    
-      <category term="Skip-Gram" scheme="http://yoursite.com/tags/Skip-Gram/"/>
-    
       <category term="负近似采样" scheme="http://yoursite.com/tags/%E8%B4%9F%E8%BF%91%E4%BC%BC%E9%87%87%E6%A0%B7/"/>
-    
-      <category term="CBOW" scheme="http://yoursite.com/tags/CBOW/"/>
-    
-      <category term="Word2Vec" scheme="http://yoursite.com/tags/Word2Vec/"/>
     
   </entry>
   
@@ -481,7 +506,7 @@
     <link href="http://yoursite.com/2020/02/28/Advanced-Optimization/"/>
     <id>http://yoursite.com/2020/02/28/Advanced-Optimization/</id>
     <published>2020-02-28T02:31:41.029Z</published>
-    <updated>2020-02-29T02:01:31.643Z</updated>
+    <updated>2020-07-14T03:14:21.927Z</updated>
     
     <summary type="html">
     
@@ -499,15 +524,7 @@
       <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
     
     
-      <category term="Momentum" scheme="http://yoursite.com/tags/Momentum/"/>
-    
-      <category term="AdaGrad" scheme="http://yoursite.com/tags/AdaGrad/"/>
-    
-      <category term="RMSProp" scheme="http://yoursite.com/tags/RMSProp/"/>
-    
-      <category term="AdaDelta" scheme="http://yoursite.com/tags/AdaDelta/"/>
-    
-      <category term="Adam" scheme="http://yoursite.com/tags/Adam/"/>
+      <category term="梯度问题" scheme="http://yoursite.com/tags/%E6%A2%AF%E5%BA%A6%E9%97%AE%E9%A2%98/"/>
     
   </entry>
   
@@ -516,7 +533,7 @@
     <link href="http://yoursite.com/2020/02/28/Optimization-including-Convex-Optimization-and-Gradient-Descent/"/>
     <id>http://yoursite.com/2020/02/28/Optimization-including-Convex-Optimization-and-Gradient-Descent/</id>
     <published>2020-02-28T02:30:21.755Z</published>
-    <updated>2020-02-29T02:05:45.324Z</updated>
+    <updated>2020-07-14T03:17:30.505Z</updated>
     
     <summary type="html">
     
@@ -536,11 +553,7 @@
       <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
     
     
-      <category term="优化" scheme="http://yoursite.com/tags/%E4%BC%98%E5%8C%96/"/>
-    
-      <category term="凸优化" scheme="http://yoursite.com/tags/%E5%87%B8%E4%BC%98%E5%8C%96/"/>
-    
-      <category term="梯度下降" scheme="http://yoursite.com/tags/%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D/"/>
+      <category term="梯度问题" scheme="http://yoursite.com/tags/%E6%A2%AF%E5%BA%A6%E9%97%AE%E9%A2%98/"/>
     
   </entry>
   
@@ -549,7 +562,7 @@
     <link href="http://yoursite.com/2020/02/28/%E6%89%B9%E9%87%8F%E5%BD%92%E4%B8%80%E5%8C%96%20&amp;&amp;%20%E6%AE%8B%E5%B7%AE%E7%BD%91%E7%BB%9C/"/>
     <id>http://yoursite.com/2020/02/28/%E6%89%B9%E9%87%8F%E5%BD%92%E4%B8%80%E5%8C%96%20&amp;&amp;%20%E6%AE%8B%E5%B7%AE%E7%BD%91%E7%BB%9C/</id>
     <published>2020-02-28T02:28:43.763Z</published>
-    <updated>2020-02-29T02:08:13.944Z</updated>
+    <updated>2020-07-14T03:12:28.896Z</updated>
     
     <summary type="html">
     
@@ -570,81 +583,6 @@
     
     
       <category term="CNN" scheme="http://yoursite.com/tags/CNN/"/>
-    
-      <category term="批量归一化" scheme="http://yoursite.com/tags/%E6%89%B9%E9%87%8F%E5%BD%92%E4%B8%80%E5%8C%96/"/>
-    
-      <category term="残差网络" scheme="http://yoursite.com/tags/%E6%AE%8B%E5%B7%AE%E7%BD%91%E7%BB%9C/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>LeNet &amp;&amp; ModernCNN</title>
-    <link href="http://yoursite.com/2020/02/28/LeNet-&amp;&amp;-ModernCNN/"/>
-    <id>http://yoursite.com/2020/02/28/LeNet-&amp;&amp;-ModernCNN/</id>
-    <published>2020-02-28T02:26:20.094Z</published>
-    <updated>2020-02-28T02:39:16.782Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h1 id=&quot;Convolutional-Neural-Networks&quot;&gt;&lt;a href=&quot;#Convolutional-Neural-Networks&quot; class=&quot;headerlink&quot; title=&quot;Convolutional Neural
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
-    
-    
-      <category term="CNN" scheme="http://yoursite.com/tags/CNN/"/>
-    
-      <category term="LeNet" scheme="http://yoursite.com/tags/LeNet/"/>
-    
-      <category term="AlexNet" scheme="http://yoursite.com/tags/AlexNet/"/>
-    
-      <category term="VGG" scheme="http://yoursite.com/tags/VGG/"/>
-    
-      <category term="NiN" scheme="http://yoursite.com/tags/NiN/"/>
-    
-      <category term="GoogLeNet" scheme="http://yoursite.com/tags/GoogLeNet/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Fundamentals of Convolutional Neural Networks</title>
-    <link href="http://yoursite.com/2020/02/28/Fundamentals-of-Convolutional-Neural-Networks/"/>
-    <id>http://yoursite.com/2020/02/28/Fundamentals-of-Convolutional-Neural-Networks/</id>
-    <published>2020-02-28T02:24:01.802Z</published>
-    <updated>2020-02-28T02:38:55.314Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;二维卷积层&quot;&gt;&lt;a href=&quot;#二维卷积层&quot; class=&quot;headerlink&quot; title=&quot;二维卷积层&quot;&gt;&lt;/a&gt;二维卷积层&lt;/h2&gt;&lt;blockquote&gt;
-&lt;p&gt;常用于处理图像数据。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h3
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
-    
-    
-      <category term="CNN" scheme="http://yoursite.com/tags/CNN/"/>
-    
-      <category term="卷积-池化" scheme="http://yoursite.com/tags/%E5%8D%B7%E7%A7%AF-%E6%B1%A0%E5%8C%96/"/>
-    
-      <category term="特征与感受野" scheme="http://yoursite.com/tags/%E7%89%B9%E5%BE%81%E4%B8%8E%E6%84%9F%E5%8F%97%E9%87%8E/"/>
     
   </entry>
   

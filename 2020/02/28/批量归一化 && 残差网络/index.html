@@ -96,6 +96,8 @@
                 
                     <a class="menu-item" href="/tag">Tags</a>
                 
+                    <a class="menu-item" href="/Questionnaire">Questionnaire</a>
+                
                     <a class="menu-item" href="/about">About</a>
                 
                 <input id="switch_default" type="checkbox" class="switch_default">
@@ -120,6 +122,8 @@
                     <a class="menu-item" href="/category">Categories</a>
                 
                     <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/Questionnaire">Questionnaire</a>
                 
                     <a class="menu-item" href="/about">About</a>
                 
@@ -259,15 +263,14 @@
 </blockquote>
 </li>
 </ul>
-<p><strong>全连接：</strong><br>$$<br>\boldsymbol{x} = \boldsymbol{W\boldsymbol{u} + \boldsymbol{b}} \\<br> output =\phi(\boldsymbol{x})<br> $$   </p>
+<p><strong>全连接：</strong><br>$$<br>\boldsymbol{x} = \boldsymbol{W\boldsymbol{u} + \boldsymbol{b}} \\<br> output =\phi(\boldsymbol{x})<br>$$</p>
 <p>输入是u，经过仿射变化得到x，经过激活函数得到output，size=(batch_size，输出神经元的个数)</p>
 <p><strong>批量归一化：</strong><br>$$<br>output=\phi(\text{BN}(\boldsymbol{x}))$$</p>
 <p>$$<br>\boldsymbol{y}^{(i)} = \text{BN}(\boldsymbol{x}^{(i)})<br>$$</p>
-<p>$$<br>\boldsymbol{\mu}<em>\mathcal{B} \leftarrow \frac{1}{m}\sum</em>{i = 1}^{m} \boldsymbol{x}^{(i)},<br>$$ </p>
+<p>$$<br>\boldsymbol{\mu}<em>\mathcal{B} \leftarrow \frac{1}{m}\sum</em>{i = 1}^{m} \boldsymbol{x}^{(i)},<br>$$</p>
 <p>$$<br>\boldsymbol{\sigma}_\mathcal{B}^2 \leftarrow \frac{1}{m} \sum_{i=1}^{m}(\boldsymbol{x}^{(i)} - \boldsymbol{\mu}_\mathcal{B})^2,<br>$$</p>
 <p>$$<br>\hat{\boldsymbol{x}}^{(i)} \leftarrow \frac{\boldsymbol{x}^{(i)} - \boldsymbol{\mu}_\mathcal{B}}{\sqrt{\boldsymbol{\sigma}_\mathcal{B}^2 + \epsilon}},<br>$$</p>
-<p>$$<br>标准化处理<br>$$</p>
-<p>这⾥ϵ &gt; 0是个很小的常数，保证分母大于0</p>
+<p>$$<br>标准化处理<br>$$<br>这⾥ϵ &gt; 0是个很小的常数，保证分母大于0</p>
 <p>$$<br>{\boldsymbol{y}}^{(i)} \leftarrow \boldsymbol{\gamma} \odot<br>\hat{\boldsymbol{x}}^{(i)} + \boldsymbol{\beta}.<br>$$</p>
 <p>引入可学习参数：拉伸参数γ和偏移参数β。若$\boldsymbol{\gamma} = \sqrt{\boldsymbol{\sigma}_\mathcal{B}^2 + \epsilon}$和$\boldsymbol{\beta} = \boldsymbol{\mu}_\mathcal{B}$，批量归一化无效。</p>
 <ul>
@@ -307,8 +310,7 @@
 <li>左边：$f(x)=x$                                               </li>
 <li>右边：$f(x)-x=0$ （易于捕捉恒等映射的细微波动 ; 易于优化）</li>
 </ul>
-<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWw4bGhub3Q0LnBuZw?x-oss-process=image/format,png" alt="Image Name"></p>
-<p>$$<br>神经网络普通层(left)残差网络(right)<br>$$</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9jZG4ua2VzY2kuY29tL3VwbG9hZC9pbWFnZS9xNWw4bGhub3Q0LnBuZw?x-oss-process=image/format,png" alt="Image Name"><br>$$<br>神经网络普通层(left)残差网络(right)<br>$$</p>
 <blockquote>
 <p>在残差块中，输⼊可通过跨层的数据线路更快 地向前传播。</p>
 </blockquote>
@@ -380,10 +382,6 @@
                     
                     
                         <a href="/tags/CNN/"># CNN</a>
-                    
-                        <a href="/tags/%E6%89%B9%E9%87%8F%E5%BD%92%E4%B8%80%E5%8C%96/"># 批量归一化</a>
-                    
-                        <a href="/tags/%E6%AE%8B%E5%B7%AE%E7%BD%91%E7%BB%9C/"># 残差网络</a>
                     
                         
                 </span>
