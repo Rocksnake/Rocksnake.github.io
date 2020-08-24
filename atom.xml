@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-07-15T02:02:56.674Z</updated>
+  <updated>2020-08-24T07:24:22.021Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,116 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Java线程</title>
+    <link href="http://yoursite.com/2020/08/23/Java%E7%BA%BF%E7%A8%8B/"/>
+    <id>http://yoursite.com/2020/08/23/Java%E7%BA%BF%E7%A8%8B/</id>
+    <published>2020-08-23T13:57:01.498Z</published>
+    <updated>2020-08-24T07:24:22.021Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;Java-线程的生命周期&quot;&gt;&lt;a href=&quot;#Java-线程的生命周期&quot; class=&quot;headerlink&quot; title=&quot;Java 线程的生命周期&quot;&gt;&lt;/a&gt;Java 线程的生命周期&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;在 Java
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Concurrent Programming" scheme="http://yoursite.com/categories/Concurrent-Programming/"/>
+    
+    
+      <category term="并发" scheme="http://yoursite.com/tags/%E5%B9%B6%E5%8F%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>管程-并发编程的万能钥匙</title>
+    <link href="http://yoursite.com/2020/08/22/%E7%AE%A1%E7%A8%8B-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E4%B8%87%E8%83%BD%E9%92%A5%E5%8C%99/"/>
+    <id>http://yoursite.com/2020/08/22/%E7%AE%A1%E7%A8%8B-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E4%B8%87%E8%83%BD%E9%92%A5%E5%8C%99/</id>
+    <published>2020-08-22T15:41:48.425Z</published>
+    <updated>2020-08-23T13:56:02.767Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;管程-并发编程的万能钥匙&quot;&gt;&lt;a href=&quot;#管程-并发编程的万能钥匙&quot; class=&quot;headerlink&quot; title=&quot;管程-并发编程的万能钥匙&quot;&gt;&lt;/a&gt;管程-并发编程的万能钥匙&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;Java 语言在 1.5
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Concurrent Programming" scheme="http://yoursite.com/categories/Concurrent-Programming/"/>
+    
+    
+      <category term="并发" scheme="http://yoursite.com/tags/%E5%B9%B6%E5%8F%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>The theory of concurrent programming</title>
+    <link href="http://yoursite.com/2020/08/22/Concurrent%20programming/"/>
+    <id>http://yoursite.com/2020/08/22/Concurrent%20programming/</id>
+    <published>2020-08-22T08:46:07.142Z</published>
+    <updated>2020-08-22T11:14:51.483Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;The-theory-of-concurrent-programming&quot;&gt;&lt;a href=&quot;#The-theory-of-concurrent-programming&quot; class=&quot;headerlink&quot; title=&quot;The theory of
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Feedback" scheme="http://yoursite.com/categories/Feedback/"/>
+    
+    
+      <category term="并发" scheme="http://yoursite.com/tags/%E5%B9%B6%E5%8F%91/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>The theory of concurrent programming</title>
+    <link href="http://yoursite.com/2020/08/20/The%20theory%20of%20concurrent%20programming/"/>
+    <id>http://yoursite.com/2020/08/20/The%20theory%20of%20concurrent%20programming/</id>
+    <published>2020-08-20T07:28:25.090Z</published>
+    <updated>2020-08-23T04:05:56.444Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h1 id=&quot;The-theory-of-concurrent-programming&quot;&gt;&lt;a href=&quot;#The-theory-of-concurrent-programming&quot; class=&quot;headerlink&quot; title=&quot;The theory of
+        
+      
+    
+    </summary>
+    
+    
+      <category term="Concurrent Programming" scheme="http://yoursite.com/categories/Concurrent-Programming/"/>
+    
+    
+      <category term="并发" scheme="http://yoursite.com/tags/%E5%B9%B6%E5%8F%91/"/>
+    
+  </entry>
   
   <entry>
     <title>Playground-of-sort-algorithm</title>
@@ -471,118 +581,6 @@
       <category term="RNN" scheme="http://yoursite.com/tags/RNN/"/>
     
       <category term="梯度问题" scheme="http://yoursite.com/tags/%E6%A2%AF%E5%BA%A6%E9%97%AE%E9%A2%98/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>词嵌入之 Word2Vec</title>
-    <link href="http://yoursite.com/2020/02/28/%E8%AF%8D%E5%B5%8C%E5%85%A5%E4%B9%8B%20Word2Vec/"/>
-    <id>http://yoursite.com/2020/02/28/%E8%AF%8D%E5%B5%8C%E5%85%A5%E4%B9%8B%20Word2Vec/</id>
-    <published>2020-02-28T02:33:15.863Z</published>
-    <updated>2020-07-14T03:11:01.148Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h1 id=&quot;词嵌入基础&quot;&gt;&lt;a href=&quot;#词嵌入基础&quot; class=&quot;headerlink&quot; title=&quot;词嵌入基础&quot;&gt;&lt;/a&gt;词嵌入基础&lt;/h1&gt;&lt;p&gt;&lt;a
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
-    
-    
-      <category term="负近似采样" scheme="http://yoursite.com/tags/%E8%B4%9F%E8%BF%91%E4%BC%BC%E9%87%87%E6%A0%B7/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Advanced Optimization</title>
-    <link href="http://yoursite.com/2020/02/28/Advanced-Optimization/"/>
-    <id>http://yoursite.com/2020/02/28/Advanced-Optimization/</id>
-    <published>2020-02-28T02:31:41.029Z</published>
-    <updated>2020-07-14T03:14:21.927Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;基于&lt;a href=&quot;https://blog.csdn.net/RokoBasilisk/article/details/104413638&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;凸优化和梯度下降优化算法&lt;/a&gt;，进一步展开阐述
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
-    
-    
-      <category term="梯度问题" scheme="http://yoursite.com/tags/%E6%A2%AF%E5%BA%A6%E9%97%AE%E9%A2%98/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Optimization including Convex Optimization and Gradient Descent</title>
-    <link href="http://yoursite.com/2020/02/28/Optimization-including-Convex-Optimization-and-Gradient-Descent/"/>
-    <id>http://yoursite.com/2020/02/28/Optimization-including-Convex-Optimization-and-Gradient-Descent/</id>
-    <published>2020-02-28T02:30:21.755Z</published>
-    <updated>2020-07-14T03:17:30.505Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;font color=red&gt;温馨提示：&lt;/font&gt;&lt;/p&gt;
-&lt;p&gt;&amp;ensp;&amp;ensp;&amp;ensp;&amp;ensp;&lt;font color=red&gt;本文将介绍统计学中的优化知识，凸优化和梯度下降，多为公式推导和图形化展示，较为硬核&lt;/font&gt;&lt;/p&gt;
-&lt;h1
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
-    
-    
-      <category term="梯度问题" scheme="http://yoursite.com/tags/%E6%A2%AF%E5%BA%A6%E9%97%AE%E9%A2%98/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>批量归一化 &amp;&amp; 残差网络</title>
-    <link href="http://yoursite.com/2020/02/28/%E6%89%B9%E9%87%8F%E5%BD%92%E4%B8%80%E5%8C%96%20&amp;&amp;%20%E6%AE%8B%E5%B7%AE%E7%BD%91%E7%BB%9C/"/>
-    <id>http://yoursite.com/2020/02/28/%E6%89%B9%E9%87%8F%E5%BD%92%E4%B8%80%E5%8C%96%20&amp;&amp;%20%E6%AE%8B%E5%B7%AE%E7%BD%91%E7%BB%9C/</id>
-    <published>2020-02-28T02:28:43.763Z</published>
-    <updated>2020-07-14T03:12:28.896Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;基于此前对于CNN的介绍&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://blog.csdn.net/RokoBasilisk/article/details/104380762&quot; target=&quot;_blank&quot;
-        
-      
-    
-    </summary>
-    
-    
-      <category term="Machine Learning" scheme="http://yoursite.com/categories/Machine-Learning/"/>
-    
-    
-      <category term="CNN" scheme="http://yoursite.com/tags/CNN/"/>
     
   </entry>
   

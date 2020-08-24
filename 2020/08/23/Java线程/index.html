@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Rokosnake">
+
+
+
+
+
+<title>Java线程 | RokoBasilisk&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="RokoBasilisk's Blog" type="application/atom+xml">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">RokoのBasilisk&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/Questionnaire">Questionnaire</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">RokoのBasilisk&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/Questionnaire">Questionnaire</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Java线程</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Rokosnake</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">August 23, 2020&nbsp;&nbsp;21:57:01</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Concurrent-Programming/">Concurrent Programming</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Java-线程的生命周期"><a href="#Java-线程的生命周期" class="headerlink" title="Java 线程的生命周期"></a>Java 线程的生命周期</h1><blockquote>
+<p>在 Java 领域，实现并发程序的主要手段就是多线程。</p>
+</blockquote>
+<p>Java语言里的线程本质上就是操作系统的线程。</p>
+<p>线程的生老病死称为生命周期，我们要做的就是搞定生命周期中的各个节点的状态转换机制即可。</p>
+<p>虽然不同编程语言对线程进行了封装，但是生命周期基本相似。</p>
+<h2 id="通用的线程生命周期"><a href="#通用的线程生命周期" class="headerlink" title="通用的线程生命周期"></a>通用的线程生命周期</h2><blockquote>
+<p>初识状态、可运行状态、运行状态、休眠状态、终止状态</p>
+</blockquote>
+<p><img src="https://static001.geekbang.org/resource/image/9b/e5/9bbc6fa7fb4d631484aa953626cf6ae5.png" alt="img"></p>
+<center>通用线程状态转换图-五种模型</center>
+
+<ol>
+<li><strong>初始状态</strong>，指的是线程已经被创建，但是还不允许分配 CPU 执行。这个状态属于编程语言特有的，不过这里所谓的被创建，仅仅是在编程语言层面被创建，而在操作系统层面，真正的线程还没有创建。</li>
+<li><strong>可运行状态</strong>，指的是线程可以分配 CPU 执行。在这种状态下，真正的操作系统线程已经被成功创建了，所以可以分配 CPU 执行。</li>
+<li>当有空闲的 CPU 时，操作系统会将其分配给一个处于可运行状态的线程，被分配到 CPU 的线程的状态就转换成了<strong>运行状态</strong>。</li>
+<li>运行状态的线程如果调用一个阻塞的 API（例如以阻塞方式读文件）或者等待某个事件（例如条件变量），那么线程的状态就会转换到休眠状态，同时释放 CPU 使用权，<strong>休眠状态</strong>的线程永远没有机会获得 CPU 使用权。当等待的事件出现了，线程就会从休眠状态转换到可运行状态。</li>
+<li>线程执行完或者出现异常就会进入<strong>终止状态</strong>，终止状态的线程不会切换到其他任何状态，进入终止状态也就意味着线程的生命周期结束了。</li>
+</ol>
+<p>这五种状态在不同编程与原理会有简化合并，例如C语言的POSIX Threads规范，合并了初始状态和可运行状态；Java语言合并了可运行状态和运行状态，这两个状态在操作系统调度层面有用，而JVM层面不关心这两个状态，因为JVM把线程调度交给操作系统处理了。</p>
+<p>除了简单合并，这五种状态也有可能被细化，例如Java语言中细化了休眠状态。</p>
+<h2 id="Java中现成的生命周期"><a href="#Java中现成的生命周期" class="headerlink" title="Java中现成的生命周期"></a>Java中现成的生命周期</h2><p>Java中线程有六种状态：</p>
+<ol>
+<li>NEW(初始化状态)</li>
+<li>RUNNABLE(可运行/运行状态)</li>
+<li>BLOCKED(阻塞状态)</li>
+<li>WAITING(无时限等待)</li>
+<li>TIMED_WAITNG(有时限等待)</li>
+<li>TERMINATED(终止状态)</li>
+</ol>
+<p>看似复杂，实际上在操作系统层面，Java 线程中的 BLOCKED、WAITING、TIMED_WAITING 是一种状态，即前面我们提到的休眠状态。</p>
+<p>也就是说，Java线程处于这三种状态之一，那么这个线程就永远没有CPU的使用权。</p>
+<p><img src="https://static001.geekbang.org/resource/image/3f/8c/3f6c6bf95a6e8627bdf3cb621bbb7f8c.png" alt="img"></p>
+<center>Java中的线程状态转换</center>
+
+<p>其中，BLOCKED、WAITING、TIMED_WAITING 可以理解为线程导致休眠状态的三种原因。那具体是哪些情形会导致线程从 RUNNABLE 状态转换到这三种状态呢？而这三种状态又是何时转换回 RUNNABLE 的呢？以及 NEW、TERMINATED 和 RUNNABLE 状态是如何转换的？</p>
+<h3 id="RUNNABLE-与-BLOCKED-的状态转换"><a href="#RUNNABLE-与-BLOCKED-的状态转换" class="headerlink" title="RUNNABLE 与 BLOCKED 的状态转换"></a>RUNNABLE 与 BLOCKED 的状态转换</h3><blockquote>
+<p>只有一种场景会触发这种转换，就是线程等待synchronized的隐式锁。</p>
+</blockquote>
+<p>synchronized修饰的方法、代码块同一时段只允许一个线程执行，其他线程只能等待，这种情况下，等待的线程就会从RUNNABLE转换到BLOCKED状态。而当等待的线程获得synchronized隐式锁时，就会从BLOCKED转换到RUNNABLE状态。</p>
+<p>Q：熟悉操作系统线程的生命周期，可能会有个问题，线程调用阻塞式API时，是否会转换到BLOCKED状态？</p>
+<p>A：在操作系统层面，线程是会转换到休眠状态的，但是在 JVM 层面，Java 线程的状态不会发生变化，也就是说 Java 线程的状态会依然保持 RUNNABLE 状态。JVM 层面并不关心操作系统调度相关的状态，因为在 JVM 看来，等待 CPU 使用权（操作系统层面此时处于可执行状态）与等待 I/O（操作系统层面此时处于休眠状态）没有区别，都是在等待某个资源，所以都归入了 RUNNABLE 状态。</p>
+<p><strong>所以，平时说到Java 在调用阻塞式 API 时，线程会阻塞，指的是操作系统线程的状态，并不是 Java 线程的状态。</strong></p>
+<h3 id="RUNNABLE与WAITING的状态转换"><a href="#RUNNABLE与WAITING的状态转换" class="headerlink" title="RUNNABLE与WAITING的状态转换"></a>RUNNABLE与WAITING的状态转换</h3><blockquote>
+<p>总体来说，有三种场景会触发这种转换</p>
+</blockquote>
+<ol>
+<li>获得synchronized隐式锁的线程，调用无参数的Object.wait()方法</li>
+<li>调用无参数的Thread.join()方法<ul>
+<li>join是一种线程同步方法</li>
+<li>E.g.：一个线程对象thread Ａ，当调用A.join()时，执行这条语句的线程会等待thread A执行完，而等待中的这个线程，其状态会从RUNNABLE转换到WAITING。当线程thread A执行完，原来等待它的线程又会从WAITING状态转换到RUNNABLE</li>
+</ul>
+</li>
+<li>调用LockSupport.park()方法<ul>
+<li>Java 并发包中的锁，都是基于LockSupport 对象实现的</li>
+<li>调用 LockSupport.park() 方法，当前线程会阻塞，线程的状态会从 RUNNABLE 转换到 WAITING。调用 LockSupport.unpark(Thread thread) 可唤醒目标线程，目标线程的状态又会从 WAITING 状态转换到 RUNNABLE。</li>
+</ul>
+</li>
+</ol>
+<h3 id="RUNNABLE-与-TIMED-WAITING-的状态转换"><a href="#RUNNABLE-与-TIMED-WAITING-的状态转换" class="headerlink" title="RUNNABLE 与 TIMED_WAITING 的状态转换"></a>RUNNABLE 与 TIMED_WAITING 的状态转换</h3><blockquote>
+<p>有五种场景会触发这种转换</p>
+</blockquote>
+<ol>
+<li>调用带超时参数的 Thread.sleep(long millis) 方法；</li>
+<li>获得 synchronized 隐式锁的线程，调用带超时参数的 Object.wait(long timeout) 方法；</li>
+<li>调用带超时参数的 Thread.join(long millis) 方法；</li>
+<li>调用带超时参数的 LockSupport.parkNanos(Object blocker, long deadline) 方法；</li>
+<li>调用带超时参数的 LockSupport.parkUntil(long deadline) 方法。</li>
+</ol>
+<blockquote>
+<p>TIMED_WAITING 和 WAITING 状态的区别，仅仅是触发条件多了超时参数。</p>
+</blockquote>
+<h3 id="从-NEW-到-RUNNABLE-状态"><a href="#从-NEW-到-RUNNABLE-状态" class="headerlink" title="从 NEW 到 RUNNABLE 状态"></a>从 NEW 到 RUNNABLE 状态</h3><blockquote>
+<p>Java刚创建出来的Thread对象就是NEW状态</p>
+</blockquote>
+<p>而创建Thread对象主要有两种方法，</p>
+<ol>
+<li>继承Thread对象，重写run方法</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 自定义线程对象</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 线程需要执行的代码</span></span><br><span class="line">    ......</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 创建线程对象</span></span><br><span class="line">MyThread myThread = <span class="keyword">new</span> MyThread();</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>实现Runnable接口，重写run方法，并将该实现类作为创建Thread对象的参数。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 实现Runnable接口</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Runner</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 线程需要执行的代码</span></span><br><span class="line">    ......</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 创建线程对象</span></span><br><span class="line">Thread thread = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runner());</span><br></pre></td></tr></table></figure>
+
+<p>NEW 状态的线程，不会被操作系统调度，因此不会执行。Java 线程要执行，就必须转换到 RUNNABLE 状态。从 NEW 状态转换到 RUNNABLE 状态很简单，只要调用线程对象的 start() 方法就可以了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MyThread myThread = <span class="keyword">new</span> MyThread();</span><br><span class="line"><span class="comment">// 从NEW状态转换到RUNNABLE状态</span></span><br><span class="line">myThread.start()；</span><br></pre></td></tr></table></figure>
+
+<h3 id="从-RUNNABLE-到-TERMINATED-状态"><a href="#从-RUNNABLE-到-TERMINATED-状态" class="headerlink" title="从 RUNNABLE 到 TERMINATED 状态"></a>从 RUNNABLE 到 TERMINATED 状态</h3><p>线程执行完 run() 方法后，会自动转换到 TERMINATED 状态，当然如果执行 run() 方法的时候异常抛出，也会导致线程终止。</p>
+<p>有时候我们需要强制中断 run() 方法的执行，例如 run() 方法访问一个很慢的网络，我们等不下去了，想终止怎么办呢？Java 的 Thread 类里面倒是有个 stop() 方法，不过已经标记为 @Deprecated，所以不建议使用了。正确的姿势其实是调用 interrupt() 方法。</p>
+<h4 id="stop-和-interrupt-方法的主要区别"><a href="#stop-和-interrupt-方法的主要区别" class="headerlink" title="stop() 和 interrupt() 方法的主要区别"></a>stop() 和 interrupt() 方法的主要区别</h4><p>stop() 方法会真的杀死线程，不给线程喘息的机会，如果线程持有 ReentrantLock 锁，被 stop() 的线程并不会自动调用 ReentrantLock 的 unlock() 去释放锁，那其他线程就再也没机会获得 ReentrantLock 锁，这实在是太危险了。所以该方法就不建议使用了，类似的方法还有 suspend() 和 resume() 方法，这两个方法同样也都不建议使用了，所以这里也就不多介绍了。</p>
+<p>而 interrupt() 方法就温柔多了，interrupt() 方法仅仅是通知线程，线程有机会执行一些后续操作，同时也可以无视这个通知。被 interrupt 的线程，是怎么收到通知的呢？一种是异常，另一种是主动检测。</p>
+<ul>
+<li><p>当线程 A 处于 WAITING、TIMED_WAITING 状态时，如果其他线程调用线程 A 的 interrupt() 方法，会使线程 A 返回到 RUNNABLE 状态，同时线程 A 的代码会触发 InterruptedException 异常。上面我们提到转换到 WAITING、TIMED_WAITING 状态的触发条件，都是调用了类似 wait()、join()、sleep() 这样的方法，我们看这些方法的签名，发现都会 throws InterruptedException 这个异常。这个异常的触发条件就是：其他线程调用了该线程的 interrupt() 方法。</p>
+</li>
+<li><p>当线程 A 处于 RUNNABLE 状态时，并且阻塞在 java.nio.channels.InterruptibleChannel 上时，如果其他线程调用线程 A 的 interrupt() 方法，线程 A 会触发 java.nio.channels.ClosedByInterruptException 这个异常；而阻塞在 java.nio.channels.Selector 上时，如果其他线程调用线程 A 的 interrupt() 方法，线程 A 的 java.nio.channels.Selector 会立即返回。</p>
+</li>
+<li><p>上面这两种情况属于被中断的线程通过异常的方式获得了通知。还有一种是主动检测，如果线程处于 RUNNABLE 状态，并且没有阻塞在某个 I/O 操作上，例如中断计算圆周率的线程 A，这时就得依赖线程 A 主动检测中断状态了。如果其他线程调用线程 A 的 interrupt() 方法，那么线程 A 可以通过 isInterrupted() 方法，检测是不是自己被中断了。</p>
+</li>
+</ul>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>理解 Java 线程的各种状态以及生命周期对于诊断多线程 Bug 非常有帮助，多线程程序很难调试，出了 Bug 基本上都是靠日志，靠线程 dump 来跟踪问题，分析线程 dump 的一个基本功就是分析线程状态，大部分的死锁、饥饿、活锁问题都需要跟踪分析线程的状态。</p>
+<p>可以通过 jstack 命令或者Java VisualVM这个可视化工具将 JVM 所有的线程栈信息导出来，完整的线程栈信息不仅包括线程的当前状态、调用栈，还包括了锁的信息。例如，我曾经写过一个死锁的程序，导出的线程栈明确告诉我发生了死锁，并且将死锁线程的调用栈信息清晰地显示出来了（如下图）。导出线程栈，分析线程状态是诊断并发问题的一个重要工具。</p>
+<p><img src="https://static001.geekbang.org/resource/image/67/be/67734e1a062adc7cf7baac7d6c17ddbe.png" alt="img"></p>
+<center>发生死锁的线程栈</center>
+
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>若要实现当前线程被中断之后，退出while(true)，这样实现是否正确？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Thread th = Thread.currentThread();</span><br><span class="line"><span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span>(th.isInterrupted()) &#123;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 省略业务代码无数</span></span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    Thread.sleep(<span class="number">100</span>);</span><br><span class="line">  &#125;<span class="keyword">catch</span> (InterruptedException e)&#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>A：</p>
+<ul>
+<li>可能出现无限循环，线程在sleep期间被打断了，抛出一个InterruptedException异常，try catch捕捉此异常，应该重置一下中断标示，因为抛出异常后，中断标示会自动清除掉！</li>
+<li>interrupt是中断的意思，在单片机开发领域，用于接收特定的事件，从而执行后续的操作。Java线程中，（通常）使用interrupt作为线程退出的通知事件，告知线程可以结束了。<br>interrupt不会结束线程的运行，在抛出InterruptedException后会清除中断标志（代表可以接收下一个中断信号了），所以我想，interrupt应该也是可以类似单片机一样作为一种通知信号的，只是实现通知的话，Java有其他更好的选择。<br>因InterruptedException退出同步代码块会释放当前线程持有的锁，所以相比外部强制stop是安全的（已手动测试）。sleep、join等会抛出InterruptedException的操作会立即抛出异常，wait在被唤醒之后才会抛出异常（就像阻塞一样，不被打扰）。I/O阻塞在Java中是可运行状态，并发包中的lock是等待状态。</li>
+<li>当发起中断之后，Thread.sleep(100);会抛出InterruptedException异常，而这个抛出这个异常会清除当前线程的中断标识，导致th.isInterrupted()一直都是返回false的。</li>
+<li>不能中断循环，异常捕获要放在while循环外面</li>
+</ul>
+<h1 id="创建多少线程才是合适的"><a href="#创建多少线程才是合适的" class="headerlink" title="创建多少线程才是合适的"></a>创建多少线程才是合适的</h1><blockquote>
+<p>Java领域，实现并发程序的主要手段就是多线程</p>
+</blockquote>
+<p>经常碰到这样的问题：各种线程池的线程数量调整成多少是合适的？或者Tomcat 的线程数、Jdbc 连接池的连接数是多少？</p>
+<p>设置合适的线程数需要分析：</p>
+<ol>
+<li>为什么要使用多线程</li>
+<li>多线程的应用场景有哪些</li>
+</ol>
+<h2 id="为什么要使用多线程？"><a href="#为什么要使用多线程？" class="headerlink" title="为什么要使用多线程？"></a>为什么要使用多线程？</h2><blockquote>
+<p>本质上就是提升程序性能</p>
+</blockquote>
+<p>如何度量呢，度量性能是否得到提升？</p>
+<p>度量的指标有很多，有两个指标是最核心的，就是吞吐量和延迟。</p>
+<ul>
+<li>延迟<ul>
+<li>指的是发出请求到收到响应这个过程的时间；<ul>
+<li>延迟越短，意味着程序执行得越快，性能也就越好。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>吞吐量<ul>
+<li>指的是在单位时间内能处理请求的数量；<ul>
+<li>吞吐量越大，意味着程序能处理的请求越多，性能也就越好。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>二者存在一些联系，同等条件下，延迟越短，吞吐量越大，也隶属于不同维度，一个是时间维度，一个是空间维度，不能互相转换。</p>
+<p>提升性能，从度量的角度，主要是降低延迟，提高吞吐量，这也是我们使用多线程的主要目的。</p>
+<h2 id="多线程的应用场景"><a href="#多线程的应用场景" class="headerlink" title="多线程的应用场景"></a>多线程的应用场景</h2><p>降低延迟，提高吞吐量的方法：</p>
+<ol>
+<li>优化算法【属于算法范畴】</li>
+<li>将硬件的性能发挥到极致【并发编程】</li>
+</ol>
+<p>计算机主要有I/O和CPU两类硬件，在并发编程领域，提升性能本质上就是提升硬件的利用率，再具体点来说，就是提升 I/O 的利用率和 CPU 的利用率。</p>
+<p>操作系统不是已经解决了硬件的利用率问题，例如：操作系统已经解决了磁盘和网卡的利用率问题，利用中断机制还能避免 CPU 轮询 I/O 状态，也提升了 CPU 的利用率。</p>
+<p>但是操作系统解决硬件利用率问题的对象往往是单一的硬件设备，而我们的并发程序，往往需要 CPU 和 I/O 设备相互配合工作，也就是说，我们需要解决 CPU 和 I/O 设备综合利用率的问题。</p>
+<p><strong>Q：如何利用多线程来提升 CPU 和 I/O 设备的利用率？</strong></p>
+<p><strong>A：</strong></p>
+<p>假设程序按照 CPU 计算和 I/O 操作交叉执行的方式运行，而且 CPU 计算和 I/O 操作的耗时是 1:1，</p>
+<p>如果只有一个线程，执行 CPU 计算的时候，I/O 设备空闲；执行 I/O 操作的时候，CPU 空闲，所以 CPU 的利用率和 I/O 设备的利用率都是 50%。</p>
+<p><img src="https://static001.geekbang.org/resource/image/d1/22/d1d7dfa1d574356cc5cb1019a4b7ca22.png" alt="img"></p>
+<center>单线程执行</center>
+
+<p>如果有两个线程，如下图所示，当线程 A 执行 CPU 计算的时候，线程 B 执行 I/O 操作；当线程 A 执行 I/O 操作的时候，线程 B 执行 CPU 计算，这样 CPU 的利用率和 I/O 设备的利用率就都达到了 100%。</p>
+<p><img src="https://static001.geekbang.org/resource/image/68/2c/68a415b31b72844eb81889e9f0eb3f2c.png" alt="img"></p>
+<center>二线程执行</center>
+
+<p>CPU 的利用率和 I/O 设备的利用率都提升到了 100%，会对性能产生了哪些影响呢？</p>
+<p>很容易看出：单位时间处理的请求数量翻了一番，也就是说吞吐量提高了 1 倍。此时可以逆向思维一下，如果 CPU 和 I/O 设备的利用率都很低，那么可以尝试通过增加线程来提高吞吐量。</p>
+<p>在单核时代，多线程主要就是用来平衡 CPU 和 I/O 设备的。如果程序只有 CPU 计算，而没有 I/O 操作的话，多线程不但不会提升性能，还会使性能变得更差，原因是增加了线程切换的成本。但是在多核时代，这种纯计算型的程序也可以利用多线程来提升性能。为什么呢？因为利用多核可以降低响应时间。</p>
+<p>为了便于理解：</p>
+<p>E.g.：计算 1+2+… … +100 亿的值，如果在 4 核的 CPU 上利用 4 个线程执行，线程 A 计算[1，25 亿)，线程 B 计算[25 亿，50 亿)，线程 C 计算[50，75 亿)，线程 D 计算[75 亿，100 亿]，之后汇总，那么理论上应该比一个线程计算[1，100 亿]快将近 4 倍，响应时间能够降到 25%。一个线程，对于 4 核的 CPU，CPU 的利用率只有 25%，而 4 个线程，则能够将 CPU 的利用率提高到 100%。</p>
+<p><img src="https://static001.geekbang.org/resource/image/95/8c/95367d49f55e0dfd099f2749c532098c.png" alt="img"></p>
+<h2 id="创建多少线程合适"><a href="#创建多少线程合适" class="headerlink" title="创建多少线程合适"></a>创建多少线程合适</h2><p>创建多少线程合适，要看多线程具体的应用场景。我们的程序一般都是 CPU 计算和 I/O 操作交叉执行的，由于 I/O 设备的速度相对于 CPU 来说都很慢，所以大部分情况下，I/O 操作执行的时间相对于 CPU 计算来说都非常长，这种场景我们一般都称为 I/O 密集型计算；和 I/O 密集型计算相对的就是 CPU 密集型计算了，CPU 密集型计算大部分场景下都是纯 CPU 计算。I/O 密集型程序和 CPU 密集型程序，计算最佳线程数的方法是不同的。</p>
+<p>下面我们对这两个场景分别说明。</p>
+<p>对于 CPU 密集型计算，多线程本质上是提升多核 CPU 的利用率，所以对于一个 4 核的 CPU，每个核一个线程，理论上创建 4 个线程就可以了，再多创建线程也只是增加线程切换的成本。所以，对于 CPU 密集型的计算场景，理论上“线程的数量 =CPU 核数”就是最合适的。不过在工程上，线程的数量一般会设置为“CPU 核数 +1”，这样的话，当线程因为偶尔的内存页失效或其他原因导致阻塞时，这个额外的线程可以顶上，从而保证 CPU 的利用率。</p>
+<p>对于 I/O 密集型的计算场景，比如前面我们的例子中，如果 CPU 计算和 I/O 操作的耗时是 1:1，那么 2 个线程是最合适的。如果 CPU 计算和 I/O 操作的耗时是 1:2，那多少个线程合适呢？是 3 个线程，如下图所示：CPU 在 A、B、C 三个线程之间切换，对于线程 A，当 CPU 从 B、C 切换回来时，线程 A 正好执行完 I/O 操作。这样 CPU 和 I/O 设备的利用率都达到了 100%。</p>
+<p><img src="https://static001.geekbang.org/resource/image/98/cb/98b71b72f01baf5f0968c7c3a2102fcb.png" alt="img"></p>
+<center>三线程执行示意图</center>
+
+<p>通过上面这个例子，我们会发现，对于 I/O 密集型计算场景，最佳的线程数是与程序中 CPU 计算和 I/O 操作的耗时比相关的，我们可以总结出这样一个公式：<br>$$<br>最佳线程数 = 1 + (I/O耗时 / CPU耗时)<br>$$<br>我们令 R=I/O 耗时 / CPU 耗时，综合上图，可以这样理解：当线程 A 执行 IO 操作时，另外 R 个线程正好执行完各自的 CPU 计算。这样 CPU 的利用率就达到了 100%。</p>
+<p>不过上面这个公式是针对单核 CPU 的，至于多核 CPU，也很简单，只需要等比扩大就可以了，计算公式如下：<br>$$<br>最佳线程数 =CPU 核数 * [ 1 +（I/O 耗时 / CPU 耗时）]总结<br>$$</p>
+<h2 id="Conclusion-1"><a href="#Conclusion-1" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>很多人都知道线程数不是越多越好，但是设置多少是合适的，却又拿不定主意。其实只要把握住一条原则就可以了，这条原则就是将硬件的性能发挥到极致。上面我们针对 CPU 密集型和 I/O 密集型计算场景都给出了理论上的最佳公式，这些公式背后的目标其实就是将硬件的性能发挥到极致。</p>
+<p>对于 I/O 密集型计算场景，I/O 耗时和 CPU 耗时的比值是一个关键参数，不幸的是这个参数是未知的，而且是动态变化的，所以工程上，我们要估算这个参数，然后做各种不同场景下的压测来验证我们的估计。不过工程上，原则还是将硬件的性能发挥到极致，所以压测时，我们需要重点关注 CPU、I/O 设备的利用率和性能指标（响应时间、吞吐量）之间的关系。</p>
+<h2 id="思考-1"><a href="#思考-1" class="headerlink" title="思考"></a>思考</h2><p>Q：有些同学对于最佳线程数的设置积累了一些经验值，认为对于 I/O 密集型应用，最佳线程数应该为：2 * CPU 的核数 + 1，你觉得这个经验值合理吗？</p>
+<p>A：</p>
+<ul>
+<li>更多的精力其实应该放在算法的优化上，线程池的配置，按照经验配置一个，随时关注线程池大小对程序的影响即可，具体做法：可以为你的程序配置一个全局的线程池，需要异步执行的任务，扔到这个全局线程池处理，线程池大小按照经验设置，每隔一段时间打印一下线程池的利用率，做到心里有数。看到过太多的代码，遇到要执行一个异步任务就创建一个线程池，导致整个程序的线程池大到爆，完全没必要。而且大多数时候，提高吞吐量可以通过使用缓存、优化业务逻辑、提前计算好等方式来处理，真没有必要太过于关注线程池大小怎么配置，如果小了就改大一点，大了改小一点就好，从老师本文的篇幅也可以看出来。经验值不靠谱的另外一个原因，大多数情况下，一台服务器跑了很多程序，每个程序都有自己的线程池，那CPU如何分配？还是根据实际情况来确定比较好。</li>
+<li>定性的io密集或者cpu密集很难在定量的维度上反应出性能瓶颈，而且公式上忽略了线程数增加带来的cpu消耗，性能优化还是要定量比较好，这样不会盲目，比如io已经成为了瓶颈，增加线程或许带来不了性能提升，这个时候是不是可以考虑用cpu换取带宽，压缩数据，或者逻辑上少发送一些。最后一个问题，我的答案是大部分应用环境是合理的，老师也说了是积累了一些调优经验后给出的方案，没有特殊需求，初始值我会选大家都在用伪标准</li>
+<li>认为不合理，不能只考虑经验，还有根据是IO密集型或者是CPU密集型，具体问题具体分析。<br>看今天文章内容，分享个实际问题；我们公司服务器都是容器，一个物理机分出好多容器，有个哥们设置线程池数量直接就是：Runtime.getRuntime().availableProcessors() * 2；本来想获取容器的CPU数量 * 2，其实Runtime.getRuntime().availableProcessors()获取到的是物理机CPU合数，一下开启了好多线程 ^_^</li>
+<li>理论加经验加实际场景，比如现在大多数公司的系统是以服务的形式来通过docker部署的，每个docker服务其实对应部署的就一个服务，这样的情况下是可以按照理论为基础，再加上实际情况来设置线程池大小的，当然通过各种监控来调整是最好的，但是实际情况是但服务几十上百，除非是核心功能，否则很难通过监控指标来调整线程池大小。理论加经验起码不会让设置跑偏太多，还有就是服务中的各种线程池统一管理是很有必要的</li>
+</ul>
+<p>Q：</p>
+<p>当应用来的请数量过大，此时线程池的线程已经不够使用，排队的队列也已经满了，那么后面的请求就会被丢弃掉，如果这是一个更新数据的请求操作，那么就会出现数据更新丢失。</p>
+<p>A：单机有瓶颈，就分布式。数据库有瓶颈，就分库分表分片</p>
+<p>Q：</p>
+<p>在4核8线程的处理器使用Runtime.availableProcessors()结果是8，超线程技术属于硬件层面上的并发，从cpu硬件来看是一个物理核心有两个逻辑核心，但因为缓存、执行资源等存在共享和竞争，所以两个核心并不能并行工作。超线程技术统计性能提升大概是30%左右，并不是100%。另外，不管设置成4还是8，现代操作系统层面的调度应该是按逻辑核心数，也就是8来调度的（除非禁用超线程技术）。所以我觉得这种情况下，严格来说，4和8都不一定是合适的。</p>
+<p>A：</p>
+<p>工作中都是按照逻辑核数来的，理论值和经验值只是提供个指导，实际上还是要靠压测。</p>
+<h1 id="为什么局部变量是线程安全的"><a href="#为什么局部变量是线程安全的" class="headerlink" title="为什么局部变量是线程安全的"></a>为什么局部变量是线程安全的</h1><p>多个线程同时访问共享变量的时候，会导致并发问题。那在 Java 语言里，是不是所有变量都是共享变量呢？</p>
+<p>不少同学会给方法里面的局部变量设置同步，显然这些同学并没有把共享变量搞清楚。那 Java 方法里面的局部变量是否存在并发问题呢？</p>
+<p>E.g.：fibonacci() 这个方法，会根据传入的参数 n ，返回 1 到 n 的斐波那契数列，斐波那契数列类似这样： 1、1、2、3、5、8、13、21、34……第 1 项和第 2 项是 1，从第 3 项开始，每一项都等于前两项之和。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回斐波那契数列</span></span><br><span class="line"><span class="keyword">int</span>[] fibonacci(<span class="keyword">int</span> n) &#123;</span><br><span class="line">  <span class="comment">// 创建结果数组，保存数列的结果</span></span><br><span class="line">  <span class="keyword">int</span>[] r = <span class="keyword">new</span> <span class="keyword">int</span>[n];</span><br><span class="line">  <span class="comment">// 初始化第一、第二个数</span></span><br><span class="line">  r[<span class="number">0</span>] = r[<span class="number">1</span>] = <span class="number">1</span>;  <span class="comment">// ①</span></span><br><span class="line">  <span class="comment">// 计算2..n</span></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">2</span>; i &lt; n; i++) &#123;</span><br><span class="line">      r[i] = r[i-<span class="number">2</span>] + r[i-<span class="number">1</span>];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> r;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>每次计算完一项，都会更新数组 r 对应位置中的值。</p>
+<p>Q：那么，当多个线程调用 fibonacci() 这个方法的时候，数组 r 是否存在数据竞争（Data Race）呢，即多个线程执行①处？</p>
+<p>A：局部变量不存在数据竞争，在CPU层面， 是没有方法概念的，CPU眼里只有一条条的指令。</p>
+<h2 id="方法是如何被执行的"><a href="#方法是如何被执行的" class="headerlink" title="方法是如何被执行的"></a>方法是如何被执行的</h2><p>高级语言里的普通语句，例如上面的r[i] = r[i-2] + r[i-1];翻译成 CPU 的指令相对简单，可方法的调用就比较复杂了。例如下面这三行代码：第 1 行，声明一个 int 变量 a；第 2 行，调用方法 fibonacci(a)；第 3 行，将 b 赋值给 c。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">7</span>；</span><br><span class="line"><span class="keyword">int</span>[] b = fibonacci(a);</span><br><span class="line"><span class="keyword">int</span>[] c = b;</span><br></pre></td></tr></table></figure>
+
+<p>当调用 fibonacci(a) 的时候，CPU 要先找到方法 fibonacci() 的地址，然后跳转到这个地址去执行代码，最后 CPU 执行完方法 fibonacci() 之后，要能够返回。</p>
+<p>首先找到调用方法的下一条语句的地址：也就是int[] c=b;的地址，再跳转到这个地址去执行。 </p>
+<p><img src="https://static001.geekbang.org/resource/image/9b/1f/9bd881b545e1c67142486f6594dc9d1f.png" alt="img"></p>
+<center>方法的调用过程</center>
+
+<p>以上我们了解了方法调用的过程，那么：</p>
+<p>CPU 去哪里找到调用方法的参数和返回地址？</p>
+<p>如果你熟悉 CPU 的工作原理，你应该会立刻想到：通过 CPU 的堆栈寄存器。CPU 支持一种栈结构，栈你一定很熟悉了，就像手枪的弹夹，先入后出。因为这个栈是和方法调用相关的，因此经常被称为<strong>调用栈</strong>。</p>
+<p>有三个方法 A、B、C，他们的调用关系是 A-&gt;B-&gt;C（A 调用 B，B 调用 C），在运行时，会构建出下面这样的调用栈。每个方法在调用栈里都有自己的独立空间，称为栈帧，每个栈帧里都有对应方法需要的参数和返回地址。当调用方法时，会创建新的栈帧，并压入调用栈；当方法返回时，对应的栈帧就会被自动弹出。也就是说，栈帧和方法是同生共死的。</p>
+<p><img src="https://static001.geekbang.org/resource/image/67/c7/674bb47feccbf55cf0b6acc5c92e4fc7.png" alt="img"></p>
+<center>调用栈结构</center>
+
+<p>利用栈结构来支持方法调用这个方案非常普遍，以至于 CPU 里内置了栈寄存器。虽然各家编程语言定义的方法千奇百怪，但是方法的内部执行原理却是出奇的一致：都是靠栈结构解决的。Java 语言虽然是靠虚拟机解释执行的，但是方法的调用也是利用栈结构解决的。</p>
+<h2 id="局部变量的存放"><a href="#局部变量的存放" class="headerlink" title="局部变量的存放"></a>局部变量的存放</h2><blockquote>
+<p>我们知道了方法间的调用在CPU眼里是怎么执行的</p>
+</blockquote>
+<p>但是，方法内的局部变量存放在哪里呢？</p>
+<p>局部变量的作用域是方法内部，也就是说当方法执行完，局部变量就没用了，局部变量应该和方法同生共死。此时你应该会想到调用栈的栈帧，调用栈的栈帧就是和方法同生共死的，所以局部变量放到调用栈里那儿是相当的合理。</p>
+<p>事实上，的确是这样的，局部变量就是放到了调用栈里。</p>
+<p>于是调用栈的结构就变成了：</p>
+<p><img src="https://static001.geekbang.org/resource/image/ec/9c/ece8c32d23e4777c370f594c97762a9c.png" alt="img"></p>
+<center>保护局部变量的调用栈结构</center>
+
+<p>学Java的人都知道，new出来的对象是在堆里，局部变量是在栈里，局部变量是和方法同生共死的，一个变量如果想跨越方法的边界，就必须创建在堆里。</p>
+<h2 id="调用栈与线程"><a href="#调用栈与线程" class="headerlink" title="调用栈与线程"></a>调用栈与线程</h2><p>Q：两个线程可以同时用不同的参数调用相同的方法，那调用栈和线程之间是什么关系呢？</p>
+<p>A：每个线程都有自己独立的调用栈。因为如果不是这样，那两个线程就互相干扰了。</p>
+<p><img src="https://static001.geekbang.org/resource/image/84/1a/840cb955e521bd51776dbcdad3dba11a.png" alt="img"></p>
+<center>线程与调用栈的关系</center>
+
+<p>现在我们再来考虑那个问题：Java 方法里面的局部变量是否存在并发问题？</p>
+<p>现在应该很清楚了，一点问题都没有。因为每个线程都有自己的调用栈，局部变量保存在线程各自的调用栈里面，不会共享，所以自然也就没有并发问题。再次重申一遍：没有共享，就没有伤害。</p>
+<h2 id="线程封闭"><a href="#线程封闭" class="headerlink" title="线程封闭"></a>线程封闭</h2><p>方法里的局部变量，因为不会和其他线程共享，所以没有并发问题，这个思路很好，已经成为解决并发问题的一个重要技术，同时还有个响当当的名字叫做<strong>线程封闭</strong></p>
+<blockquote>
+<p>仅在单线程内访问数据。由于不存在共享，所以即便不同步也不会有并发问题，性能足够好。</p>
+</blockquote>
+<p>采用线程封闭技术的案例非常多，例如：</p>
+<p>从数据库连接池里获取的连接 Connection，在 JDBC 规范里并没有要求这个 Connection 必须是线程安全的。数据库连接池通过线程封闭技术，保证一个 Connection 一旦被一个线程获取之后，在这个线程关闭 Connection 之前的这段时间里，不会再分配给其他线程，从而保证了 Connection 不会有并发问题。</p>
+<h2 id="Conclusion-2"><a href="#Conclusion-2" class="headerlink" title="Conclusion"></a>Conclusion</h2><blockquote>
+<p>调用栈是一个通用的计算机概念，所有的编程语言都会涉及到</p>
+</blockquote>
+<h2 id="思考-2"><a href="#思考-2" class="headerlink" title="思考"></a>思考</h2><p>Q：递归调用太深，可能导致栈溢出。你思考一下原因是什么？有哪些解决方案呢？</p>
+<p>A：</p>
+<p>栈溢出原因：</p>
+<p>因为每调用一个方法就会在栈上创建一个栈帧，方法调用结束后就会弹出该栈帧，而栈的大小不是无限的，所以递归调用次数过多的话就会导致栈溢出。</p>
+<p>而递归调用的特点是每递归一次，就要创建一个新的栈帧，而且还要保留之前的环境（栈帧），直到遇到结束条件。所以递归调用一定要明确好结束条件，不要出现死循环，而且要避免栈太深。</p>
+<p>解决方法：</p>
+<ol>
+<li><p>简单粗暴，不要使用递归，使用循环替代。缺点：代码逻辑不够清晰；</p>
+</li>
+<li><p>限制递归次数；</p>
+</li>
+<li><p>使用尾递归</p>
+<ul>
+<li>尾递归是指在方法返回时只调用自己本身，且不能包含表达式。编译器或解释器会把尾递归做优化，使递归方法不论调用多少次，都只占用一个栈帧，所以不会出现栈溢出。然而，Java没有尾递归优化。</li>
+</ul>
+</li>
+</ol>
+<h1 id="如何用面向对象思想写好并发程序"><a href="#如何用面向对象思想写好并发程序" class="headerlink" title="如何用面向对象思想写好并发程序"></a>如何用面向对象思想写好并发程序</h1><p>很多时候，代码设计之初都是直接按照单线程的思路来写，而忽略了本应该重视的并发问题。</p>
+<p>面向对象思想与并发编程有关系吗？</p>
+<p>本来没关系，他们分属于两个不同的领域，但是在Java语言里，融合效果还是不错的，在Java语言中，面向对象思想能够让并发编程变得更简单。</p>
+<p>具体如何才能用面向对象思路写好并发程序呢？</p>
+<ul>
+<li>封装共享变量</li>
+<li>识别共享变量间的约束条件</li>
+<li>制定并发访问策略</li>
+</ul>
+<h2 id="封装共享变量"><a href="#封装共享变量" class="headerlink" title="封装共享变量"></a>封装共享变量</h2><blockquote>
+<p>面向对象思想里面有一个很重要的特性是封装</p>
+</blockquote>
+<p>将属性和实现细节封装在对象内部，外界对象只能通过目标对象提供的公共方法来间接访问这些内部属性。</p>
+<p>通俗地讲，和门票管理模型匹配度相对较高，球场里的作为就是对象属性，球场入口就是对象的公共方法，我们把共享变量作为对象的属性，对于共享变量的访问路径就是对象的公共方法，所有入口都要安排检票程序就相当于我们前面提到的并发访问策略。</p>
+<p>利用面向对象思想写并发程序的思路，其实就是将共享变量作为对象属性封装在内部，对所有公共方法指定并发访问策略。</p>
+<p>E.g.：统计程序的计数器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Counter</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">long</span> value;</span><br><span class="line">  <span class="function"><span class="keyword">synchronized</span> <span class="keyword">long</span> <span class="title">get</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">synchronized</span> <span class="keyword">long</span> <span class="title">addOne</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ++value;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>计数器程序共享变量只有一个</strong>，就是 value，我们把它作为 Counter 类的属性，并且将两个公共方法 get() 和 addOne() 声明为同步方法，这样 Counter 类就成为一个线程安全的类了。</p>
+<p>实际工作中，经常面临的情况往往是很多的共享变量，多个共享变量，如果每一个都考虑其并发安全问题，会做很多不必要的工作，因为很多共享变量的值不会变，对于这些不会变化的共享变量，建议使用final关键字修饰，既能避免并发问题，也能表明设计意图。</p>
+<h2 id="识别共享变量间的约束条件"><a href="#识别共享变量间的约束条件" class="headerlink" title="识别共享变量间的约束条件"></a>识别共享变量间的约束条件</h2><blockquote>
+<p>非常重要</p>
+<p>这些约束条件决定了并发访问策略</p>
+</blockquote>
+<p>E.g.：库存管理里面有个合理库存的概念，库存量不能太高，也不能太低，有一个上限和下限。</p>
+<p>关于约束条件，可以用程序进行模拟：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">*<span class="doctag">@param</span>:upper:库存上限</span></span><br><span class="line"><span class="comment">*<span class="doctag">@param</span>:lower:库存上限</span></span><br><span class="line"><span class="comment">*用了AtomicLong原子 类</span></span><br><span class="line"><span class="comment">*原子类是线程安全的，set方法不需要同步</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SafeWM</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 库存上限</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> AtomicLong upper =</span><br><span class="line">        <span class="keyword">new</span> AtomicLong(<span class="number">0</span>);</span><br><span class="line">  <span class="comment">// 库存下限</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> AtomicLong lower =</span><br><span class="line">        <span class="keyword">new</span> AtomicLong(<span class="number">0</span>);</span><br><span class="line">  <span class="comment">// 设置库存上限</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">setUpper</span><span class="params">(<span class="keyword">long</span> v)</span></span>&#123;</span><br><span class="line">    upper.set(v);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 设置库存下限</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">setLower</span><span class="params">(<span class="keyword">long</span> v)</span></span>&#123;</span><br><span class="line">    lower.set(v);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 省略其他业务代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码貌似是没问题的，但是<strong>忽略了一个约束条件</strong>，就是库存下限要小于库存上限。</p>
+<p>这个约束条件能够直接加到上面的 set 方法上吗？我们先直接加一下看看效果（如下面代码所示）。我们在 setUpper() 和 setLower() 中增加了参数校验，这乍看上去好像是对的，但其实存在并发问题，问题在于存在竞态条件。这里我顺便插一句，其实当你看到代码里出现 if 语句的时候，就应该立刻意识到可能存在竞态条件。</p>
+<p>我们假设库存的下限和上限分别是 (2,10)，线程 A 调用 setUpper(5) 将上限设置为 5，线程 B 调用 setLower(7) 将下限设置为 7，如果线程 A 和线程 B 完全同时执行，你会发现线程 A 能够通过参数校验，因为这个时候，下限还没有被线程 B 设置，还是 2，而 5&gt;2；线程 B 也能够通过参数校验，因为这个时候，上限还没有被线程 A 设置，还是 10，而 7&lt;10。当线程 A 和线程 B 都通过参数校验后，就把库存的下限和上限设置成 (7, 5) 了，显然此时的结果是<strong>不符合库存下限要小于库存上限这个约束条件</strong>的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SafeWM</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 库存上限</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> AtomicLong upper =</span><br><span class="line">        <span class="keyword">new</span> AtomicLong(<span class="number">0</span>);</span><br><span class="line">  <span class="comment">// 库存下限</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> AtomicLong lower =</span><br><span class="line">        <span class="keyword">new</span> AtomicLong(<span class="number">0</span>);</span><br><span class="line">  <span class="comment">// 设置库存上限</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">setUpper</span><span class="params">(<span class="keyword">long</span> v)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 检查参数合法性</span></span><br><span class="line">    <span class="keyword">if</span> (v &lt; lower.get()) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</span><br><span class="line">    &#125;</span><br><span class="line">    upper.set(v);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 设置库存下限</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">setLower</span><span class="params">(<span class="keyword">long</span> v)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 检查参数合法性</span></span><br><span class="line">    <span class="keyword">if</span> (v &gt; upper.get()) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</span><br><span class="line">    &#125;</span><br><span class="line">    lower.set(v);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 省略其他业务代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在没有识别出<strong>库存下限要小于库存上限</strong>这个约束条件之前，我们制定的并发访问策略是利用原子类，但是这个策略，完全不能保证<strong>库存下限要小于库存上限</strong>这个约束条件。所以说，在设计阶段，我们<strong>一定要识别出所有共享变量之间的约束条件，如果约束条件识别不足，很可能导致制定的并发访问策略南辕北辙。</strong></p>
+<p>共享变量之间的约束条件，反映在代码里，基本上都会有 if 语句，所以，一定要特别注意竞态条件。</p>
+<h2 id="制定并发访问策略"><a href="#制定并发访问策略" class="headerlink" title="制定并发访问策略"></a>制定并发访问策略</h2><p>制定并发访问策略，是一个非常复杂的事情。应该说整个专栏都是在尝试搞定它。不过从方案上来看，无外乎就是以下“三件事”。</p>
+<ol>
+<li>避免共享：避免共享的技术主要是利于线程本地存储以及为每个任务分配独立的线程。</li>
+<li>不变模式：这个在 Java 领域应用的很少，但在其他领域却有着广泛的应用，例如 Actor 模式、CSP 模式以及函数式编程的基础都是不变模式。</li>
+<li>管程及其他同步工具：Java 领域万能的解决方案是管程，但是对于很多特定场景，使用 Java 并发包提供的读写锁、并发容器等同步工具会更好。</li>
+</ol>
+<p>除了这些方案之外，还有一些宏观的原则需要你了解。这些宏观原则，有助于你写出“健壮”的并发程序。这些原则主要有以下三条。</p>
+<ol>
+<li>优先使用成熟的工具类：Java SDK 并发包里提供了丰富的工具类，基本上能满足你日常的需要，建议你熟悉它们，用好它们，而不是自己再“发明轮子”，毕竟并发工具类不是随随便便就能发明成功的。</li>
+<li>迫不得已时才使用低级的同步原语：低级的同步原语主要指的是 synchronized、Lock、Semaphore 等，这些虽然感觉简单，但实际上并没那么简单，一定要小心使用。</li>
+<li>避免过早优化：安全第一，并发程序首先要保证安全，出现性能瓶颈后再优化。在设计期和开发期，很多人经常会情不自禁地预估性能的瓶颈，并对此实施优化，但残酷的现实却是：性能瓶颈不是你想预估就能预估的。</li>
+</ol>
+<h2 id="Conclusion-3"><a href="#Conclusion-3" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>利用面向对象思想编写并发程序，一个关键点就是利用面向对象里的封装特性。</p>
+<p>对共享变量进行封装，要避免“逸出”，所谓“逸出”简单讲就是共享变量逃逸到对象的外面。</p>
+<h2 id="思考-3"><a href="#思考-3" class="headerlink" title="思考"></a>思考</h2><p>类 SafeWM 不满足库存下限要小于库存上限这个约束条件，那你来试试修改一下，让它能够在并发条件下满足库存下限要小于库存上限这个约束条件。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200824152158744.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Jva29CYXNpbGlzaw==,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<p>对于两个互相比较的变量来说，赋值的时候只能加锁来控制。但是这也会带来性能问题，不过可以采用读锁和写锁来优化，申请写锁了就互斥，读锁可以并发访问，这样性能相对粗粒度的锁来说会高点。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DBPush</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> DBPush dbPush = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">DBPush</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> DBPush <span class="title">getInStance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (dbPush == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (DBPush<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (dbPush == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    dbPush = <span class="keyword">new</span> DBPush();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dbPush;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SafeWM</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 库存上限</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> AtomicLong upper =</span><br><span class="line">        <span class="keyword">new</span> AtomicLong(<span class="number">0</span>);</span><br><span class="line">  <span class="comment">// 库存下限</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> AtomicLong lower =</span><br><span class="line">        <span class="keyword">new</span> AtomicLong(<span class="number">0</span>);</span><br><span class="line">  <span class="comment">// 设置库存上限</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">setUpper</span><span class="params">(<span class="keyword">long</span> v)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">      <span class="comment">// 检查参数合法性</span></span><br><span class="line">      <span class="keyword">if</span> (v &lt; lower.get()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</span><br><span class="line">      &#125;</span><br><span class="line">      upper.set(v);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 设置库存下限</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">setLower</span><span class="params">(<span class="keyword">long</span> v)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">      <span class="comment">// 检查参数合法性</span></span><br><span class="line">      <span class="keyword">if</span> (v &gt; upper.get()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</span><br><span class="line">      &#125;</span><br><span class="line">      lower.set(v);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 省略其他业务代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Rokosnake</span>
+                    </p>
+                
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><strong>How to thought, there is what kind of life.</strong></span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/%E5%B9%B6%E5%8F%91/"># 并发</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/08/22/%E7%AE%A1%E7%A8%8B-%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E4%B8%87%E8%83%BD%E9%92%A5%E5%8C%99/">管程-并发编程的万能钥匙</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Rokosnake | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+    
+</footer>
+
+    </div>
+</body>
+</html>
