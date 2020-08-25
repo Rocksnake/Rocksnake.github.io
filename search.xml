@@ -1,6 +1,235 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>利用Semaphore实现一个限流器</title>
+    <url>/2020/08/25/%E5%88%A9%E7%94%A8Semaphore%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E9%99%90%E6%B5%81%E5%99%A8/</url>
+    <content><![CDATA[<h1 id="利用Semaphore实现一个限流器"><a href="#利用Semaphore实现一个限流器" class="headerlink" title="利用Semaphore实现一个限流器"></a>利用Semaphore实现一个限流器</h1><blockquote>
+<p>Semaphore普遍翻译为信号量，编程世界里，线程能不能执行，要看信号量是不是允许。</p>
+</blockquote>
+<p>信号量是由大名鼎鼎的计算机科学家迪杰斯特拉（Dijkstra）于 1965 年提出，在这之后的 15 年，信号量一直都是并发编程领域的终结者，直到 1980 年管程被提出来，我们才有了第二选择。目前几乎所有支持并发编程的语言都支持信号量机制。</p>
+<h2 id="信号量模型"><a href="#信号量模型" class="headerlink" title="信号量模型"></a>信号量模型</h2><blockquote>
+<p>简单概括为：一个计数器、一个等待队列、三个方法</p>
+</blockquote>
+<p>在信号量模型里，计数器和等待队列对外是透明的，所以只能通过信号量模型提供的三个方法来访问它们，这三个方法分别是：init()、down() 和 up()。</p>
+<p><img src="https://static001.geekbang.org/resource/image/6d/5c/6dfeeb9180ff3e038478f2a7dccc9b5c.png" alt="img"></p>
+<center>信号量模型图</center>
+
+<p>这三个方法详细的语义具体如下：</p>
+<ul>
+<li>init()：设置计数器的初始值</li>
+<li>down()：计数器的值减1,；如果此时计数器的值小于0，则当前线程将被阻塞，否则当前线程可以继续执行；</li>
+<li>up()：计数器的值加 1；如果此时计数器的值小于或者等于 0，则唤醒等待队列中的一个线程，并将其从等待队列中移除。</li>
+</ul>
+<p>这里提到的 init()、down() 和 up() 三个方法都是原子性的，并且这个原子性是由信号量模型的实现方保证的。</p>
+<p>在 Java SDK 里面，信号量模型是由 java.util.concurrent.Semaphore 实现的，Semaphore 这个类能够保证这三个方法都是原子操作。</p>
+<p>给出一个参考信号量模型：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Semaphore</span></span>&#123;</span><br><span class="line">  <span class="comment">// 计数器</span></span><br><span class="line">  <span class="keyword">int</span> count;</span><br><span class="line">  <span class="comment">// 等待队列</span></span><br><span class="line">  Queue queue;</span><br><span class="line">  <span class="comment">// 初始化操作</span></span><br><span class="line">  Semaphore(<span class="keyword">int</span> c)&#123;</span><br><span class="line">    <span class="keyword">this</span>.count=c;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// </span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">down</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.count--;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">this</span>.count&lt;<span class="number">0</span>)&#123;</span><br><span class="line">      <span class="comment">//将当前线程插入等待队列</span></span><br><span class="line">      <span class="comment">//阻塞当前线程</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">up</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.count++;</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">this</span>.count&lt;=<span class="number">0</span>) &#123;</span><br><span class="line">      <span class="comment">//移除等待队列中的某个线程T</span></span><br><span class="line">      <span class="comment">//唤醒线程T</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>信号量模型里面，down()、up() 这两个操作历史上最早称为 P 操作和 V 操作，所以信号量模型也被称为 PV 原语。</p>
+<p>还有些人喜欢用 semWait() 和 semSignal() 来称呼它们，虽然叫法不同，但是语义都是相同的。在 Java SDK 并发包里，down() 和 up() 对应的则是 acquire() 和 release()。</p>
+<h2 id="如何使用信号量"><a href="#如何使用信号量" class="headerlink" title="如何使用信号量"></a>如何使用信号量</h2><blockquote>
+<p>信号量的模型比较简单，关于信号量模型的使用，可以参考红绿灯，车辆在通过路口前必须检查是否是绿灯，只有绿灯才能通行。</p>
+</blockquote>
+<p>信号量也是类似的，使用累加器的例子说明，在累加器的例子里面，count+=1操作是个临界区，只允许一个线程执行，也就是说要保证互斥，用信号量怎么控制呢？</p>
+<p>就像用互斥锁一样，只要在进入临界区之前执行以下down()操作，退出临界区之前执行一下up()操作就可以。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> count;</span><br><span class="line"><span class="comment">//初始化信号量</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> Semaphore s </span><br><span class="line">    = <span class="keyword">new</span> Semaphore(<span class="number">1</span>);</span><br><span class="line"><span class="comment">//用信号量保证互斥    </span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">addOne</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">//down()</span></span><br><span class="line">  s.acquire();</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    count+=<span class="number">1</span>;</span><br><span class="line">  &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="comment">//up()</span></span><br><span class="line">    s.release();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>信号量是如何保证互斥的呢？</p>
+<p>假设两个线程 T1 和 T2 同时访问 addOne() 方法，当它们同时调用 acquire() 的时候，由于 acquire() 是一个原子操作，所以只能有一个线程（假设 T1）把信号量里的计数器减为 0，另外一个线程（T2）则是将计数器减为 -1。对于线程 T1，信号量里面的计数器的值是 0，大于等于 0，所以线程 T1 会继续执行；对于线程 T2，信号量里面的计数器的值是 -1，小于 0，按照信号量模型里对 down() 操作的描述，线程 T2 将被阻塞。所以此时只有线程 T1 会进入临界区执行count+=1；。</p>
+<p>当线程 T1 执行 release() 操作，也就是 up() 操作的时候，信号量里计数器的值是 -1，加 1 之后的值是 0，小于等于 0，按照信号量模型里对 up() 操作的描述，此时等待队列中的 T2 将会被唤醒。于是 T2 在 T1 执行完临界区代码之后才获得了进入临界区执行的机会，从而保证了互斥性。</p>
+<h2 id="快速实现一个限流器"><a href="#快速实现一个限流器" class="headerlink" title="快速实现一个限流器"></a>快速实现一个限流器</h2><blockquote>
+<p>我们用信号量实现了一个最简单的互斥锁功能。</p>
+</blockquote>
+<p>既然Java SDK里面提供了Lock，为啥还要提供一个 Semaphore ？</p>
+<p>其实实现一个互斥锁，仅仅是 Semaphore 的部分功能，<strong>Semaphore 还有一个功能是 Lock 不容易实现的</strong>，那就是：<strong>Semaphore 可以允许多个线程访问一个临界区。</strong></p>
+<p>现实中也是有这样的需求的，常见的就是工作中遇到的各种池化资源，如连接池、对象池、线程池等，其中，可能最熟悉的就是数据库连接池，同一时刻，一定时允许多个线程同时使用连接池的，当然，每个连接在释放前，是不允许其他线程使用的。</p>
+<p>所谓<strong>对象池</strong>，指的是一次性创建出 N 个对象，之后所有的线程重复利用这 N 个对象，当然对象在被释放前，也是不允许其他线程使用的。</p>
+<p>对象池，可以用 List 保存实例对象，这个很简单。但关键是限流器的设计，这里的限流，指的是不允许多于 N 个线程同时进入临界区。</p>
+<p>那如何快速实现一个这样的限流器呢？这种场景，我立刻就想到了信号量的解决方案。</p>
+<p>信号量的计数器，在上面的例子中，我们设置成了 1，这个 1 表示只允许一个线程进入临界区，但如果我们把计数器的值设置成对象池里对象的个数 N，就能完美解决对象池的限流问题了。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//对象池</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ObjPool</span>&lt;<span class="title">T</span>, <span class="title">R</span>&gt; </span>&#123;</span><br><span class="line">  <span class="keyword">final</span> List&lt;T&gt; pool;</span><br><span class="line">  <span class="comment">// 用信号量实现限流器</span></span><br><span class="line">  <span class="keyword">final</span> Semaphore sem;</span><br><span class="line">  <span class="comment">// 构造函数</span></span><br><span class="line">  ObjPool(<span class="keyword">int</span> size, T t)&#123;</span><br><span class="line">    pool = <span class="keyword">new</span> Vector&lt;T&gt;()&#123;&#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;size; i++)&#123;</span><br><span class="line">      pool.add(t);</span><br><span class="line">    &#125;</span><br><span class="line">    sem = <span class="keyword">new</span> Semaphore(size);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 利用对象池的对象，调用func</span></span><br><span class="line">  <span class="function">R <span class="title">exec</span><span class="params">(Function&lt;T,R&gt; func)</span> </span>&#123;</span><br><span class="line">    T t = <span class="keyword">null</span>;</span><br><span class="line">    sem.acquire();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      t = pool.remove(<span class="number">0</span>);</span><br><span class="line">      <span class="keyword">return</span> func.apply(t);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      pool.add(t);</span><br><span class="line">      sem.release();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 创建对象池</span></span><br><span class="line">ObjPool&lt;Long, String&gt; pool = </span><br><span class="line">  <span class="keyword">new</span> ObjPool&lt;Long, String&gt;(<span class="number">10</span>, <span class="number">2</span>);</span><br><span class="line"><span class="comment">// 通过对象池获取t，之后执行  </span></span><br><span class="line">pool.exec(t -&gt; &#123;</span><br><span class="line">    System.out.println(t);</span><br><span class="line">    <span class="keyword">return</span> t.toString();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>我们用一个 List来保存对象实例，用 Semaphore 实现限流器。</p>
+<p>关键的代码是 ObjPool 里面的 exec() 方法，这个方法里面实现了限流的功能。</p>
+<p>在这个方法里面，我们首先调用 acquire() 方法（与之匹配的是在 finally 里面调用 release() 方法），假设对象池的大小是 10，信号量的计数器初始化为 10，那么前 10 个线程调用 acquire() 方法，都能继续执行，相当于通过了信号灯，而其他线程则会阻塞在 acquire() 方法上。对于通过信号灯的线程，我们为每个线程分配了一个对象 t（这个分配工作是通过 pool.remove(0) 实现的），分配完之后会执行一个回调函数 func，而函数的参数正是前面分配的对象 t ；执行完回调函数之后，它们就会释放对象（这个释放工作是通过 pool.add(t) 实现的），同时调用 release() 方法来更新信号量的计数器。如果此时信号量里计数器的值小于等于 0，那么说明有线程在等待，此时会自动唤醒等待的线程。</p>
+<blockquote>
+<p>使用信号量，我们可以轻松地实现一个限流器，使用起来还是非常简单的</p>
+</blockquote>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><blockquote>
+<p>信号量在其他语言里相对于Java里更加有名，java在并发编程领域重点支持管程模型。</p>
+</blockquote>
+<p> 管程模型理论上解决了信号量模型的一些不足，主要体现在易用性和工程化方面，例如用信号量解决我们曾经提到过的阻塞队列问题，就比管程模型麻烦很多。</p>
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>Q：在上面对象池的例子中，对象保存在了 Vector 中，Vector 是 Java 提供的线程安全的容器，如果我们把 Vector 换成 ArrayList，是否可以呢？</p>
+<p>A：</p>
+<ul>
+<li>和管程相比，信号量可以实现的独特功能就是同时允许多个线程进入临界区，但是信号量不能做的就是同时唤醒多个线程去争抢锁，只能唤醒一个阻塞中的线程，而且信号量模型是没有Condition的概念的，即阻塞线程被醒了直接就运行了而不会去检查此时临界条件是否已经不满足了，基于此考虑信号量模型才会设计出只能让一个线程被唤醒，否则就会出现因为缺少Condition检查而带来的线程安全问题。正因为缺失了Condition，所以用信号量来实现阻塞队列就很麻烦，因为要自己实现类似Condition的逻辑。</li>
+<li>需要用线程安全的vector，因为信号量支持多个线程进入临界区，执行list的add和remove方法时可能是多线程并发执行</li>
+<li>有同学认为up()中的判断条件应该&gt;=0，我觉得有可能理解为生产者-消费者模式中的生产者了。可以这么想，&gt;0就意味着没有阻塞的线程了，所以只有&lt;=0的情况才需要唤醒一个等待的线程。其实down()和up()是成对出现的，并且是先调用down()获得锁，处理完成再调用up()释放锁，如果信号量初始值为1，应该是不会出现&gt;0的情况的，除非故意调先用up()，这也失去了信号量本身的意义了。</li>
+<li>很多人对up()方法的计数器count&lt;=0不理解，可以看下这里：<br>1、反证法验证一下，假如一个线程先执行down()操作，那么此时count的值是0，接着这个线程执行up()操作，此时count的值是1，如果count应该是大于等于0，那么应该唤醒其他线程，可是此时并没有线程在睡眠呀，count的值不应该是大于等于0。<br>2、假如一个线程t1执行down()操作，此时count = 0，然后t1被中断，另外的线程t2执行down()操作，此时count=-1，t2阻塞睡眠，另外的线程t3执行down()操作，count=-2，t3也睡眠。count=-2 说明有两个线程在睡眠，接着t1执行up() 操作，此时count=-1，小于等于0，唤醒t2或者t3其中一个线程，假如计数器count是大于等于0才唤醒其他线程，这明显是不对的。</li>
+<li>换ArrayList是不行的，临界区内可能存在多个线程来执行remove操作，出现不可预知的后果</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Concurrent Programming</category>
+      </categories>
+      <tags>
+        <tag>并发</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Lock and Condition</title>
+    <url>/2020/08/24/Lock%20and%20Condition/</url>
+    <content><![CDATA[<h1 id="Lock-and-Condition"><a href="#Lock-and-Condition" class="headerlink" title="Lock and Condition"></a>Lock and Condition</h1><h2 id="隐藏在并发包中的管程"><a href="#隐藏在并发包中的管程" class="headerlink" title="隐藏在并发包中的管程"></a>隐藏在并发包中的管程</h2><blockquote>
+<p>Java SDK并发包中内容丰富，但最核心的还是其对管程的实现，理论上利用管程，几乎可以实现并发包中的所有工具类。</p>
+</blockquote>
+<p>我们知道并发编程领域里，两大核心问题：互斥和同步，这两大问题管程都是可以解决的，Java SDK并发包通过Lock和Condition两个接口实现管程，其中Lock用于解决互斥问题，Condition用于解决同步问题。</p>
+<p>首先考虑一个问题，就是Java 语言本身提供的 synchronized 也是管程的一种实现，既然 Java 从语言层面已经实现了管程了，那为什么还要在 SDK 里提供另外一种实现呢？</p>
+<p>很显然synchronized与Lock有区别，理解这个问题有助于进一步深入。</p>
+<h3 id="再造管程的理由"><a href="#再造管程的理由" class="headerlink" title="再造管程的理由"></a>再造管程的理由</h3><p>在 Java 的 1.5 版本中，synchronized 性能不如 SDK 里面的 Lock，但 1.6 版本之后，synchronized 做了很多优化，将性能追了上来，所以 1.6 之后的版本又有人推荐使用 synchronized 了。</p>
+<p><font color=red>那么性能问题是否能作为理由呢，显然不能，因为性能问题是可以通过优化解决的。</font></p>
+<p>还记得我们前面介绍的死锁问题，有一个破坏不可抢占条件方案，这个方案synchronized没有办法解决，原因是synchronized申请资源的时候，如果申请不到，线程直接进入阻塞状态了，而线程进入阻塞状态，啥都干不了，也释放不了线程已经占有的资源。但我们希望的是：</p>
+<blockquote>
+<p>对于“不可抢占”这个条件，占用部分资源的线程进一步申请其他资源时，如果申请不到，可以主动释放它占有的资源，这样不可抢占这个条件就破坏掉了。</p>
+</blockquote>
+<p>如果我们重新设计一把互斥锁去解决这个问题，那该怎么设计呢？我觉得有三种方案。</p>
+<ol>
+<li>能够响应中断。<ul>
+<li>synchronized 的问题是，持有锁 A 后，如果尝试获取锁 B 失败，那么线程就进入阻塞状态，一旦发生死锁，就没有任何机会来唤醒阻塞的线程。但如果阻塞状态的线程能够响应中断信号，也就是说当我们给阻塞的线程发送中断信号的时候，能够唤醒它，那它就有机会释放曾经持有的锁 A。这样就破坏了不可抢占条件了。</li>
+</ul>
+</li>
+<li>支持超时。<ul>
+<li>如果线程在一段时间之内没有获取到锁，不是进入阻塞状态，而是返回一个错误，那这个线程也有机会释放曾经持有的锁。这样也能破坏不可抢占条件。</li>
+</ul>
+</li>
+<li>非阻塞地获取锁。<ul>
+<li>如果尝试获取锁失败，并不进入阻塞状态，而是直接返回，那这个线程也有机会释放曾经持有的锁。这样也能破坏不可抢占条件。</li>
+</ul>
+</li>
+</ol>
+<p>这三种方案可以全面弥补 synchronized 的问题。到这里相信你应该也能理解了，这三个方案就是“重复造轮子”的主要原因，体现在 API 上，就是 Lock 接口的三个方法。详情如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 支持中断的API</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">lockInterruptibly</span><span class="params">()</span> </span></span><br><span class="line"><span class="function">  <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line"><span class="comment">// 支持超时的API</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">(<span class="keyword">long</span> time, TimeUnit unit)</span> </span></span><br><span class="line"><span class="function">  <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line"><span class="comment">// 支持非阻塞获取锁的API</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">tryLock</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="如何保证可见性"><a href="#如何保证可见性" class="headerlink" title="如何保证可见性"></a>如何保证可见性</h3><p>Java SDK 里面 Lock 的使用，有一个经典的范例，就是try{}finally{}，在 finally 里面释放锁。其中可见性是怎么保证的呢？ Java 里多线程的可见性是通过 Happens-Before 规则保证的。</p>
+<p>synchronized 之所以能够保证可见性，也是因为有一条 synchronized 相关的规则：synchronized 的解锁 Happens-Before 于后续对这个锁的加锁。那 Java SDK 里面 Lock 靠什么保证可见性呢？</p>
+<p>Q：线程 T1 对 value 进行了 +=1 操作，那后续的线程 T2 能够看到 value 的正确结果吗？</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Lock rtl =</span><br><span class="line">  <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">  <span class="keyword">int</span> value;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addOne</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 获取锁</span></span><br><span class="line">    rtl.lock();  </span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      value+=<span class="number">1</span>;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      <span class="comment">// 保证锁能释放</span></span><br><span class="line">      rtl.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>A：答案必须是肯定的。Java SDK 里面锁的实现非常复杂，它是利用了 volatile 相关的 Happens-Before 规则。Java SDK 里面的 ReentrantLock，内部持有一个 volatile 的成员变量 state，获取锁的时候，会读写 state 的值；解锁的时候，也会读写 state 的值（简化后的代码如下面所示）。也就是说，在执行 value+=1 之前，程序先读写了一次 volatile 变量 state，在执行 value+=1 之后，又读写了一次 volatile 变量 state。根据相关的 Happens-Before 规则：</p>
+<ol>
+<li>顺序性规则：对于线程 T1，value+=1 Happens-Before 释放锁的操作 unlock()；</li>
+<li>volatile 变量规则：由于 state = 1 会先读取 state，所以线程 T1 的 unlock() 操作 Happens-Before 线程 T2 的 lock() 操作；</li>
+<li>传递性规则：线程 T1 的 value+=1 Happens-Before 线程 T2 的 lock() 操作。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SampleLock</span> </span>&#123;</span><br><span class="line">  <span class="keyword">volatile</span> <span class="keyword">int</span> state;</span><br><span class="line">  <span class="comment">// 加锁</span></span><br><span class="line">  lock() &#123;</span><br><span class="line">    <span class="comment">// 省略代码无数</span></span><br><span class="line">    state = <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 解锁</span></span><br><span class="line">  unlock() &#123;</span><br><span class="line">    <span class="comment">// 省略代码无数</span></span><br><span class="line">    state = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以，后续线程T2能够看到value的正确结果。</p>
+<h3 id="什么是可重入锁"><a href="#什么是可重入锁" class="headerlink" title="什么是可重入锁"></a>什么是可重入锁</h3><p>可重入锁，ReentrantLock，指的是线程可以重复获取同一把锁。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Lock rtl =</span><br><span class="line">  <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">  <span class="keyword">int</span> value;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 获取锁</span></span><br><span class="line">    rtl.lock();         ②</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> value;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      <span class="comment">// 保证锁能释放</span></span><br><span class="line">      rtl.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addOne</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 获取锁</span></span><br><span class="line">    rtl.lock();  </span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      value = <span class="number">1</span> + get(); ①</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      <span class="comment">// 保证锁能释放</span></span><br><span class="line">      rtl.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当线程 T1 执行到 ① 处时，已经获取到了锁 rtl ，当在 ① 处调用 get() 方法时，会在 ② 再次对锁 rtl 执行加锁操作。此时，如果锁 rtl 是可重入的，那么线程 T1 可以再次加锁成功；如果锁 rtl 是不可重入的，那么线程 T1 此时会被阻塞。</p>
+<p>除了可重入锁，可能你还听说过可重入函数，可重入函数怎么理解呢？指的是线程可以重复调用？</p>
+<p>显然不是，所谓<strong>可重入函数</strong>，指的是多个线程可以同时调用该函数，每个线程都能得到正确结果；同时在一个线程内支持线程切换，无论被切换多少次，结果都是正确的。多线程可以同时执行，还支持线程切换，这意味着什么呢？线程安全啊。所以，<strong>可重入函数是线程安全的</strong>。</p>
+<h3 id="公平锁与非公平锁"><a href="#公平锁与非公平锁" class="headerlink" title="公平锁与非公平锁"></a>公平锁与非公平锁</h3><p>在使用 ReentrantLock 的时候，你会发现 ReentrantLock 这个类有两个构造函数，一个是无参构造函数，一个是传入 fair 参数的构造函数。</p>
+<p>fair 参数代表的是锁的公平策略，如果传入 true 就表示需要构造一个公平锁，反之则表示要构造一个非公平锁。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//无参构造函数：默认非公平锁</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ReentrantLock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    sync = <span class="keyword">new</span> NonfairSync();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//根据公平策略参数创建锁</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ReentrantLock</span><span class="params">(<span class="keyword">boolean</span> fair)</span></span>&#123;</span><br><span class="line">    sync = fair ? <span class="keyword">new</span> FairSync() </span><br><span class="line">                : <span class="keyword">new</span> NonfairSync();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在介绍管程的时候我们知道了入口等待队列，锁都对应着一个等待队列，如果一个线程没有获得锁，就会进入等待队列，当有线程释放锁的时候，就需要从等待队列中唤醒一个等待的线程。</p>
+<ul>
+<li><p>如果是公平锁，唤醒的策略就是谁等待的时间长，就唤醒谁，很公平；</p>
+</li>
+<li><p>如果是非公平锁，则不提供这个保证，有可能等待时间短的线程反而先被唤醒。</p>
+</li>
+</ul>
+<h3 id="用锁的最佳实践"><a href="#用锁的最佳实践" class="headerlink" title="用锁的最佳实践"></a>用锁的最佳实践</h3><blockquote>
+<p>锁虽然能解决很多并发问题，但风险很高，可能会导致死锁，也可能影响性能。</p>
+</blockquote>
+<p>并发大师 Doug Lea《Java 并发编程：设计原则与模式》一书中，推荐的三个用锁的最佳实践，它们分别是：</p>
+<ol>
+<li>永远只在更新对象的成员变量时加锁</li>
+<li>永远只在访问可变的成员变量时加锁</li>
+<li>永远不在调用其他对象的方法时加锁</li>
+</ol>
+<p>这三条规则，前两条估计你一定会认同，最后一条你可能会觉得过于严苛。</p>
+<p>但是我还是倾向于你去遵守，因为调用其他对象的方法，实在是太不安全了，也许“其他”方法里面有线程 sleep() 的调用，也可能会有奇慢无比的 I/O 操作，这些都会严重影响性能。更可怕的是，“其他”类的方法可能也会加锁，然后双重加锁就可能导致死锁。</p>
+<p><strong>并发问题，本来就难以诊断，所以你一定要让你的代码尽量安全，尽量简单，哪怕有一点可能会出问题，都要努力避免。</strong></p>
+<h3 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h3><p>Java SDK 并发包里的 Lock 接口里面的每个方法，你可以感受到，都是经过深思熟虑的。除了支持类似 synchronized 隐式加锁的 lock() 方法外，还支持超时、非阻塞、可中断的方式获取锁，这三种方式为我们编写更加安全、健壮的并发程序提供了很大的便利。</p>
+<p>除了并发大师 Doug Lea 推荐的三个最佳实践外，你也可以参考一些诸如：减少锁的持有时间、减小锁的粒度等业界广为人知的规则，其实本质上它们都是相通的，不过是在该加锁的地方加锁而已。</p>
+<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><p>tryLock() 支持非阻塞方式获取锁，那么是否存在死锁问题呢？</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Account</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">int</span> balance;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Lock lock</span><br><span class="line">          = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">  <span class="comment">// 转账</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">transfer</span><span class="params">(Account tar, <span class="keyword">int</span> amt)</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span>(<span class="keyword">this</span>.lock.tryLock()) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="keyword">if</span> (tar.lock.tryLock()) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">              <span class="keyword">this</span>.balance -= amt;</span><br><span class="line">              tar.balance += amt;</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">              tar.lock.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;<span class="comment">//if</span></span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">          <span class="keyword">this</span>.lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;<span class="comment">//if</span></span><br><span class="line">    &#125;<span class="comment">//while</span></span><br><span class="line">  &#125;<span class="comment">//transfer</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>A：</strong></p>
+<ul>
+<li>存在活锁。这个例子可以稍微改下，成功转账后应该跳出循环。加个随机重试时间避免活锁</li>
+<li>有可能活锁，A，B两账户相互转账，各自持有自己lock的锁，都一直在尝试获取对方的锁，形成了活锁</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Account</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">int</span> balance;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> Lock lock</span><br><span class="line">          = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">  <span class="comment">// 转账</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">transfer</span><span class="params">(Account tar, <span class="keyword">int</span> amt)</span></span>&#123;</span><br><span class="line"><span class="keyword">boolean</span> flag = <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">while</span> (flag) &#123;</span><br><span class="line">      <span class="keyword">if</span>(<span class="keyword">this</span>.lock.tryLock(随机数，NANOSECONDS)) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="keyword">if</span> (tar.lock.tryLock(随机数，NANOSECONDS)) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">              <span class="keyword">this</span>.balance -= amt;</span><br><span class="line">              tar.balance += amt;</span><br><span class="line">flag = <span class="keyword">false</span>;</span><br><span class="line">            &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">              tar.lock.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;<span class="comment">//if</span></span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">          <span class="keyword">this</span>.lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;<span class="comment">//if</span></span><br><span class="line">    &#125;<span class="comment">//while</span></span><br><span class="line">  &#125;<span class="comment">//transfer</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Dubbo如何用管程实现异步转同步？"><a href="#Dubbo如何用管程实现异步转同步？" class="headerlink" title="Dubbo如何用管程实现异步转同步？"></a>Dubbo如何用管程实现异步转同步？</h2><p>在上一部分我们说到了 Java SDK 并发包里的 Lock 有别于 synchronized 隐式锁的三个特性：能够响应中断、支持超时和非阻塞地获取锁。</p>
+<p>这一部分我们来了解Java SDK 并发包里的 Condition，Condition 实现了管程模型里面的条件变量。</p>
+<p>Java语言内置的管程里只有一个条件变量，而Lock &amp; Condition实现的管程是支持多个条件变量的。</p>
+<p>在很多并发场景下，支持多个条件变量能够让我们的并发程序可读性更好，实现起来也更容易。例如，实现一个阻塞队列，就需要两个条件变量。</p>
+<h3 id="那如何利用两个条件变量快速实现阻塞队列呢？"><a href="#那如何利用两个条件变量快速实现阻塞队列呢？" class="headerlink" title="那如何利用两个条件变量快速实现阻塞队列呢？"></a>那如何利用两个条件变量快速实现阻塞队列呢？</h3><p>一个阻塞队列，需要两个条件变量，一个是队列不空（空队列不允许出队），另一个是队列不满（队列已满不允许入队）。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BlockedQueue</span>&lt;<span class="title">T</span>&gt;</span>&#123;</span><br><span class="line">  <span class="keyword">final</span> Lock lock =</span><br><span class="line">    <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">  <span class="comment">// 条件变量：队列不满  </span></span><br><span class="line">  <span class="keyword">final</span> Condition notFull =</span><br><span class="line">    lock.newCondition();</span><br><span class="line">  <span class="comment">// 条件变量：队列不空  </span></span><br><span class="line">  <span class="keyword">final</span> Condition notEmpty =</span><br><span class="line">    lock.newCondition();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 入队</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">enq</span><span class="params">(T x)</span> </span>&#123;</span><br><span class="line">    lock.lock();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">while</span> (队列已满)&#123;</span><br><span class="line">        <span class="comment">// 等待队列不满</span></span><br><span class="line">        notFull.await();</span><br><span class="line">      &#125;  </span><br><span class="line">      <span class="comment">// 省略入队操作...</span></span><br><span class="line">      <span class="comment">//入队后,通知可出队</span></span><br><span class="line">      notEmpty.signal();</span><br><span class="line">    &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">      lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 出队</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">deq</span><span class="params">()</span></span>&#123;</span><br><span class="line">    lock.lock();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">while</span> (队列已空)&#123;</span><br><span class="line">        <span class="comment">// 等待队列不空</span></span><br><span class="line">        notEmpty.await();</span><br><span class="line">      &#125;  </span><br><span class="line">      <span class="comment">// 省略出队操作...</span></span><br><span class="line">      <span class="comment">//出队后，通知可入队</span></span><br><span class="line">      notFull.signal();</span><br><span class="line">    &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">      lock.unlock();</span><br><span class="line">    &#125;  </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>不过需要注意的是，Lock和Condition实现的管程，线程等待和通知需要调用 await()、signal()、signalAll()，它们的语义和 wait()、notify()、notifyAll() 是相同的。但是不一样的是，Lock&amp;Condition 实现的管程里只能使用前面的 await()、signal()、signalAll()，而后面的 wait()、notify()、notifyAll() 只有在 synchronized 实现的管程里才能使用。如果一不小心在 Lock&amp;Condition 实现的管程里调用了 wait()、notify()、notifyAll()，那程序可就彻底玩完了。</p>
+<p>Java SDK 并发包里的 Lock 和 Condition 不过就是管程的一种实现而已，熟悉管程，Lock和Condition自然就熟练于心了。</p>
+<p><strong>下面我们看看Dubbo中，Lock和Condition是怎么用的。</strong></p>
+<p>首先需要了同步和异步：我们平时写的代码基本都是同步的。同步和异步的区别通俗点讲就是调用方法是否需要等到结果，如果需要等待结果就是同步，反之则是异步。</p>
+<p>E.g.：有一个计算圆周率小数点后 100 万位的方法pai1M()，这个方法可能需要执行俩礼拜，如果调用pai1M()之后，线程一直等着计算结果，等俩礼拜之后结果返回，就可以执行 printf(“hello world”)了，这个属于同步；如果调用pai1M()之后，线程不用等待计算结果，立刻就可以执行 printf(“hello world”)，这个就属于异步。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 计算圆周率小说点后100万位 </span></span><br><span class="line"><span class="function">String <span class="title">pai1M</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">//省略代码无数</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">pai1M()</span><br><span class="line">printf(<span class="string">"hello world"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>同步是java代码默认的处理方式，如果你想让程序支持异步，可以通过以下方法实现：</p>
+<ol>
+<li>调用方创建一个子线程，在子线程中执行方法调用，称为异步调用；</li>
+<li>方法实现的时候，创建一个新的线程执行主要逻辑，主线程直接return，这种方法一般称为异步方法。</li>
+</ol>
+<h3 id="Dubbo源码分析"><a href="#Dubbo源码分析" class="headerlink" title="Dubbo源码分析"></a>Dubbo源码分析</h3><blockquote>
+<p>异步的场景还是很多的，例如TCP协议本身就是异步的，工作中经常用到RPC调用，在TCP协议层面，发送完RPC请求后，线程是不会等待RPC的响应结果。</p>
+</blockquote>
+<p>可是平时工作中的RPC调用大多数是同步的，这是因为有人帮忙做了异步转同步的事情，就比如RPC框架Dubbo，下面我们具体分析。</p>
+<p>对于一个简单的RPC调用，默认情况下sayHello()方法是个同步方法，也就是说，执行service.sayHello(“dubbo”)的时候，线程会停下来等结果。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">DemoService service = 初始化部分省略</span><br><span class="line">String message = </span><br><span class="line">  service.sayHello(<span class="string">"dubbo"</span>);</span><br><span class="line">System.out.println(message);</span><br></pre></td></tr></table></figure>
+
+<p>如果此时你将调用线程dump出来的话，会是这个样子：</p>
+<p><img src="https://static001.geekbang.org/resource/image/a9/c5/a924d23fc43d31267473f2dc91396ec5.png" alt="img"></p>
+<center>调用栈信息</center>
+
+<p>你会发现调用线程阻塞了，线程状态是TIMED_WAITING，本来发送请求是异步的，但是调用线程却阻塞了，说明Dubbo帮我们做了异步转同步的事情。通过调用栈，能看到线程是阻塞在DefaultFuture.get()方法是哪个，可以推断，Dubbo异步转同步的功能应该是通过DefaultFuture这个类实现的。</p>
+<p>不过为了理清前后关系，有必要分析调用DefaultFuture.get()之前发生了什么，Fubbolnvoler的108行调用了DefaultFuture.get()，这一行先调用了request(inv, timeout)方法，其实就是发送RPC请求，之后调用get()方法等待RPC返回结果。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DubboInvoker</span></span>&#123;</span><br><span class="line">  <span class="function">Result <span class="title">doInvoke</span><span class="params">(Invocation inv)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 下面这行就是源码中108行</span></span><br><span class="line">    <span class="comment">// 为了便于展示，做了修改</span></span><br><span class="line">    <span class="keyword">return</span> currentClient </span><br><span class="line">      .request(inv, timeout)</span><br><span class="line">      .get();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>DefaultFuture 这个类是很关键，对其做一定程度的精简，如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建锁与条件变量</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Lock lock </span><br><span class="line">    = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Condition done </span><br><span class="line">    = lock.newCondition();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用方通过该方法等待结果</span></span><br><span class="line"><span class="function">Object <span class="title">get</span><span class="params">(<span class="keyword">int</span> timeout)</span></span>&#123;</span><br><span class="line">  <span class="keyword">long</span> start = System.nanoTime();</span><br><span class="line">  lock.lock();</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">  <span class="keyword">while</span> (!isDone()) &#123;</span><br><span class="line">    done.await(timeout);</span><br><span class="line">      <span class="keyword">long</span> cur=System.nanoTime();</span><br><span class="line">    <span class="keyword">if</span> (isDone() || </span><br><span class="line">          cur-start &gt; timeout)&#123;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">  lock.unlock();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (!isDone()) &#123;</span><br><span class="line">  <span class="keyword">throw</span> <span class="keyword">new</span> TimeoutException();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> returnFromResponse();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// RPC结果是否已经返回</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isDone</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> response != <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// RPC结果返回时调用该方法   </span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doReceived</span><span class="params">(Response res)</span> </span>&#123;</span><br><span class="line">  lock.lock();</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    response = res;</span><br><span class="line">    <span class="keyword">if</span> (done != <span class="keyword">null</span>) &#123;</span><br><span class="line">      done.signal();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    lock.unlock();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>还记得我们的需求，当RPC返回结果之前，阻塞调用线程，让调用线程等待；当RPC返回结果后，唤醒调用线程，让调用线程重新执行。</p>
+<p>其实这就是经典的等待-通知机制，大概就已经想到了管程的解决方案了，我们看看Dubbo是怎么实现的：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 创建锁与条件变量</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Lock lock </span><br><span class="line">    = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Condition done </span><br><span class="line">    = lock.newCondition();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用方通过该方法等待结果</span></span><br><span class="line"><span class="function">Object <span class="title">get</span><span class="params">(<span class="keyword">int</span> timeout)</span></span>&#123;</span><br><span class="line">  <span class="keyword">long</span> start = System.nanoTime();</span><br><span class="line">  lock.lock();</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">  <span class="keyword">while</span> (!isDone()) &#123;</span><br><span class="line">    done.await(timeout);</span><br><span class="line">      <span class="keyword">long</span> cur=System.nanoTime();</span><br><span class="line">    <span class="keyword">if</span> (isDone() || </span><br><span class="line">          cur-start &gt; timeout)&#123;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">  lock.unlock();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (!isDone()) &#123;</span><br><span class="line">  <span class="keyword">throw</span> <span class="keyword">new</span> TimeoutException();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> returnFromResponse();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// RPC结果是否已经返回</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isDone</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> response != <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// RPC结果返回时调用该方法   </span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doReceived</span><span class="params">(Response res)</span> </span>&#123;</span><br><span class="line">  lock.lock();</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    response = res;</span><br><span class="line">    <span class="keyword">if</span> (done != <span class="keyword">null</span>) &#123;</span><br><span class="line">      done.signal();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    lock.unlock();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用线程通过get()方法等待RPC返回结果这个方法里面，看到最熟悉的就是：调用lock()获取锁，在finally里调用unlock()释放锁；获取锁后，通过经典的在循环中调用await()方法来实现等待。</p>
+<p>当RPC结果返回时，会调用doReceived()方法，这个方法里面，调用lock()获取锁，在finally里面调用unlock()释放锁，获取锁后通过调用signal()来通知调用线程，结果已经返回，不用继续等待了。</p>
+<p>工作中需要异步处理的越来越多，其中有一个主要原因就是有些 API 本身就是异步 API。例如 websocket 也是一个异步的通信协议，如果基于这个协议实现一个简单的 RPC，你也会遇到异步转同步的问题。</p>
+<p>现在很多公有云的 API 本身也是异步的，例如创建云主机，就是一个异步的 API，调用虽然成功了，但是云主机并没有创建成功，你需要调用另外一个 API 去轮询云主机的状态。如果你需要在项目内部封装创建云主机的 API，你也会面临异步转同步的问题，因为同步的 API 更易用。</p>
+<h3 id="Conclusion-1"><a href="#Conclusion-1" class="headerlink" title="Conclusion"></a>Conclusion</h3><p>Lock and Condition是管程的一种实现，能否用好Lock and Condition取决于管程模型理解得怎样。</p>
+<p>Lock&amp;Condition 实现的管程相对于 synchronized 实现的管程来说更加灵活、功能也更丰富。</p>
+<p>了解原理比了解实现更能让你快速学好并发编程，关于 Java SDK 并发包里锁和条件变量是如何实现的，可以参考《Java 并发编程的艺术》一书的第 5 章《Java 中的锁》。</p>
+<p>可以去查看DefaultFuture <a href="incubator-dubbo/dubbo-remoting/dubbo-remoting-api/src/main/java/org/apache/dubbo/remoting/exchange/support/DefaultFuture.java。">源码</a>，Dubbo<a href="https://github.com/apache/dubbo" target="_blank" rel="noopener">源码</a>。</p>
+<h3 id="思考-1"><a href="#思考-1" class="headerlink" title="思考"></a>思考</h3><p>DefaultFuture 里面唤醒等待的线程，用的是 signal()，而不是 signalAll()，是否合理呢？</p>
+<p>A：</p>
+<ul>
+<li>不合理，会导致很多请求超时，看了源码是调用signalAll()</li>
+<li>我理解异步的本质是利用多线程提升性能，异步一定是基于一个新开的线程，从调用线程来看是异步的，但是从新开的那个线程来看，正是同步（等待）的，只是对于调用方而言这种同步是透明的。正所谓生活哪有什么岁月静好，只是有人替你负重前行。</li>
+<li>提到异步转同步，让我想到这两天看的zookeeper客户端源码，感觉应该也是这个机制，客户端同步模式下发送请求后会执行packet.wait，收到服务端响应后执行packet.notifyAll</li>
+<li>DefaultFuture的某个实例并非单线程访问的，可能会有多个线程访问同一个，因此需要用SignalAll通知全部，避免没有通知到正确的线程（不知道DUBBO中DefaultFuture同一个实例会不会共享）</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Concurrent Programming</category>
+      </categories>
+      <tags>
+        <tag>并发</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java线程</title>
     <url>/2020/08/23/Java%E7%BA%BF%E7%A8%8B/</url>
     <content><![CDATA[<h1 id="Java-线程的生命周期"><a href="#Java-线程的生命周期" class="headerlink" title="Java 线程的生命周期"></a>Java 线程的生命周期</h1><blockquote>
